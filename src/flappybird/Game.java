@@ -1,8 +1,25 @@
 package flappybird;
 
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+class Bird {
+
+}
+
+class Pipe {
+
+}
+
+class Background {
+
+}
+
+class Ground {
+
+}
 
 public class Game extends javax.swing.JFrame {
 
@@ -13,109 +30,109 @@ public class Game extends javax.swing.JFrame {
     public Game() {
         initComponents();
 
-        GameOver.setVisible(false);
+        label_GameOver.setVisible(false);
 
         int num = randomizer.nextInt(350 - 0 + 1) + 0;
-        Pipe1.setBounds(
+        label_BottomPipe.setBounds(
                 800,
                 -480 + num,
-                Pipe1.getWidth(),
-                Pipe1.getHeight()
+                label_BottomPipe.getWidth(),
+                label_BottomPipe.getHeight()
         );
-        Pipe.setBounds(
+        label_TopPipe.setBounds(
                 800,
                 200 + num,
-                Pipe.getWidth(),
-                Pipe.getHeight()
+                label_TopPipe.getWidth(),
+                label_TopPipe.getHeight()
         );
 
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
+        ActionListener taskPerformer = new ActionListener() {
 
-            @Override
-            public void run() {
-                Bird.setBounds(
-                        Bird.getX(),
-                        Bird.getY() + 10,
-                        Bird.getWidth(),
-                        Bird.getHeight());
+            public void actionPerformed(ActionEvent evt) {
+                label_Bird.setBounds(
+                        label_Bird.getX(),
+                        label_Bird.getY() + 10,
+                        label_Bird.getWidth(),
+                        label_Bird.getHeight());
 
                 // move bird down
-                if (Bird.getY() < 0) {
+                if (label_Bird.getY() < 0) {
                     gameOver = true;
                     System.out.println("Touched the sky");
                 }
-                if (Bird.getY() > 450) {
+                if (label_Bird.getY() > 450) {
                     gameOver = true;
                     System.out.println("Touched the ground");
                 }
 
-                // move pipe left
-                Pipe1.setBounds(
-                        Pipe1.getX() - 10,
-                        Pipe1.getY(),
-                        Pipe1.getWidth(),
-                        Pipe1.getHeight());
-                Pipe.setBounds(
-                        Pipe.getX() - 10,
-                        Pipe.getY(),
-                        Pipe.getWidth(),
-                        Pipe.getHeight());
+                // move pipe to the left
+                label_BottomPipe.setBounds(
+                        label_BottomPipe.getX() - 10,
+                        label_BottomPipe.getY(),
+                        label_BottomPipe.getWidth(),
+                        label_BottomPipe.getHeight());
+                label_TopPipe.setBounds(
+                        label_TopPipe.getX() - 10,
+                        label_TopPipe.getY(),
+                        label_TopPipe.getWidth(),
+                        label_TopPipe.getHeight());
 
-                if (((Bird.getX() < Pipe1.getX() + Pipe1.getWidth()
-                        && Bird.getX() + Bird.getWidth() > Pipe1.getX()
-                        && Bird.getY() < Pipe1.getY() + Pipe1.getHeight()
-                        && Bird.getY() + Bird.getHeight() > Pipe1.getY()))
-                        || ((Bird.getX() < Pipe.getX() + Pipe.getWidth()
-                        && Bird.getX() + Bird.getWidth() > Pipe.getX()
-                        && Bird.getY() < Pipe.getY() + Pipe.getHeight()
-                        && Bird.getY() + Bird.getHeight() > Pipe.getY()))) {
+                if (((label_Bird.getX() < label_BottomPipe.getX() + label_BottomPipe.getWidth()
+                        && label_Bird.getX() + label_Bird.getWidth() > label_BottomPipe.getX()
+                        && label_Bird.getY() < label_BottomPipe.getY() + label_BottomPipe.getHeight()
+                        && label_Bird.getY() + label_Bird.getHeight() > label_BottomPipe.getY()))
+                        || ((label_Bird.getX() < label_TopPipe.getX() + label_TopPipe.getWidth()
+                        && label_Bird.getX() + label_Bird.getWidth() > label_TopPipe.getX()
+                        && label_Bird.getY() < label_TopPipe.getY() + label_TopPipe.getHeight()
+                        && label_Bird.getY() + label_Bird.getHeight() > label_TopPipe.getY()))) {
                     gameOver = true;
                     System.out.println("Collision.");
                 }
 
-                if (Pipe1.getX() < 0 - Pipe1.getWidth()) {
+                if (label_BottomPipe.getX() < 0 - label_BottomPipe.getWidth()) {
                     int num = randomizer.nextInt(350 - 0 + 1) + 0;
-                    Pipe1.setBounds(
+                    label_BottomPipe.setBounds(
                             800,
                             -480 + num,
-                            Pipe1.getWidth(),
-                            Pipe1.getHeight());
-                    Pipe.setBounds(
+                            label_BottomPipe.getWidth(),
+                            label_BottomPipe.getHeight());
+                    label_TopPipe.setBounds(
                             800,
                             200 + num,
-                            Pipe.getWidth(),
-                            Pipe.getHeight());
+                            label_TopPipe.getWidth(),
+                            label_TopPipe.getHeight());
                 }
 
                 score++;
                 String text = "Score: " + score;
-                Score.setText(text);
-                
+                label_Score.setText(text);
+
                 if (gameOver) {
-                    timer.cancel();
-                    GameOver.setVisible(true);
+                    Timer localTimer = (Timer) evt.getSource();
+                    localTimer.stop();
+                    label_GameOver.setVisible(true);
                 }
-                                    repaint();
+                repaint();
 
             }
         };
-
-        timer.scheduleAtFixedRate(timerTask, 0, 60);
+        
+        Timer timer = new Timer(60, taskPerformer);
+        timer.start();
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        Background = new javax.swing.JPanel();
-        Score = new javax.swing.JLabel();
-        GameOver = new javax.swing.JLabel();
-        Ground = new javax.swing.JLabel();
-        Bird = new javax.swing.JLabel();
-        Jump = new javax.swing.JButton();
-        Pipe = new javax.swing.JLabel();
-        Pipe1 = new javax.swing.JLabel();
+        panel_Background = new javax.swing.JPanel();
+        label_Score = new javax.swing.JLabel();
+        label_GameOver = new javax.swing.JLabel();
+        label_Ground = new javax.swing.JLabel();
+        label_Bird = new javax.swing.JLabel();
+        button_Jump = new javax.swing.JButton();
+        label_TopPipe = new javax.swing.JLabel();
+        label_BottomPipe = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(800, 600));
@@ -125,95 +142,94 @@ public class Game extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(null);
 
-        Background.setBackground(new java.awt.Color(51, 102, 255));
-        Background.setMaximumSize(new java.awt.Dimension(800, 600));
-        Background.setMinimumSize(new java.awt.Dimension(800, 600));
-        Background.setLayout(null);
+        panel_Background.setBackground(new java.awt.Color(51, 102, 255));
+        panel_Background.setMaximumSize(new java.awt.Dimension(800, 600));
+        panel_Background.setMinimumSize(new java.awt.Dimension(800, 600));
+        panel_Background.setLayout(null);
 
-        Score.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
-        Score.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Score.setText("Score");
-        Background.add(Score);
-        Score.setBounds(10, 470, 240, 70);
+        label_Score.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
+        label_Score.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Score.setText("Score");
+        panel_Background.add(label_Score);
+        label_Score.setBounds(10, 470, 240, 70);
 
-        GameOver.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
-        GameOver.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        GameOver.setText("GAME OVER");
-        Background.add(GameOver);
-        GameOver.setBounds(260, 200, 290, 100);
+        label_GameOver.setFont(new java.awt.Font("Segoe UI", 0, 48)); // NOI18N
+        label_GameOver.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_GameOver.setText("GAME OVER");
+        panel_Background.add(label_GameOver);
+        label_GameOver.setBounds(260, 200, 290, 100);
 
-        Ground.setBackground(new java.awt.Color(153, 255, 153));
-        Ground.setMaximumSize(new java.awt.Dimension(50, 50));
-        Ground.setMinimumSize(new java.awt.Dimension(50, 50));
-        Ground.setOpaque(true);
-        Ground.setPreferredSize(new java.awt.Dimension(50, 50));
-        Background.add(Ground);
-        Ground.setBounds(0, 460, 800, 140);
+        label_Ground.setBackground(new java.awt.Color(153, 255, 153));
+        label_Ground.setMaximumSize(new java.awt.Dimension(50, 50));
+        label_Ground.setMinimumSize(new java.awt.Dimension(50, 50));
+        label_Ground.setOpaque(true);
+        label_Ground.setPreferredSize(new java.awt.Dimension(50, 50));
+        panel_Background.add(label_Ground);
+        label_Ground.setBounds(0, 460, 800, 140);
 
-        Bird.setBackground(new java.awt.Color(255, 255, 204));
-        Bird.setMaximumSize(new java.awt.Dimension(50, 50));
-        Bird.setMinimumSize(new java.awt.Dimension(50, 50));
-        Bird.setOpaque(true);
-        Bird.setPreferredSize(new java.awt.Dimension(50, 50));
-        Background.add(Bird);
-        Bird.setBounds(400, 0, 50, 50);
+        label_Bird.setBackground(new java.awt.Color(255, 255, 204));
+        label_Bird.setMaximumSize(new java.awt.Dimension(50, 50));
+        label_Bird.setMinimumSize(new java.awt.Dimension(50, 50));
+        label_Bird.setOpaque(true);
+        label_Bird.setPreferredSize(new java.awt.Dimension(50, 50));
+        panel_Background.add(label_Bird);
+        label_Bird.setBounds(400, 0, 50, 50);
 
-        Jump.setBackground(new java.awt.Color(255, 255, 251, 0));
-        Jump.setAutoscrolls(true);
-        Jump.setBorder(null);
-        Jump.setBorderPainted(false);
-        Jump.addActionListener(new java.awt.event.ActionListener() {
+        button_Jump.setBackground(new java.awt.Color(255, 255, 251, 0));
+        button_Jump.setAutoscrolls(true);
+        button_Jump.setBorder(null);
+        button_Jump.setBorderPainted(false);
+        button_Jump.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JumpActionPerformed(evt);
+                button_JumpActionPerformed(evt);
             }
         });
-        Background.add(Jump);
-        Jump.setBounds(325, 513, 200, 80);
+        panel_Background.add(button_Jump);
+        button_Jump.setBounds(325, 513, 200, 80);
 
-        Pipe.setBackground(new java.awt.Color(0, 153, 0));
-        Pipe.setMaximumSize(new java.awt.Dimension(50, 50));
-        Pipe.setMinimumSize(new java.awt.Dimension(50, 50));
-        Pipe.setOpaque(true);
-        Pipe.setPreferredSize(new java.awt.Dimension(50, 50));
-        Background.add(Pipe);
-        Pipe.setBounds(590, -420, 100, 500);
+        label_TopPipe.setBackground(new java.awt.Color(0, 153, 0));
+        label_TopPipe.setMaximumSize(new java.awt.Dimension(50, 50));
+        label_TopPipe.setMinimumSize(new java.awt.Dimension(50, 50));
+        label_TopPipe.setOpaque(true);
+        label_TopPipe.setPreferredSize(new java.awt.Dimension(50, 50));
+        panel_Background.add(label_TopPipe);
+        label_TopPipe.setBounds(590, -420, 100, 500);
 
-        Pipe1.setBackground(new java.awt.Color(0, 153, 0));
-        Pipe1.setMaximumSize(new java.awt.Dimension(50, 50));
-        Pipe1.setMinimumSize(new java.awt.Dimension(50, 50));
-        Pipe1.setOpaque(true);
-        Pipe1.setPreferredSize(new java.awt.Dimension(50, 50));
-        Background.add(Pipe1);
-        Pipe1.setBounds(600, 260, 100, 500);
+        label_BottomPipe.setBackground(new java.awt.Color(0, 153, 0));
+        label_BottomPipe.setMaximumSize(new java.awt.Dimension(50, 50));
+        label_BottomPipe.setMinimumSize(new java.awt.Dimension(50, 50));
+        label_BottomPipe.setOpaque(true);
+        label_BottomPipe.setPreferredSize(new java.awt.Dimension(50, 50));
+        panel_Background.add(label_BottomPipe);
+        label_BottomPipe.setBounds(600, 260, 100, 500);
 
-        getContentPane().add(Background);
-        Background.setBounds(0, 0, 800, 600);
+        getContentPane().add(panel_Background);
+        panel_Background.setBounds(0, 0, 800, 600);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void JumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JumpActionPerformed
+    private void button_JumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_JumpActionPerformed
 
         if (!gameOver) {
-            Bird.setBounds(
-                    Bird.getX(),
-                    Bird.getY() - 40,
-                    Bird.getWidth(),
-                    Bird.getHeight());
+            label_Bird.setBounds(
+                    label_Bird.getX(),
+                    label_Bird.getY() - 40,
+                    label_Bird.getWidth(),
+                    label_Bird.getHeight());
         }
 
-
-    }//GEN-LAST:event_JumpActionPerformed
+    }//GEN-LAST:event_button_JumpActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel Background;
-    private javax.swing.JLabel Bird;
-    private javax.swing.JLabel GameOver;
-    private javax.swing.JLabel Ground;
-    private javax.swing.JButton Jump;
-    private javax.swing.JLabel Pipe;
-    private javax.swing.JLabel Pipe1;
-    private javax.swing.JLabel Score;
+    private javax.swing.JButton button_Jump;
+    private javax.swing.JLabel label_Bird;
+    private javax.swing.JLabel label_BottomPipe;
+    private javax.swing.JLabel label_GameOver;
+    private javax.swing.JLabel label_Ground;
+    private javax.swing.JLabel label_Score;
+    private javax.swing.JLabel label_TopPipe;
+    private javax.swing.JPanel panel_Background;
     // End of variables declaration//GEN-END:variables
 }
