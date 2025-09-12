@@ -4,9 +4,22 @@ import java.util.Random;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 class Bird {
 
+    private javax.swing.JLabel label_Bird = new javax.swing.JLabel();
+    
+    Bird() {
+        label_Bird.setBackground(new java.awt.Color(255, 255, 204));
+        label_Bird.setMaximumSize(new java.awt.Dimension(50, 50));
+        label_Bird.setMinimumSize(new java.awt.Dimension(50, 50));
+        label_Bird.setOpaque(true);
+        label_Bird.setPreferredSize(new java.awt.Dimension(50, 50));
+        
+        label_Bird.setBounds(400, 0, 50, 50);
+    }
 }
 
 class Pipe {
@@ -15,9 +28,45 @@ class Pipe {
 
 class Background {
 
+//    public void addObject() {
+//        panel_Background.add(label_Bird);
+//    }
 }
 
 class Ground {
+
+}
+
+class InputHandler implements KeyListener {
+
+    boolean jumped, moveLeft, moveRight = false;
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int code = e.getKeyCode();
+
+        if (code == KeyEvent.VK_A
+                || code == KeyEvent.VK_LEFT) {
+            moveLeft = true;
+        }
+        if (code == KeyEvent.VK_D
+                || code == KeyEvent.VK_RIGHT) {
+            moveRight = true;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        int code = e.getKeyCode();
+
+        if (code == KeyEvent.VK_SPACE) {
+            jumped = true;
+        }
+    }
 
 }
 
@@ -27,8 +76,12 @@ public class Game extends javax.swing.JFrame {
     Random randomizer = new Random();
     int score = 0;
 
+    final int FPS = 60;
+    InputHandler playerInput = new InputHandler();
+
     public Game() {
         initComponents();
+        this.addKeyListener(playerInput);
 
         label_GameOver.setVisible(false);
 
@@ -46,78 +99,91 @@ public class Game extends javax.swing.JFrame {
                 label_TopPipe.getHeight()
         );
 
-        ActionListener taskPerformer = new ActionListener() {
+        ActionListener update = (ActionEvent evt) -> {
 
-            public void actionPerformed(ActionEvent evt) {
-                label_Bird.setBounds(
-                        label_Bird.getX(),
-                        label_Bird.getY() + 10,
-                        label_Bird.getWidth(),
-                        label_Bird.getHeight());
-
-                // move bird down
-                if (label_Bird.getY() < 0) {
-                    gameOver = true;
-                    System.out.println("Touched the sky");
-                }
-                if (label_Bird.getY() > 450) {
-                    gameOver = true;
-                    System.out.println("Touched the ground");
-                }
-
-                // move pipe to the left
-                label_BottomPipe.setBounds(
-                        label_BottomPipe.getX() - 10,
-                        label_BottomPipe.getY(),
-                        label_BottomPipe.getWidth(),
-                        label_BottomPipe.getHeight());
-                label_TopPipe.setBounds(
-                        label_TopPipe.getX() - 10,
-                        label_TopPipe.getY(),
-                        label_TopPipe.getWidth(),
-                        label_TopPipe.getHeight());
-
-                if (((label_Bird.getX() < label_BottomPipe.getX() + label_BottomPipe.getWidth()
-                        && label_Bird.getX() + label_Bird.getWidth() > label_BottomPipe.getX()
-                        && label_Bird.getY() < label_BottomPipe.getY() + label_BottomPipe.getHeight()
-                        && label_Bird.getY() + label_Bird.getHeight() > label_BottomPipe.getY()))
-                        || ((label_Bird.getX() < label_TopPipe.getX() + label_TopPipe.getWidth()
-                        && label_Bird.getX() + label_Bird.getWidth() > label_TopPipe.getX()
-                        && label_Bird.getY() < label_TopPipe.getY() + label_TopPipe.getHeight()
-                        && label_Bird.getY() + label_Bird.getHeight() > label_TopPipe.getY()))) {
-                    gameOver = true;
-                    System.out.println("Collision.");
+            // handle player input
+            if (!gameOver) {
+                if (playerInput.jumped) {
+                    // turn this into method
+                    label_Bird.setBounds(
+                            label_Bird.getX(),
+                            label_Bird.getY() - 40,
+                            label_Bird.getWidth(),
+                            label_Bird.getHeight());
+                    playerInput.jumped = false;
+                } else {
+                    label_Bird.setBounds(
+                            label_Bird.getX(),
+                            label_Bird.getY() + 10,
+                            label_Bird.getWidth(),
+                            label_Bird.getHeight());
                 }
 
-                if (label_BottomPipe.getX() < 0 - label_BottomPipe.getWidth()) {
-                    int num = randomizer.nextInt(350 - 0 + 1) + 0;
-                    label_BottomPipe.setBounds(
-                            800,
-                            -480 + num,
-                            label_BottomPipe.getWidth(),
-                            label_BottomPipe.getHeight());
-                    label_TopPipe.setBounds(
-                            800,
-                            200 + num,
-                            label_TopPipe.getWidth(),
-                            label_TopPipe.getHeight());
+                if (playerInput.moveLeft) {
+                    label_Bird.setBounds(
+                            label_Bird.getX() - 10,
+                            label_Bird.getY(),
+                            label_Bird.getWidth(),
+                            label_Bird.getHeight());
+                    playerInput.moveLeft = false;
                 }
-
-                score++;
-                String text = "Score: " + score;
-                label_Score.setText(text);
-
-                if (gameOver) {
-                    Timer localTimer = (Timer) evt.getSource();
-                    localTimer.stop();
-                    label_GameOver.setVisible(true);
+                if (playerInput.moveRight) {
+                    label_Bird.setBounds(
+                            label_Bird.getX() + 10,
+                            label_Bird.getY(),
+                            label_Bird.getWidth(),
+                            label_Bird.getHeight());
+                    playerInput.moveRight = false;
                 }
-                repaint();
+            }
 
+            // move bird down
+            if (label_Bird.getY() < 0) {
+                gameOver = true;
+                System.out.println("Touched the sky");
+            }
+            if (label_Bird.getY() > 450) {
+                gameOver = true;
+                System.out.println("Touched the ground");
+            }
+            // move pipe to the left
+            label_BottomPipe.setBounds(
+                    label_BottomPipe.getX() - 10,
+                    label_BottomPipe.getY(),
+                    label_BottomPipe.getWidth(),
+                    label_BottomPipe.getHeight());
+            label_TopPipe.setBounds(
+                    label_TopPipe.getX() - 10,
+                    label_TopPipe.getY(),
+                    label_TopPipe.getWidth(),
+                    label_TopPipe.getHeight());
+            if (((label_Bird.getX() < label_BottomPipe.getX() + label_BottomPipe.getWidth()
+                    && label_Bird.getX() + label_Bird.getWidth() > label_BottomPipe.getX()
+                    && label_Bird.getY() < label_BottomPipe.getY() + label_BottomPipe.getHeight()
+                    && label_Bird.getY() + label_Bird.getHeight() > label_BottomPipe.getY()))
+                    || ((label_Bird.getX() < label_TopPipe.getX() + label_TopPipe.getWidth()
+                    && label_Bird.getX() + label_Bird.getWidth() > label_TopPipe.getX()
+                    && label_Bird.getY() < label_TopPipe.getY() + label_TopPipe.getHeight()
+                    && label_Bird.getY() + label_Bird.getHeight() > label_TopPipe.getY()))) {
+                gameOver = true;
+                System.out.println("Collision.");
+            }
+            if (label_BottomPipe.getX() < 0 - label_BottomPipe.getWidth()) {
+                int num1 = randomizer.nextInt(350 - 0 + 1) + 0;
+                label_BottomPipe.setBounds(800, -480 + num1, label_BottomPipe.getWidth(), label_BottomPipe.getHeight());
+                label_TopPipe.setBounds(800, 200 + num1, label_TopPipe.getWidth(), label_TopPipe.getHeight());
+            }
+            score++;
+            String text = "Score: " + score;
+            label_Score.setText(text);
+            if (gameOver) {
+                Timer localTimer = (Timer) evt.getSource();
+                localTimer.stop();
+                label_GameOver.setVisible(true);
             }
         };
-        
-        Timer timer = new Timer(60, taskPerformer);
+
+        Timer timer = new Timer(FPS, update);
         timer.start();
     }
 
@@ -130,7 +196,6 @@ public class Game extends javax.swing.JFrame {
         label_GameOver = new javax.swing.JLabel();
         label_Ground = new javax.swing.JLabel();
         label_Bird = new javax.swing.JLabel();
-        button_Jump = new javax.swing.JButton();
         label_TopPipe = new javax.swing.JLabel();
         label_BottomPipe = new javax.swing.JLabel();
 
@@ -175,18 +240,6 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(label_Bird);
         label_Bird.setBounds(400, 0, 50, 50);
 
-        button_Jump.setBackground(new java.awt.Color(255, 255, 251, 0));
-        button_Jump.setAutoscrolls(true);
-        button_Jump.setBorder(null);
-        button_Jump.setBorderPainted(false);
-        button_Jump.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_JumpActionPerformed(evt);
-            }
-        });
-        panel_Background.add(button_Jump);
-        button_Jump.setBounds(325, 513, 200, 80);
-
         label_TopPipe.setBackground(new java.awt.Color(0, 153, 0));
         label_TopPipe.setMaximumSize(new java.awt.Dimension(50, 50));
         label_TopPipe.setMinimumSize(new java.awt.Dimension(50, 50));
@@ -210,20 +263,7 @@ public class Game extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void button_JumpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_JumpActionPerformed
-
-        if (!gameOver) {
-            label_Bird.setBounds(
-                    label_Bird.getX(),
-                    label_Bird.getY() - 40,
-                    label_Bird.getWidth(),
-                    label_Bird.getHeight());
-        }
-
-    }//GEN-LAST:event_button_JumpActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton button_Jump;
     private javax.swing.JLabel label_Bird;
     private javax.swing.JLabel label_BottomPipe;
     private javax.swing.JLabel label_GameOver;
