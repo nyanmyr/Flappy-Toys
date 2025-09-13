@@ -1,74 +1,13 @@
 package flappybird;
 
+import flappybird.objects.Pipe;
+import flappybird.objects.Toy;
+import flappybird.objects.Floor;
+import flappybird.gameplay.PlayerInputHandler;
 import java.util.Random;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-class Bird {
-
-    private javax.swing.JLabel label_Bird = new javax.swing.JLabel();
-    
-    Bird() {
-        label_Bird.setBackground(new java.awt.Color(255, 255, 204));
-        label_Bird.setMaximumSize(new java.awt.Dimension(50, 50));
-        label_Bird.setMinimumSize(new java.awt.Dimension(50, 50));
-        label_Bird.setOpaque(true);
-        label_Bird.setPreferredSize(new java.awt.Dimension(50, 50));
-        
-        label_Bird.setBounds(400, 0, 50, 50);
-    }
-}
-
-class Pipe {
-
-}
-
-class Background {
-
-//    public void addObject() {
-//        panel_Background.add(label_Bird);
-//    }
-}
-
-class Ground {
-
-}
-
-class InputHandler implements KeyListener {
-
-    boolean jumped, moveLeft, moveRight = false;
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int code = e.getKeyCode();
-
-        if (code == KeyEvent.VK_A
-                || code == KeyEvent.VK_LEFT) {
-            moveLeft = true;
-        }
-        if (code == KeyEvent.VK_D
-                || code == KeyEvent.VK_RIGHT) {
-            moveRight = true;
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int code = e.getKeyCode();
-
-        if (code == KeyEvent.VK_SPACE) {
-            jumped = true;
-        }
-    }
-
-}
 
 public class Game extends javax.swing.JFrame {
 
@@ -77,7 +16,19 @@ public class Game extends javax.swing.JFrame {
     int score = 0;
 
     final int FPS = 60;
-    InputHandler playerInput = new InputHandler();
+    PlayerInputHandler playerInput = new PlayerInputHandler();
+
+    int num = randomizer.nextInt(175, 425);
+    int gap = 150;
+    Pipe pipes;
+    
+    final int MIN_TOP = 175;
+    final int MAX_TOP = 425;
+    final int GROUND_HEIGHT = 420;
+    
+    final int MOVEMENT_SPEED = 10;
+    final int JUMP_HEIGHT = 40;
+    final int GRAVITY = 10;
 
     public Game() {
         initComponents();
@@ -85,19 +36,18 @@ public class Game extends javax.swing.JFrame {
 
         label_GameOver.setVisible(false);
 
-        int num = randomizer.nextInt(350 - 0 + 1) + 0;
-        label_BottomPipe.setBounds(
-                800,
-                -480 + num,
-                label_BottomPipe.getWidth(),
-                label_BottomPipe.getHeight()
-        );
-        label_TopPipe.setBounds(
-                800,
-                200 + num,
-                label_TopPipe.getWidth(),
-                label_TopPipe.getHeight()
-        );
+        // initialize objects here
+        Toy toy = new Toy();
+        panel_Background.add(toy.sprite);
+
+        Floor floor = new Floor();
+        panel_Background.add(floor.floor);
+
+        num = randomizer.nextInt(175, 425);
+        gap = 150;
+        pipes = new Pipe(gap, num);
+        panel_Background.add(pipes.bottom);
+        panel_Background.add(pipes.top);
 
         ActionListener update = (ActionEvent evt) -> {
 
@@ -105,73 +55,80 @@ public class Game extends javax.swing.JFrame {
             if (!gameOver) {
                 if (playerInput.jumped) {
                     // turn this into method
-                    label_Bird.setBounds(
-                            label_Bird.getX(),
-                            label_Bird.getY() - 40,
-                            label_Bird.getWidth(),
-                            label_Bird.getHeight());
+                    toy.sprite.setBounds(
+                            toy.sprite.getX(),
+                            toy.sprite.getY() - JUMP_HEIGHT,
+                            toy.sprite.getWidth(),
+                            toy.sprite.getHeight());
                     playerInput.jumped = false;
                 } else {
-                    label_Bird.setBounds(
-                            label_Bird.getX(),
-                            label_Bird.getY() + 10,
-                            label_Bird.getWidth(),
-                            label_Bird.getHeight());
+                    toy.sprite.setBounds(
+                            toy.sprite.getX(),
+                                toy.sprite.getY() + GRAVITY,
+                            toy.sprite.getWidth(),
+                            toy.sprite.getHeight());
                 }
 
                 if (playerInput.moveLeft) {
-                    label_Bird.setBounds(
-                            label_Bird.getX() - 10,
-                            label_Bird.getY(),
-                            label_Bird.getWidth(),
-                            label_Bird.getHeight());
+                    toy.sprite.setBounds(toy.sprite.getX() - MOVEMENT_SPEED,
+                            toy.sprite.getY(),
+                            toy.sprite.getWidth(),
+                            toy.sprite.getHeight());
                     playerInput.moveLeft = false;
                 }
                 if (playerInput.moveRight) {
-                    label_Bird.setBounds(
-                            label_Bird.getX() + 10,
-                            label_Bird.getY(),
-                            label_Bird.getWidth(),
-                            label_Bird.getHeight());
+                    toy.sprite.setBounds(toy.sprite.getX() + MOVEMENT_SPEED,
+                            toy.sprite.getY(),
+                            toy.sprite.getWidth(),
+                            toy.sprite.getHeight());
                     playerInput.moveRight = false;
                 }
             }
 
             // move bird down
-            if (label_Bird.getY() < 0) {
+            if (toy.sprite.getY() < 0) {
                 gameOver = true;
                 System.out.println("Touched the sky");
             }
-            if (label_Bird.getY() > 450) {
+            if (toy.sprite.getY() > GROUND_HEIGHT) {
                 gameOver = true;
                 System.out.println("Touched the ground");
             }
+
             // move pipe to the left
-            label_BottomPipe.setBounds(
-                    label_BottomPipe.getX() - 10,
-                    label_BottomPipe.getY(),
-                    label_BottomPipe.getWidth(),
-                    label_BottomPipe.getHeight());
-            label_TopPipe.setBounds(
-                    label_TopPipe.getX() - 10,
-                    label_TopPipe.getY(),
-                    label_TopPipe.getWidth(),
-                    label_TopPipe.getHeight());
-            if (((label_Bird.getX() < label_BottomPipe.getX() + label_BottomPipe.getWidth()
-                    && label_Bird.getX() + label_Bird.getWidth() > label_BottomPipe.getX()
-                    && label_Bird.getY() < label_BottomPipe.getY() + label_BottomPipe.getHeight()
-                    && label_Bird.getY() + label_Bird.getHeight() > label_BottomPipe.getY()))
-                    || ((label_Bird.getX() < label_TopPipe.getX() + label_TopPipe.getWidth()
-                    && label_Bird.getX() + label_Bird.getWidth() > label_TopPipe.getX()
-                    && label_Bird.getY() < label_TopPipe.getY() + label_TopPipe.getHeight()
-                    && label_Bird.getY() + label_Bird.getHeight() > label_TopPipe.getY()))) {
+            pipes.bottom.setBounds(
+                    pipes.bottom.getX() - 10,
+                    pipes.bottom.getY(),
+                    pipes.bottom.getWidth(),
+                    pipes.bottom.getHeight());
+            pipes.top.setBounds(
+                    pipes.top.getX() - 10,
+                    pipes.top.getY(),
+                    pipes.top.getWidth(),
+                    pipes.top.getHeight());
+
+            // pipe collision detection
+            if (((toy.sprite.getX() < pipes.bottom.getX() + pipes.bottom.getWidth()
+                    && toy.sprite.getX() + toy.sprite.getWidth() > pipes.bottom.getX()
+                    && toy.sprite.getY() < pipes.bottom.getY() + pipes.bottom.getHeight()
+                    && toy.sprite.getY() + toy.sprite.getHeight() > pipes.bottom.getY()))
+                    || ((toy.sprite.getX() < pipes.top.getX() + pipes.top.getWidth()
+                    && toy.sprite.getX() + toy.sprite.getWidth() > pipes.top.getX()
+                    && toy.sprite.getY() < pipes.top.getY() + pipes.top.getHeight()
+                    && toy.sprite.getY() + toy.sprite.getHeight() > pipes.top.getY()))) {
                 gameOver = true;
                 System.out.println("Collision.");
             }
-            if (label_BottomPipe.getX() < 0 - label_BottomPipe.getWidth()) {
-                int num1 = randomizer.nextInt(350 - 0 + 1) + 0;
-                label_BottomPipe.setBounds(800, -480 + num1, label_BottomPipe.getWidth(), label_BottomPipe.getHeight());
-                label_TopPipe.setBounds(800, 200 + num1, label_TopPipe.getWidth(), label_TopPipe.getHeight());
+            
+            // move pipe to left
+            if (pipes.bottom.getX() < 0 - pipes.bottom.getWidth()) {
+                num = randomizer.nextInt(MIN_TOP, MAX_TOP);
+                // make this dynamic eventually
+                // hint: arrays?
+                gap = 150;
+                pipes = new Pipe(gap, num);
+                panel_Background.add(pipes.bottom);
+                panel_Background.add(pipes.top);
             }
             score++;
             String text = "Score: " + score;
@@ -194,10 +151,6 @@ public class Game extends javax.swing.JFrame {
         panel_Background = new javax.swing.JPanel();
         label_Score = new javax.swing.JLabel();
         label_GameOver = new javax.swing.JLabel();
-        label_Ground = new javax.swing.JLabel();
-        label_Bird = new javax.swing.JLabel();
-        label_TopPipe = new javax.swing.JLabel();
-        label_BottomPipe = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(800, 600));
@@ -224,38 +177,6 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(label_GameOver);
         label_GameOver.setBounds(260, 200, 290, 100);
 
-        label_Ground.setBackground(new java.awt.Color(153, 255, 153));
-        label_Ground.setMaximumSize(new java.awt.Dimension(50, 50));
-        label_Ground.setMinimumSize(new java.awt.Dimension(50, 50));
-        label_Ground.setOpaque(true);
-        label_Ground.setPreferredSize(new java.awt.Dimension(50, 50));
-        panel_Background.add(label_Ground);
-        label_Ground.setBounds(0, 460, 800, 140);
-
-        label_Bird.setBackground(new java.awt.Color(255, 255, 204));
-        label_Bird.setMaximumSize(new java.awt.Dimension(50, 50));
-        label_Bird.setMinimumSize(new java.awt.Dimension(50, 50));
-        label_Bird.setOpaque(true);
-        label_Bird.setPreferredSize(new java.awt.Dimension(50, 50));
-        panel_Background.add(label_Bird);
-        label_Bird.setBounds(400, 0, 50, 50);
-
-        label_TopPipe.setBackground(new java.awt.Color(0, 153, 0));
-        label_TopPipe.setMaximumSize(new java.awt.Dimension(50, 50));
-        label_TopPipe.setMinimumSize(new java.awt.Dimension(50, 50));
-        label_TopPipe.setOpaque(true);
-        label_TopPipe.setPreferredSize(new java.awt.Dimension(50, 50));
-        panel_Background.add(label_TopPipe);
-        label_TopPipe.setBounds(590, -420, 100, 500);
-
-        label_BottomPipe.setBackground(new java.awt.Color(0, 153, 0));
-        label_BottomPipe.setMaximumSize(new java.awt.Dimension(50, 50));
-        label_BottomPipe.setMinimumSize(new java.awt.Dimension(50, 50));
-        label_BottomPipe.setOpaque(true);
-        label_BottomPipe.setPreferredSize(new java.awt.Dimension(50, 50));
-        panel_Background.add(label_BottomPipe);
-        label_BottomPipe.setBounds(600, 260, 100, 500);
-
         getContentPane().add(panel_Background);
         panel_Background.setBounds(0, 0, 800, 600);
 
@@ -264,12 +185,8 @@ public class Game extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel label_Bird;
-    private javax.swing.JLabel label_BottomPipe;
     private javax.swing.JLabel label_GameOver;
-    private javax.swing.JLabel label_Ground;
     private javax.swing.JLabel label_Score;
-    private javax.swing.JLabel label_TopPipe;
     private javax.swing.JPanel panel_Background;
     // End of variables declaration//GEN-END:variables
 }
