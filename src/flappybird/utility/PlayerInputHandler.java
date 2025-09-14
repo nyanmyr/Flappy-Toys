@@ -1,11 +1,11 @@
-package flappybird.gameplay;
+package flappybird.utility;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class PlayerInputHandler implements KeyListener {
 
-    public boolean jumped, moveLeft, moveRight = false;
+    public boolean jumped, moveLeft, moveRight, abilityUsed = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -29,8 +29,11 @@ public class PlayerInputHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
 
-        if (code == KeyEvent.VK_SPACE 
-                || code == KeyEvent.VK_W) {
+        if (code == KeyEvent.VK_SPACE) {
+            abilityUsed = true;
+        }
+        if (code == KeyEvent.VK_W
+                || code == KeyEvent.VK_UP) {
             jumped = true;
         }
     }

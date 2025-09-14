@@ -1,17 +1,21 @@
-package flappybird.objects;
+package flappybird.toys;
 
+import flappybird.objects.Sprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Toy {
-
-    public Sprite sprite;
-
-    public Toy() {
+public class Foldy extends Toy {
+    
+    public Foldy() {
+        LoadSprite();
+    }
+    
+    @Override
+    public void LoadSprite(){
         try {
-            java.net.URL resource = getClass().getResource("/flappybird/resources/teddycopter_idle.png");
+            java.net.URL resource = getClass().getResource("/flappybird/resources/foldy_idle.png");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered =
@@ -25,9 +29,9 @@ public class Toy {
                 g2d.dispose();
 
                 sprite = new Sprite(buffered);
-                sprite.setBounds(400, 0, 50, 50);
+                sprite.setBounds(0, 0, 200, 200);
             } else {
-                throw new RuntimeException("Image resource not found: /bird.png");
+                throw new RuntimeException("Image resource not found: /foldy_idle.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
