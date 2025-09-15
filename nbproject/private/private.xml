@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/game/Game.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>395</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/objects/Sprite.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/Game.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/objects/Column.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/objects/Background.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/objects/Floor.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/toys/ToyCharacter.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/utility/PlayerInputHandler.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/flappybird/toys/Toy.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/toys/Toy.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/game/Game.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/utility/PlayerInputHandler.java</file>
         </group>
     </open-files>
 </project-private>
