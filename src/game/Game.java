@@ -1,7 +1,16 @@
 package game;
 
-// toys
+// misc.
+import java.util.Random;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Dimension;
+// abilities
+import abilities.Dash;
+import abilities.JumpBoost;
+import abilities.Shield;
+// toys
 import toys.Toy;
 import toys.Teddycopter;
 import toys.Rocketron;
@@ -15,11 +24,6 @@ import obstacles.grounds.Ground;
 import obstacles.grounds.BrickGround;
 // utility
 import utility.PlayerInputHandler;
-// misc.
-import java.util.Random;
-import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Game extends javax.swing.JFrame {
 
@@ -55,6 +59,9 @@ public class Game extends javax.swing.JFrame {
     int WINDOW_WIDTH;
     int WINDOW_HEIGHT;
 
+    int countdown;
+    boolean immunity;
+
     public Game() {
         initComponents();
 
@@ -68,6 +75,9 @@ public class Game extends javax.swing.JFrame {
     }
 
     private void startGame() {
+        
+        countdown = 0;
+        immunity = false;
 
         // give controls to player
         playerInput.reset(); // makes sure to reset the controls
@@ -119,6 +129,12 @@ public class Game extends javax.swing.JFrame {
                         label_Charges.setText("Charges: " + toy.charges);
                     }
                     playerInput.abilityUsed = false;
+
+                    // if shield is activated then give player 5 sec immunity
+                    if (toy.shield) {
+                        countdown = 500;
+                        immunity = true;
+                    }
                 }
             } else {
                 this.removeKeyListener(playerInput);
@@ -140,14 +156,16 @@ public class Game extends javax.swing.JFrame {
             ground.move(-PIPE_SPEED, 0);
 
             // column collision detection
-            if (((toy.sprite.getX() < columns.bottom.getX() + columns.bottom.getWidth()
+            if ((((toy.sprite.getX() < columns.bottom.getX() + columns.bottom.getWidth()
                     && toy.sprite.getX() + toy.sprite.getWidth() > columns.bottom.getX()
                     && toy.sprite.getY() < columns.bottom.getY() + columns.bottom.getHeight()
                     && toy.sprite.getY() + toy.sprite.getHeight() > columns.bottom.getY()))
                     || ((toy.sprite.getX() < columns.top.getX() + columns.top.getWidth()
                     && toy.sprite.getX() + toy.sprite.getWidth() > columns.top.getX()
                     && toy.sprite.getY() < columns.top.getY() + columns.top.getHeight()
-                    && toy.sprite.getY() + toy.sprite.getHeight() > columns.top.getY()))) {
+                    && toy.sprite.getY() + toy.sprite.getHeight() > columns.top.getY())))
+                    && !immunity) {
+                
                 gameOver = true;
                 System.out.println(columns.killEffect());
             }
@@ -169,6 +187,14 @@ public class Game extends javax.swing.JFrame {
             String text = "Score: " + toy.score;
             label_Score.setText(text);
 
+            // decrement the countdown
+            if (countdown > 0) {
+                countdown--;
+            } else {
+                toy.shield = false;
+                immunity = false;
+            }
+
             // handle game over
             if (gameOver) {
 
@@ -180,6 +206,7 @@ public class Game extends javax.swing.JFrame {
                 button_PlayAgain.setVisible(true);
             }
             repaint();
+
         };
 
         Timer timer = new Timer(MILISECOND_DELAY, update);
@@ -192,16 +219,19 @@ public class Game extends javax.swing.JFrame {
         switch (character) {
             case TEDDYCOPTER -> {
                 toy = new Teddycopter();
+                toy.setAbility(new JumpBoost());
                 label_Name.setText("Teddycopter");
                 label_Ability.setText("Jump Boost");
             }
             case ROCKETRON -> {
                 toy = new Rocketron();
+                toy.setAbility(new Shield());
                 label_Name.setText("Rocketron");
                 label_Ability.setText("Shield");
             }
             case FOLDY -> {
                 toy = new Foldy();
+                toy.setAbility(new Dash());
                 label_Name.setText("Foldy");
                 label_Ability.setText("Dash");
             }
@@ -221,7 +251,7 @@ public class Game extends javax.swing.JFrame {
         button_ChooseCharacter.setVisible(false);
         button_PlayAgain.setVisible(false);
     }
-    
+
     private void hideCharacterSelection() {
         label_Name.setVisible(false);
         label_Ability.setVisible(false);

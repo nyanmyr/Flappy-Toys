@@ -11,10 +11,12 @@ public abstract class Toy implements Moveable {
     public int charges = 3;
     
     public int score = 0;
+    public boolean shield = false;
 
     abstract public void LoadSprite();
 
     public boolean useAbility() {
+        ability.useAbility(this);
         if (charges > 0) {
             charges--;
             return true;
@@ -22,6 +24,10 @@ public abstract class Toy implements Moveable {
         return false;
     }
 
+    public void setAbility(Ability ability) {
+        this.ability = ability;
+    }
+    
     @Override
     public void move(int x, int y) {
         sprite.setLocation(sprite.getX() + x, sprite.getY() + y);
