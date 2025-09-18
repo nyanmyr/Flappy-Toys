@@ -8,8 +8,7 @@ import javax.imageio.ImageIO;
 
 public class BrickColumn extends Column {
     
-    public BrickColumn(int gap, int offset, int lifetime) {
-        super(lifetime);
+    public BrickColumn(int gap, int offset) {
         LoadSprite(gap, offset);
     }
 

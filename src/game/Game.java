@@ -75,7 +75,7 @@ public class Game extends javax.swing.JFrame {
     }
 
     private void startGame() {
-
+        
         countdown = 0;
         immunity = false;
 
@@ -93,13 +93,13 @@ public class Game extends javax.swing.JFrame {
         toy.setLocation((WINDOW_WIDTH / 2) - (toy.sprite.getWidth() / 2), 0);
 
         // initialize objects here
-        ground = new BrickGround(1000);
-        panel_Background.add(ground.sprite);
+        ground = new BrickGround();
+        panel_Background.add(ground.left);
         panel_Background.add(ground.right);
 
         num = randomizer.nextInt(175, 425);
         gap = 150;
-        columns = new BrickColumn(gap, num, 1000);
+        columns = new BrickColumn(gap, num);
         panel_Background.add(columns.bottom);
         panel_Background.add(columns.top);
 
@@ -165,7 +165,7 @@ public class Game extends javax.swing.JFrame {
                     && toy.sprite.getY() < columns.top.getY() + columns.top.getHeight()
                     && toy.sprite.getY() + toy.sprite.getHeight() > columns.top.getY())))
                     && !immunity) {
-
+                
                 gameOver = true;
                 System.out.println(columns.killEffect());
             }
@@ -177,16 +177,9 @@ public class Game extends javax.swing.JFrame {
                 // make this dynamic eventually
                 // hint: arrays?
                 gap = 150;
-                columns = new BrickColumn(gap, num, 1000);
+                columns = new BrickColumn(gap, num);
                 panel_Background.add(columns.bottom);
                 panel_Background.add(columns.top);
-            }
-
-            // handle lifetimes here
-            if (columns.decay()) {
-                System.out.println("Column has decayed.");
-            } else {
-                System.out.println("life: " + columns.lifetime);
             }
 
             // increment the score every frame
@@ -450,7 +443,7 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.remove(toy.sprite);
 
-        panel_Background.remove(ground.sprite);
+        panel_Background.remove(ground.left);
         panel_Background.remove(ground.right);
 
         panel_Background.remove(columns.bottom);

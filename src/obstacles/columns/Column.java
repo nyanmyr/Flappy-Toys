@@ -10,10 +10,6 @@ public abstract class Column extends Obstacle implements Moveable {
     public Sprite top;
     public Sprite bottom;
     
-    Column(int lifetime) {
-        super(lifetime);
-    }
-    
     public abstract void LoadSprite(int gap, int offset);
     
     @Override
