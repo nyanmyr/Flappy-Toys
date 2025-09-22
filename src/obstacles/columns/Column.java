@@ -3,15 +3,18 @@ package obstacles.columns;
 // turn into abstract eventually
 import obstacles.Obstacle;
 import utility.Moveable;
+import utility.Decays;
 import utility.Sprite;
 
-public abstract class Column extends Obstacle implements Moveable {
+public abstract class Column extends Obstacle implements Moveable, Decays {
 
     public Sprite top;
     public Sprite bottom;
-    
+
+    protected int lifeTime;
+
     public abstract void LoadSprite(int gap, int offset);
-    
+
     @Override
     public void move(int x, int y) {
         top.setLocation(top.getX() + x, top.getY() + y);
@@ -28,5 +31,20 @@ public abstract class Column extends Obstacle implements Moveable {
     public void setSize(int x, int y) {
         top.setSize(x, y);
         bottom.setSize(x, y);
+    }
+
+    @Override
+    public boolean decay() {
+        if (lifeTime > 0) {
+            lifeTime--;
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public boolean isAlive() {
+        return lifeTime > 0;
     }
 }

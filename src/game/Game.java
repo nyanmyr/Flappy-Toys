@@ -1,6 +1,7 @@
 package game;
 
 // misc.
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
@@ -38,16 +39,15 @@ public class Game extends javax.swing.JFrame {
 
     int num = randomizer.nextInt(175, 425);
     int gap = 150;
-    Column columns;
+    int spawnTime;
 
-    final int MIN_TOP = 175;
-    final int MAX_TOP = 425;
     final int GROUND_HEIGHT = 420;
 
     final int MOVEMENT_SPEED = 10;
     final int JUMP_HEIGHT = 50;
     final int GRAVITY = 2;
-    final int PIPE_SPEED = 2;
+
+    float speed = 2;
 
     ToyCharacter selectedCharacter = ToyCharacter.TEDDYCOPTER;
     Toy toy = new Teddycopter();
@@ -57,10 +57,12 @@ public class Game extends javax.swing.JFrame {
 
     // values set after constructor call
     int WINDOW_WIDTH;
-    int WINDOW_HEIGHT;
 
     int countdown;
     boolean immunity;
+
+    ArrayList<Column> columnsList = new ArrayList();
+    int toAdd = 0;
 
     public Game() {
         initComponents();
@@ -71,11 +73,10 @@ public class Game extends javax.swing.JFrame {
 
         Dimension screenSize = panel_Background.getSize();
         WINDOW_WIDTH = screenSize.width;
-        WINDOW_HEIGHT = screenSize.height;
     }
 
     private void startGame() {
-        
+
         countdown = 0;
         immunity = false;
 
@@ -97,13 +98,26 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(ground.left);
         panel_Background.add(ground.right);
 
-        num = randomizer.nextInt(175, 425);
-        gap = 150;
-        columns = new BrickColumn(gap, num);
-        panel_Background.add(columns.bottom);
-        panel_Background.add(columns.top);
-
+//        // spawn first column
+//        Column columns = new BrickColumn(gap, num, spawnTime);
+//        panel_Background.add(columns.bottom);
+//        panel_Background.add(columns.top);
+//        columnsList.add(columns);
         ActionListener update = (ActionEvent evt) -> {
+
+            // calculate speed over time
+            // make constants for both starting speed (2)
+            // and speed time increase (500)
+            speed = (2 + toy.score / 500);
+
+            // calculate lifetime of the column using
+            // Time = Distance / Speed formula
+            spawnTime = (int) ((785 + 90) / speed);
+            System.out.println("spawnTime:" + spawnTime);
+
+            // randomize where the column spawns
+            num = randomizer.nextInt(175, 425);
+            gap = 150;
 
             // handle player input
             if (!gameOver) {
@@ -150,36 +164,54 @@ public class Game extends javax.swing.JFrame {
                 System.out.println(ground.killEffect());
             }
 
-            // move column to the left
-            // turn this into a method too
-            columns.move(-PIPE_SPEED, 0);
-            ground.move(-PIPE_SPEED, 0);
+            // move the ground to the left
+            ground.move((int) -speed, 0);
 
-            // column collision detection
-            if ((((toy.sprite.getX() < columns.bottom.getX() + columns.bottom.getWidth()
-                    && toy.sprite.getX() + toy.sprite.getWidth() > columns.bottom.getX()
-                    && toy.sprite.getY() < columns.bottom.getY() + columns.bottom.getHeight()
-                    && toy.sprite.getY() + toy.sprite.getHeight() > columns.bottom.getY()))
-                    || ((toy.sprite.getX() < columns.top.getX() + columns.top.getWidth()
-                    && toy.sprite.getX() + toy.sprite.getWidth() > columns.top.getX()
-                    && toy.sprite.getY() < columns.top.getY() + columns.top.getHeight()
-                    && toy.sprite.getY() + toy.sprite.getHeight() > columns.top.getY())))
-                    && !immunity) {
-                
-                gameOver = true;
-                System.out.println(columns.killEffect());
+            ArrayList<Column> toRemove = new ArrayList();
+
+            // iterate through every spawned column
+            for (Column col : columnsList) {
+                // move column to the left
+                col.move((int) -speed, 0);
+
+                // column collision detection
+                if ((((toy.sprite.getX() < col.bottom.getX() + col.bottom.getWidth()
+                        && toy.sprite.getX() + toy.sprite.getWidth() > col.bottom.getX()
+                        && toy.sprite.getY() < col.bottom.getY() + col.bottom.getHeight()
+                        && toy.sprite.getY() + toy.sprite.getHeight() > col.bottom.getY()))
+                        || ((toy.sprite.getX() < col.top.getX() + col.top.getWidth()
+                        && toy.sprite.getX() + toy.sprite.getWidth() > col.top.getX()
+                        && toy.sprite.getY() < col.top.getY() + col.top.getHeight()
+                        && toy.sprite.getY() + toy.sprite.getHeight() > col.top.getY())))
+                        && !immunity
+                        && col.isAlive()) {
+
+                    gameOver = true;
+                    System.out.println(col.killEffect());
+                }
+
+                // delete the column after lifeTime expires
+                if (col.decay()) {
+                    // remove decayed column
+                    panel_Background.remove(col.bottom);
+                    panel_Background.remove(col.top);
+
+                    toRemove.add(col);
+                }
             }
 
-            // detect if column has disappeared to the left
-            // also handles column spawning
-            if (columns.bottom.getX() < 0 - columns.bottom.getWidth()) {
-                num = randomizer.nextInt(MIN_TOP, MAX_TOP);
-                // make this dynamic eventually
-                // hint: arrays?
-                gap = 150;
-                columns = new BrickColumn(gap, num);
-                panel_Background.add(columns.bottom);
-                panel_Background.add(columns.top);
+            // set the amoutn of columns to spawn to the amount deleted before
+            toAdd = toRemove.size();
+
+            // delete all the decayed columns
+            columnsList.removeAll(toRemove);
+
+            // adds a new column to replace the decayed columns
+            if (toAdd > 0 || columnsList.isEmpty()) {
+                Column newColumns = new BrickColumn(gap, num, spawnTime);
+                panel_Background.add(newColumns.bottom);
+                panel_Background.add(newColumns.top);
+                columnsList.add(newColumns);
             }
 
             // increment the score every frame
@@ -446,8 +478,13 @@ public class Game extends javax.swing.JFrame {
         panel_Background.remove(ground.left);
         panel_Background.remove(ground.right);
 
-        panel_Background.remove(columns.bottom);
-        panel_Background.remove(columns.top);
+        // remove every spawned column from the screen
+        for (Column col : columnsList) {
+            panel_Background.remove(col.bottom);
+            panel_Background.remove(col.top);
+
+        }
+        columnsList.clear();
 
         // disable controls
         this.removeKeyListener(playerInput);
