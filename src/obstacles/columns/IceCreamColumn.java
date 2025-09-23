@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 public class IceCreamColumn extends Column {
 
     public IceCreamColumn(int gap, int offset, int lifeTime) {
-        this.lifeTime = lifeTime;
+        super(lifeTime);
         LoadSprite(gap, offset);
     }
 

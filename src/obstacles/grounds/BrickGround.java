@@ -31,7 +31,6 @@ public class BrickGround extends Ground {
 
                 sprite = new Sprite(buffered);
 
-                System.out.println("offest: " + offset);
                 sprite.setBounds(0 + offset, 450, 800, 150);
             } else {
                 throw new RuntimeException("Image resource not found: /brickland_ground.png");

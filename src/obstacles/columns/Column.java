@@ -13,6 +13,9 @@ public abstract class Column extends Obstacle implements Moveable, Decays {
 
     protected int lifeTime;
 
+    public Column(int lifeTime) {
+        this.lifeTime = lifeTime;
+    }
     public abstract void LoadSprite(int gap, int offset);
 
     @Override

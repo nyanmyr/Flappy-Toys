@@ -6,7 +6,7 @@ import utility.Sprite;
 
 public abstract class Ground extends Obstacle implements Moveable {
 
-    public Sprite sprite;
+    protected Sprite sprite;
     protected final int offset;
 
     public Ground(int offset){
@@ -36,5 +36,9 @@ public abstract class Ground extends Obstacle implements Moveable {
 
     public boolean outOfBoundsDetection() {
         return sprite.getX() + sprite.getWidth() < 0;
+    }
+    
+    public Sprite getSprite() {
+        return sprite;
     }
 }

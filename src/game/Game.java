@@ -17,14 +17,16 @@ import toys.Teddycopter;
 import toys.Rocketron;
 import toys.Foldy;
 import toys.ToyCharacter;
-// column
+// columns
 import obstacles.columns.Column;
 import obstacles.columns.BrickColumn;
-// ground_left
+// grounds
 import obstacles.grounds.Ground;
 import obstacles.grounds.BrickGround;
 import obstacles.grounds.GroundSetting;
-// utility
+// levels
+import obstacles.levels.Level;
+// utilities
 import utility.PlayerInputHandler;
 
 public class Game extends javax.swing.JFrame {
@@ -63,6 +65,8 @@ public class Game extends javax.swing.JFrame {
     int countdown;
     boolean immunity;
 
+    Level level;
+    
     ArrayList<Column> columnsList = new ArrayList();
     int toAdd = 0;
 
@@ -89,6 +93,7 @@ public class Game extends javax.swing.JFrame {
         label_Score.setVisible(true);
         label_Charges.setVisible(true);
 
+        
         panel_Background.add(toy.sprite);
         // make toy to small
         toy.setSize(CHARACTER_SIZE, CHARACTER_SIZE);
@@ -97,10 +102,10 @@ public class Game extends javax.swing.JFrame {
 
         // initialize objects here
         ground_left = new BrickGround(GroundSetting.NORMAL.offset);
-        panel_Background.add(ground_left.sprite);
+        panel_Background.add(ground_left.getSprite());
 
         ground_right = new BrickGround(GroundSetting.OFFSET.offset);
-        panel_Background.add(ground_right.sprite);
+        panel_Background.add(ground_right.getSprite());
 
         ActionListener update = (ActionEvent evt) -> {
 
@@ -165,11 +170,11 @@ public class Game extends javax.swing.JFrame {
             // detect if ground has gone out of bounds to delete it and spawn a new one
             if (ground_left.outOfBoundsDetection()) {
                 ground_left = new BrickGround(GroundSetting.OFFSET.offset);
-                panel_Background.add(ground_left.sprite);
+                panel_Background.add(ground_left.getSprite());
             }
             if (ground_right.outOfBoundsDetection()) {
                 ground_right = new BrickGround(GroundSetting.OFFSET.offset);
-                panel_Background.add(ground_right.sprite);
+                panel_Background.add(ground_right.getSprite());
 
             }
 
@@ -490,8 +495,8 @@ public class Game extends javax.swing.JFrame {
         panel_Background.remove(toy.sprite);
 
         // rework background removal handling
-        panel_Background.remove(ground_left.sprite);
-        panel_Background.remove(ground_right.sprite);
+        panel_Background.remove(ground_left.getSprite());
+        panel_Background.remove(ground_right.getSprite());
 
         // remove every spawned column from the screen
         for (Column col : columnsList) {
