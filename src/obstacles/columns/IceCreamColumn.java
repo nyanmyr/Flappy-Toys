@@ -14,7 +14,7 @@ public class IceCreamColumn extends Column {
     }
 
     @Override
-    public void LoadSprite(int gap, int offset) {
+    public final void LoadSprite(int gap, int offset) {
         try {
             java.net.URL resource = getClass().getResource("/resources/popsicle_column.png");
             if (resource != null) {

@@ -8,12 +8,13 @@ import javax.imageio.ImageIO;
 
 public class BrickGround extends Ground {
 
-    public BrickGround() {
+    public BrickGround(int offset) {
+        super(offset);
         LoadSprite();
     }
 
     @Override
-    public void LoadSprite() {
+    public final void LoadSprite() {
         try {
             java.net.URL resource = getClass().getResource("/resources/brickland_ground.png");
             if (resource != null) {
@@ -28,11 +29,10 @@ public class BrickGround extends Ground {
                 g2d.drawImage(img, 0, 0, null);
                 g2d.dispose();
 
-                left = new Sprite(buffered);
-                right = new Sprite(buffered);
+                sprite = new Sprite(buffered);
 
-                left.setBounds(0, 450, 800, 150);
-                right.setBounds(left.getX() + left.getWidth(), 450, 800, 150);
+                System.out.println("offest: " + offset);
+                sprite.setBounds(0 + offset, 450, 800, 150);
             } else {
                 throw new RuntimeException("Image resource not found: /brickland_ground.png");
             }

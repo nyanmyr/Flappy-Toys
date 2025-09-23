@@ -5,7 +5,7 @@
             <url>src/game/Game.java</url>
             <bookmark id="1">
                 <name/>
-                <line>457</line>
+                <line>471</line>
                 <key/>
             </bookmark>
         </file>
@@ -13,9 +13,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/game/Game.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/grounds/Ground.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/grounds/BrickGround.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/grounds/IceCreamGround.java</file>
+            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/grounds/GroundSetting.java</file>
             <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/columns/Column.java</file>
             <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/columns/BrickColumn.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/obstacles/columns/IceCreamColumn.java</file>
         </group>
     </open-files>
 </project-private>

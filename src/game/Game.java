@@ -20,9 +20,10 @@ import toys.ToyCharacter;
 // column
 import obstacles.columns.Column;
 import obstacles.columns.BrickColumn;
-// ground
+// ground_left
 import obstacles.grounds.Ground;
 import obstacles.grounds.BrickGround;
+import obstacles.grounds.GroundSetting;
 // utility
 import utility.PlayerInputHandler;
 
@@ -53,7 +54,8 @@ public class Game extends javax.swing.JFrame {
     Toy toy = new Teddycopter();
     final int CHARACTER_SIZE = 40;
 
-    Ground ground;
+    Ground ground_left;
+    Ground ground_right;
 
     // values set after constructor call
     int WINDOW_WIDTH;
@@ -94,15 +96,12 @@ public class Game extends javax.swing.JFrame {
         toy.setLocation((WINDOW_WIDTH / 2) - (toy.sprite.getWidth() / 2), 0);
 
         // initialize objects here
-        ground = new BrickGround();
-        panel_Background.add(ground.left);
-        panel_Background.add(ground.right);
+        ground_left = new BrickGround(GroundSetting.NORMAL.offset);
+        panel_Background.add(ground_left.sprite);
 
-//        // spawn first column
-//        Column columns = new BrickColumn(gap, num, spawnTime);
-//        panel_Background.add(columns.bottom);
-//        panel_Background.add(columns.top);
-//        columnsList.add(columns);
+        ground_right = new BrickGround(GroundSetting.OFFSET.offset);
+        panel_Background.add(ground_right.sprite);
+
         ActionListener update = (ActionEvent evt) -> {
 
             // calculate speed over time
@@ -113,11 +112,6 @@ public class Game extends javax.swing.JFrame {
             // calculate lifetime of the column using
             // Time = Distance / Speed formula
             spawnTime = (int) ((785 + 90) / speed);
-            System.out.println("spawnTime:" + spawnTime);
-
-            // randomize where the column spawns
-            num = randomizer.nextInt(175, 425);
-            gap = 150;
 
             // handle player input
             if (!gameOver) {
@@ -154,24 +148,44 @@ public class Game extends javax.swing.JFrame {
                 this.removeKeyListener(playerInput);
             }
 
-            // sky and ground collision detection
+            // sky and ground_left collision detection
             if (toy.sprite.getY() < 0) {
                 gameOver = true;
                 System.out.println("Touched the sky");
             }
             if (toy.sprite.getY() > GROUND_HEIGHT) {
                 gameOver = true;
-                System.out.println(ground.killEffect());
+                System.out.println(ground_left.killEffect());
             }
 
-            // move the ground to the left
-            ground.move((int) -speed, 0);
+            // move the ground left
+            ground_left.move((int) -speed, 0);
+            ground_right.move((int) -speed, 0);
+
+            // detect if ground has gone out of bounds to delete it and spawn a new one
+            if (ground_left.outOfBoundsDetection()) {
+                ground_left = new BrickGround(GroundSetting.OFFSET.offset);
+                panel_Background.add(ground_left.sprite);
+            }
+            if (ground_right.outOfBoundsDetection()) {
+                ground_right = new BrickGround(GroundSetting.OFFSET.offset);
+                panel_Background.add(ground_right.sprite);
+
+            }
+
+            // randomize where the column spawns
+            num = randomizer.nextInt(175, 425);
+            // reduces the gap between the columns by
+            // 5 spaces in the y axis
+            // every 1 speed added
+            // with a max of 100
+            gap = (int) Math.max(100, 150 - ((speed - 2) * 5));
 
             ArrayList<Column> toRemove = new ArrayList();
 
             // iterate through every spawned column
             for (Column col : columnsList) {
-                // move column to the left
+                // move column to the sprite
                 col.move((int) -speed, 0);
 
                 // column collision detection
@@ -475,8 +489,9 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.remove(toy.sprite);
 
-        panel_Background.remove(ground.left);
-        panel_Background.remove(ground.right);
+        // rework background removal handling
+        panel_Background.remove(ground_left.sprite);
+        panel_Background.remove(ground_right.sprite);
 
         // remove every spawned column from the screen
         for (Column col : columnsList) {

@@ -8,12 +8,13 @@ import javax.imageio.ImageIO;
 
 public class IceCreamGround extends Ground {
 
-    public IceCreamGround() {
+    public IceCreamGround(int offset) {
+        super(offset);
         LoadSprite();
     }
 
     @Override
-    public void LoadSprite() {
+    public final void LoadSprite() {
         try {
             java.net.URL resource = getClass().getResource("/resources/icecreamland_ground.png");
             if (resource != null) {
@@ -28,11 +29,9 @@ public class IceCreamGround extends Ground {
                 g2d.drawImage(img, 0, 0, null);
                 g2d.dispose();
 
-                left = new Sprite(buffered);
-                right = new Sprite(buffered);
+                sprite = new Sprite(buffered);
 
-                left.setBounds(0, 450, 800, 150);
-                right.setBounds(left.getX() + left.getWidth(), 450, 800, 150);
+                sprite.setBounds(0 + offset, 450, 800, 150);
             } else {
                 throw new RuntimeException("Image resource not found: /icecreamland_ground.png");
             }
