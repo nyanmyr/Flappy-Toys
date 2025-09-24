@@ -6,7 +6,7 @@ import utility.Sprite;
 
 public abstract class Toy implements Moveable {
 
-    public Sprite sprite;
+    protected Sprite sprite;
     public Ability ability;
     public int charges = 3;
     
@@ -26,6 +26,10 @@ public abstract class Toy implements Moveable {
 
     public void setAbility(Ability ability) {
         this.ability = ability;
+    }
+    
+    public Sprite getSprite() {
+        return sprite;
     }
     
     @Override

@@ -50,4 +50,12 @@ public abstract class Column extends Obstacle implements Moveable, Decays {
     public boolean isAlive() {
         return lifeTime > 0;
     }
+    
+    public Sprite getTopSprite() {
+        return top;
+    }
+    
+    public Sprite getBottomSprite() {
+        return bottom;
+    }
 }

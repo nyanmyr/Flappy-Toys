@@ -17,15 +17,13 @@ import toys.Teddycopter;
 import toys.Rocketron;
 import toys.Foldy;
 import toys.ToyCharacter;
-// columns
-import obstacles.columns.Column;
-import obstacles.columns.BrickColumn;
-// grounds
-import obstacles.grounds.Ground;
-import obstacles.grounds.BrickGround;
-import obstacles.grounds.GroundSetting;
 // levels
-import obstacles.levels.Level;
+import obstacles.columns.Column;
+import obstacles.grounds.GroundSetting;
+import levels.Level;
+import levels.BrickLand;
+import levels.IceCreamLand;
+import utility.OrderLayer;
 // utilities
 import utility.PlayerInputHandler;
 
@@ -56,9 +54,6 @@ public class Game extends javax.swing.JFrame {
     Toy toy = new Teddycopter();
     final int CHARACTER_SIZE = 40;
 
-    Ground ground_left;
-    Ground ground_right;
-
     // values set after constructor call
     int WINDOW_WIDTH;
 
@@ -66,7 +61,7 @@ public class Game extends javax.swing.JFrame {
     boolean immunity;
 
     Level level;
-    
+
     ArrayList<Column> columnsList = new ArrayList();
     int toAdd = 0;
 
@@ -83,6 +78,7 @@ public class Game extends javax.swing.JFrame {
 
     private void startGame() {
 
+        // could make all these methods
         countdown = 0;
         immunity = false;
 
@@ -91,28 +87,50 @@ public class Game extends javax.swing.JFrame {
         this.addKeyListener(playerInput);
 
         label_Score.setVisible(true);
-        label_Charges.setVisible(true);
+        panel_Background.setComponentZOrder(label_Score, OrderLayer.UI.layer);
 
-        
-        panel_Background.add(toy.sprite);
+        label_Charges.setVisible(true);
+        panel_Background.setComponentZOrder(label_Charges, OrderLayer.UI.layer);
+
+        level = new BrickLand();
+
+        // initialize the background
+        level.generateBackground();
+        panel_Background.add(level.getBackground());
+        panel_Background.setComponentZOrder(level.getBackground(), OrderLayer.BACKGROUND.layer);
+
+        // add player
+        panel_Background.add(toy.getSprite());
+        panel_Background.setComponentZOrder(toy.getSprite(), OrderLayer.FOREGROUND.layer);
         // make toy to small
         toy.setSize(CHARACTER_SIZE, CHARACTER_SIZE);
         // place toy into center
-        toy.setLocation((WINDOW_WIDTH / 2) - (toy.sprite.getWidth() / 2), 0);
+        toy.setLocation((WINDOW_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 0);
 
         // initialize objects here
-        ground_left = new BrickGround(GroundSetting.NORMAL.offset);
-        panel_Background.add(ground_left.getSprite());
+        level.generateLeftGround(GroundSetting.NORMAL.value);
+        level.generateRightGround(GroundSetting.OFFSET.value);
 
-        ground_right = new BrickGround(GroundSetting.OFFSET.offset);
-        panel_Background.add(ground_right.getSprite());
+        panel_Background.add(level.getLeftGround());
+        panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
+        panel_Background.add(level.getRightGround());
+        panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
 
         ActionListener update = (ActionEvent evt) -> {
+
+            if (toy.score > 0 && toy.score % 200 == 0) {
+                if (level instanceof BrickLand) {
+                    level = new IceCreamLand();
+                    System.out.println("TEST");
+                } else {
+                    level = new BrickLand();
+                }
+            }
 
             // calculate speed over time
             // make constants for both starting speed (2)
             // and speed time increase (500)
-            speed = (2 + toy.score / 500);
+            speed = (2 + toy.score / 1000);
 
             // calculate lifetime of the column using
             // Time = Distance / Speed formula
@@ -154,83 +172,94 @@ public class Game extends javax.swing.JFrame {
             }
 
             // sky and ground_left collision detection
-            if (toy.sprite.getY() < 0) {
+            if (toy.getSprite().getY() < 0) {
                 gameOver = true;
                 System.out.println("Touched the sky");
             }
-            if (toy.sprite.getY() > GROUND_HEIGHT) {
+            if (toy.getSprite().getY() > GROUND_HEIGHT) {
                 gameOver = true;
-                System.out.println(ground_left.killEffect());
+                System.out.println(level.groundKillEffect());
             }
 
             // move the ground left
-            ground_left.move((int) -speed, 0);
-            ground_right.move((int) -speed, 0);
+            if (!(toy.score > 0 && toy.score % 200 == 0)) {
+                level.moveLeftGround((int) -speed, 0);
+                level.moveRightGround((int) -speed, 0);
 
-            // detect if ground has gone out of bounds to delete it and spawn a new one
-            if (ground_left.outOfBoundsDetection()) {
-                ground_left = new BrickGround(GroundSetting.OFFSET.offset);
-                panel_Background.add(ground_left.getSprite());
-            }
-            if (ground_right.outOfBoundsDetection()) {
-                ground_right = new BrickGround(GroundSetting.OFFSET.offset);
-                panel_Background.add(ground_right.getSprite());
-
+                // could generate first gound here instead of outside
+                // detect if ground has gone out of bounds to delete it and spawn a new one
+                if (level.isLeftGroundOutOfBounds()) {
+                    level.generateLeftGround(GroundSetting.OFFSET.value);
+                    panel_Background.add(level.getLeftGround());
+                    panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
+                }
+                if (level.isRightGroundOutOfBounds()) {
+                    level.generateRightGround(GroundSetting.OFFSET.value);
+                    panel_Background.add(level.getRightGround());
+                    panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
+                }
             }
 
             // randomize where the column spawns
             num = randomizer.nextInt(175, 425);
+            // could add constants here
             // reduces the gap between the columns by
             // 5 spaces in the y axis
             // every 1 speed added
             // with a max of 100
             gap = (int) Math.max(100, 150 - ((speed - 2) * 5));
 
-            ArrayList<Column> toRemove = new ArrayList();
+            if (!columnsList.isEmpty()) {
+                ArrayList<Column> toRemove = new ArrayList();
 
-            // iterate through every spawned column
-            for (Column col : columnsList) {
-                // move column to the sprite
-                col.move((int) -speed, 0);
+                // iterate through every spawned column
+                for (Column col : columnsList) {
+                    // move column to the sprite
+                    col.move((int) -speed, 0);
 
-                // column collision detection
-                if ((((toy.sprite.getX() < col.bottom.getX() + col.bottom.getWidth()
-                        && toy.sprite.getX() + toy.sprite.getWidth() > col.bottom.getX()
-                        && toy.sprite.getY() < col.bottom.getY() + col.bottom.getHeight()
-                        && toy.sprite.getY() + toy.sprite.getHeight() > col.bottom.getY()))
-                        || ((toy.sprite.getX() < col.top.getX() + col.top.getWidth()
-                        && toy.sprite.getX() + toy.sprite.getWidth() > col.top.getX()
-                        && toy.sprite.getY() < col.top.getY() + col.top.getHeight()
-                        && toy.sprite.getY() + toy.sprite.getHeight() > col.top.getY())))
-                        && !immunity
-                        && col.isAlive()) {
+                    // column collision detection
+                    if ((((toy.getSprite().getX() < col.bottom.getX() + col.bottom.getWidth()
+                            && toy.getSprite().getX() + toy.getSprite().getWidth() > col.bottom.getX()
+                            && toy.getSprite().getY() < col.bottom.getY() + col.bottom.getHeight()
+                            && toy.getSprite().getY() + toy.getSprite().getHeight() > col.bottom.getY()))
+                            || ((toy.getSprite().getX() < col.top.getX() + col.top.getWidth()
+                            && toy.getSprite().getX() + toy.getSprite().getWidth() > col.top.getX()
+                            && toy.getSprite().getY() < col.top.getY() + col.top.getHeight()
+                            && toy.getSprite().getY() + toy.getSprite().getHeight() > col.top.getY())))
+                            && !immunity
+                            && col.isAlive()) {
 
-                    gameOver = true;
-                    System.out.println(col.killEffect());
+                        gameOver = true;
+                        System.out.println(col.killEffect());
+                    }
+
+                    // delete the column after lifeTime expires
+                    if (col.decay()) {
+                        // remove decayed column
+                        panel_Background.remove(col.bottom);
+                        panel_Background.remove(col.top);
+
+                        toRemove.add(col);
+                    }
                 }
 
-                // delete the column after lifeTime expires
-                if (col.decay()) {
-                    // remove decayed column
-                    panel_Background.remove(col.bottom);
-                    panel_Background.remove(col.top);
+                // set the amoutn of columns to spawn to the amount deleted before
+                toAdd = toRemove.size();
 
-                    toRemove.add(col);
-                }
+                // delete all the decayed columns
+                columnsList.removeAll(toRemove);
             }
-
-            // set the amoutn of columns to spawn to the amount deleted before
-            toAdd = toRemove.size();
-
-            // delete all the decayed columns
-            columnsList.removeAll(toRemove);
 
             // adds a new column to replace the decayed columns
             if (toAdd > 0 || columnsList.isEmpty()) {
-                Column newColumns = new BrickColumn(gap, num, spawnTime);
-                panel_Background.add(newColumns.bottom);
-                panel_Background.add(newColumns.top);
-                columnsList.add(newColumns);
+                level.generateColumn(gap, num, spawnTime);
+
+                panel_Background.add(level.getBottomColumn());
+                panel_Background.setComponentZOrder(level.getBottomColumn(), OrderLayer.COLUMNS.layer);
+                panel_Background.add(level.getTopColumn());
+                panel_Background.setComponentZOrder(level.getTopColumn(), OrderLayer.COLUMNS.layer);
+
+                columnsList.add(level.getColumn());
             }
 
             // increment the score every frame
@@ -248,16 +277,17 @@ public class Game extends javax.swing.JFrame {
 
             // handle game over
             if (gameOver) {
-
                 Timer localTimer = (Timer) evt.getSource();
                 localTimer.stop();
 
                 label_GameOver.setVisible(true);
+                panel_Background.setComponentZOrder(label_GameOver, OrderLayer.UI.layer);
                 button_ChooseCharacter.setVisible(true);
+                panel_Background.setComponentZOrder(button_ChooseCharacter, OrderLayer.UI.layer);
                 button_PlayAgain.setVisible(true);
+                panel_Background.setComponentZOrder(button_PlayAgain, OrderLayer.UI.layer);
             }
             repaint();
-
         };
 
         Timer timer = new Timer(MILISECOND_DELAY, update);
@@ -265,7 +295,7 @@ public class Game extends javax.swing.JFrame {
     }
 
     private void setSelectedCharacter(ToyCharacter character) {
-        panel_Background.remove(toy.sprite);
+        panel_Background.remove(toy.getSprite());
 
         switch (character) {
             case TEDDYCOPTER -> {
@@ -290,8 +320,8 @@ public class Game extends javax.swing.JFrame {
                 throw new AssertionError(character.name());
         }
 
-        toy.setLocation((WINDOW_WIDTH / 2) - (toy.sprite.getWidth() / 2), 50);
-        panel_Background.add(toy.sprite);
+        toy.setLocation((WINDOW_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 50);
+        panel_Background.add(toy.getSprite());
         repaint();
     }
 
@@ -492,17 +522,18 @@ public class Game extends javax.swing.JFrame {
         // remove obstacles and player
         hideGame();
 
-        panel_Background.remove(toy.sprite);
+        panel_Background.remove(level.getBackground());
+
+        panel_Background.remove(toy.getSprite());
 
         // rework background removal handling
-        panel_Background.remove(ground_left.getSprite());
-        panel_Background.remove(ground_right.getSprite());
+        panel_Background.remove(level.getLeftGround());
+        panel_Background.remove(level.getRightGround());
 
         // remove every spawned column from the screen
         for (Column col : columnsList) {
             panel_Background.remove(col.bottom);
             panel_Background.remove(col.top);
-
         }
         columnsList.clear();
 
