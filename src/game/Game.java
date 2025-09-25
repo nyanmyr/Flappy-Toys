@@ -76,8 +76,17 @@ public class Game extends javax.swing.JFrame {
         WINDOW_WIDTH = screenSize.width;
     }
 
+    int transitionTimer = 0;
+
+    final int LEVEL_CHANGE_TIME = 2000;
+    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 500;
+    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 250;
+
     private void startGame() {
 
+        System.out.println("LEVEL_SPEEDUP_CHECKPOINT: " + LEVEL_SPEEDUP_CHECKPOINT);
+        System.out.println("TRANSITION_TIME: " + TRANSITION_TIME);
+        
         // could make all these methods
         countdown = 0;
         immunity = false;
@@ -118,24 +127,25 @@ public class Game extends javax.swing.JFrame {
 
         ActionListener update = (ActionEvent evt) -> {
 
-            if (toy.score > 0 && toy.score % 200 == 0) {
-                if (level instanceof BrickLand) {
-                    level = new IceCreamLand();
-                    System.out.println("TEST");
-                } else {
-                    level = new BrickLand();
-                }
-            }
-
+            // ALPHA feature in the making
             // calculate speed over time
             // make constants for both starting speed (2)
             // and speed time increase (500)
-            speed = (2 + toy.score / 1000);
+            if (toy.score % LEVEL_SPEEDUP_CHECKPOINT == 0) {
+                speed = (2 + toy.score / LEVEL_SPEEDUP_CHECKPOINT);
 
-            // calculate lifetime of the column using
-            // Time = Distance / Speed formula
-            spawnTime = (int) ((785 + 90) / speed);
+                // calculate lifetime of the column using
+                // Time = Distance / Speed formula
+                spawnTime = (int) ((785 + 90) / speed);
+            }
 
+            if (toy.score > 0 && toy.score % LEVEL_CHANGE_TIME == 0) {
+                transitionTimer = TRANSITION_TIME;
+            }
+
+            if (transitionTimer > 0) {
+                transitionTimer--;
+            }
             // handle player input
             if (!gameOver) {
                 if (playerInput.jumped) {
@@ -182,17 +192,18 @@ public class Game extends javax.swing.JFrame {
             }
 
             // move the ground left
-            if (!(toy.score > 0 && toy.score % 200 == 0)) {
-                level.moveLeftGround((int) -speed, 0);
-                level.moveRightGround((int) -speed, 0);
+            level.moveLeftGround((int) -speed, 0);
+            level.moveRightGround((int) -speed, 0);
 
+            if (transitionTimer <= 0) {
                 // could generate first gound here instead of outside
                 // detect if ground has gone out of bounds to delete it and spawn a new one
                 if (level.isLeftGroundOutOfBounds()) {
                     level.generateLeftGround(GroundSetting.OFFSET.value);
                     panel_Background.add(level.getLeftGround());
                     panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
-                }
+                } 
+                // bug is WIP
                 if (level.isRightGroundOutOfBounds()) {
                     level.generateRightGround(GroundSetting.OFFSET.value);
                     panel_Background.add(level.getRightGround());
@@ -200,16 +211,16 @@ public class Game extends javax.swing.JFrame {
                 }
             }
 
-            // randomize where the column spawns
-            num = randomizer.nextInt(175, 425);
-            // could add constants here
-            // reduces the gap between the columns by
-            // 5 spaces in the y axis
-            // every 1 speed added
-            // with a max of 100
-            gap = (int) Math.max(100, 150 - ((speed - 2) * 5));
-
             if (!columnsList.isEmpty()) {
+                // randomize where the column spawns
+                num = randomizer.nextInt(175, 425);
+                // could add constants here
+                // reduces the gap between the columns by
+                // 5 spaces in the y axis
+                // every 1 speed added
+                // with a max of 100
+                gap = (int) Math.max(100, 150 - ((speed - 2) * 5));
+
                 ArrayList<Column> toRemove = new ArrayList();
 
                 // iterate through every spawned column
@@ -239,7 +250,9 @@ public class Game extends javax.swing.JFrame {
                         panel_Background.remove(col.bottom);
                         panel_Background.remove(col.top);
 
-                        toRemove.add(col);
+                        if (transitionTimer <= 0) {
+                            toRemove.add(col);
+                        }
                     }
                 }
 
@@ -251,7 +264,9 @@ public class Game extends javax.swing.JFrame {
             }
 
             // adds a new column to replace the decayed columns
-            if (toAdd > 0 || columnsList.isEmpty()) {
+            if ((toAdd > 0
+                    || columnsList.isEmpty())
+                    && transitionTimer <= 0) {
                 level.generateColumn(gap, num, spawnTime);
 
                 panel_Background.add(level.getBottomColumn());
@@ -518,7 +533,7 @@ public class Game extends javax.swing.JFrame {
         openCharacterSelection();
     }//GEN-LAST:event_button_PlayActionPerformed
 
-    private void ResetGame() {
+    private void resetGame() {
         // remove obstacles and player
         hideGame();
 
@@ -547,12 +562,15 @@ public class Game extends javax.swing.JFrame {
     }
 
     private void button_ChooseCharacterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ChooseCharacterActionPerformed
-        ResetGame();
+        resetGame();
         openCharacterSelection();
     }//GEN-LAST:event_button_ChooseCharacterActionPerformed
 
     private void button_PlayAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PlayAgainActionPerformed
-        ResetGame();
+        resetGame();
+        // temp fix probably
+        openCharacterSelection();
+        hideCharacterSelection();
         startGame();
     }//GEN-LAST:event_button_PlayAgainActionPerformed
 
