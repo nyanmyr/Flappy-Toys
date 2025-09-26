@@ -78,15 +78,15 @@ public class Game extends javax.swing.JFrame {
 
     int transitionTimer = 0;
 
-    final int LEVEL_CHANGE_TIME = 2000;
-    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 500;
-    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 250;
+    final int LEVEL_CHANGE_TIME = 1500;
+    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 125;
+    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 125;
 
     private void startGame() {
 
         System.out.println("LEVEL_SPEEDUP_CHECKPOINT: " + LEVEL_SPEEDUP_CHECKPOINT);
         System.out.println("TRANSITION_TIME: " + TRANSITION_TIME);
-        
+
         // could make all these methods
         countdown = 0;
         immunity = false;
@@ -108,6 +108,15 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(level.getBackground());
         panel_Background.setComponentZOrder(level.getBackground(), OrderLayer.BACKGROUND.layer);
 
+        // initialize objects here
+        level.generateLeftGround(GroundSetting.NORMAL.value, GroundSetting.NORMAL.value);
+        level.generateRightGround(GroundSetting.OFFSET.value, GroundSetting.NORMAL.value);
+
+        panel_Background.add(level.getLeftGround());
+        panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
+        panel_Background.add(level.getRightGround());
+        panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
+
         // add player
         panel_Background.add(toy.getSprite());
         panel_Background.setComponentZOrder(toy.getSprite(), OrderLayer.FOREGROUND.layer);
@@ -115,15 +124,6 @@ public class Game extends javax.swing.JFrame {
         toy.setSize(CHARACTER_SIZE, CHARACTER_SIZE);
         // place toy into center
         toy.setLocation((WINDOW_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 0);
-
-        // initialize objects here
-        level.generateLeftGround(GroundSetting.NORMAL.value);
-        level.generateRightGround(GroundSetting.OFFSET.value);
-
-        panel_Background.add(level.getLeftGround());
-        panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
-        panel_Background.add(level.getRightGround());
-        panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
 
         ActionListener update = (ActionEvent evt) -> {
 
@@ -139,8 +139,30 @@ public class Game extends javax.swing.JFrame {
                 spawnTime = (int) ((785 + 90) / speed);
             }
 
-            if (toy.score > 0 && toy.score % LEVEL_CHANGE_TIME == 0) {
+            if (toy.score > 0 && toy.score % LEVEL_SPEEDUP_CHECKPOINT == 0) {
                 transitionTimer = TRANSITION_TIME;
+
+                panel_Background.remove(level.getBackground());
+
+                // rework background removal handling
+                panel_Background.remove(level.getLeftGround());
+                panel_Background.remove(level.getRightGround());
+
+                level = new IceCreamLand();
+
+                // initialize the background
+                level.generateBackground();
+                panel_Background.add(level.getBackground());
+                panel_Background.setComponentZOrder(level.getBackground(), OrderLayer.BACKGROUND.layer);
+
+                // initialize objects here
+                level.generateLeftGround(GroundSetting.NORMAL.value, GroundSetting.LOWERED.value);
+                level.generateRightGround(GroundSetting.OFFSET.value, GroundSetting.LOWERED.value);
+
+                panel_Background.add(level.getLeftGround());
+                panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
+                panel_Background.add(level.getRightGround());
+                panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
             }
 
             if (transitionTimer > 0) {
@@ -195,21 +217,9 @@ public class Game extends javax.swing.JFrame {
             level.moveLeftGround((int) -speed, 0);
             level.moveRightGround((int) -speed, 0);
 
-            if (transitionTimer <= 0) {
-                // could generate first gound here instead of outside
-                // detect if ground has gone out of bounds to delete it and spawn a new one
-                if (level.isLeftGroundOutOfBounds()) {
-                    level.generateLeftGround(GroundSetting.OFFSET.value);
-                    panel_Background.add(level.getLeftGround());
-                    panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
-                } 
-                // bug is WIP
-                if (level.isRightGroundOutOfBounds()) {
-                    level.generateRightGround(GroundSetting.OFFSET.value);
-                    panel_Background.add(level.getRightGround());
-                    panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
-                }
-            }
+            // could generate first gound here instead of outside
+            // detect if ground has gone out of bounds to delete it and spawn a new one
+            checkGroundOutOfBounds();
 
             if (!columnsList.isEmpty()) {
                 // randomize where the column spawns
@@ -307,6 +317,25 @@ public class Game extends javax.swing.JFrame {
 
         Timer timer = new Timer(MILISECOND_DELAY, update);
         timer.start();
+    }
+
+    private void checkGroundOutOfBounds() {
+        int offsetX = GroundSetting.OFFSET.value;
+        int offsetY = GroundSetting.NORMAL.value;
+        if (transitionTimer > 0) {
+            offsetY = GroundSetting.LOWERED.value;
+        }
+
+        if (level.isLeftGroundOutOfBounds()) {
+            level.generateLeftGround(offsetX, offsetY);
+            panel_Background.add(level.getLeftGround());
+            panel_Background.setComponentZOrder(level.getLeftGround(), OrderLayer.MIDDLEGROUND.layer);
+        }
+        if (level.isRightGroundOutOfBounds()) {
+            level.generateRightGround(offsetX, offsetY);
+            panel_Background.add(level.getRightGround());
+            panel_Background.setComponentZOrder(level.getRightGround(), OrderLayer.MIDDLEGROUND.layer);
+        }
     }
 
     private void setSelectedCharacter(ToyCharacter character) {

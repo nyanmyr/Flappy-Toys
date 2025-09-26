@@ -7,10 +7,12 @@ import utility.Sprite;
 public abstract class Ground extends Obstacle implements Moveable {
 
     protected Sprite sprite;
-    protected final int offset;
+    protected final int offsetX;
+    protected final int offsetY;
 
-    public Ground(int offset){
-        this.offset = offset;
+    public Ground(int offsetX, int offsetY){
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
     
     abstract public void LoadSprite();

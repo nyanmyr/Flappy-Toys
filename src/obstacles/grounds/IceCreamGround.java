@@ -8,8 +8,8 @@ import javax.imageio.ImageIO;
 
 public class IceCreamGround extends Ground {
 
-    public IceCreamGround(int offset) {
-        super(offset);
+    public IceCreamGround(int offsetX, int offsetY){
+        super(offsetX, offsetY);
         LoadSprite();
     }
 
@@ -31,7 +31,7 @@ public class IceCreamGround extends Ground {
 
                 sprite = new Sprite(buffered);
 
-                sprite.setBounds(0 + offset, 450, 800, 150);
+                sprite.setBounds(0 + offsetX, 450 + offsetY, 800, 150);
             } else {
                 throw new RuntimeException("Image resource not found: /icecreamland_ground.png");
             }

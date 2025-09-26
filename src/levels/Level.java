@@ -15,9 +15,9 @@ public abstract class Level {
     // add variables for holding loaded data here
     public abstract void generateColumn(int gap, int columnOffset, int lifeTime);
 
-    public abstract void generateLeftGround(int groundOffset);
+    public abstract void generateLeftGround(int offsetX, int offsetY);
 
-    public abstract void generateRightGround(int groundOffset);
+    public abstract void generateRightGround(int offsetX, int offsetY);
 
     public abstract void generateBackground();
 

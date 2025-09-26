@@ -12,13 +12,13 @@ public class IceCreamLand extends Level {
     }
 
     @Override
-    final public void generateLeftGround(int groundOffset) {
-        ground_left = new IceCreamGround(groundOffset);
+    final public void generateLeftGround(int offsetX, int offsetY) {
+        ground_left = new IceCreamGround(offsetX, offsetY);
     }
     
     @Override
-    final public void generateRightGround(int groundOffset) {
-        ground_right = new IceCreamGround(groundOffset);
+    final public void generateRightGround(int offsetX, int offsetY) {
+        ground_right = new IceCreamGround(offsetX, offsetY);
     }
 
     @Override
