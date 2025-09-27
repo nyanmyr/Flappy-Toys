@@ -8,11 +8,9 @@ public abstract class Ground extends Obstacle implements Moveable {
 
     protected Sprite sprite;
     protected final int offsetX;
-    protected final int offsetY;
 
-    public Ground(int offsetX, int offsetY){
+    public Ground(int offsetX){
         this.offsetX = offsetX;
-        this.offsetY = offsetY;
     }
     
     abstract public void LoadSprite();

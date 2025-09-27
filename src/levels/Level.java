@@ -15,11 +15,35 @@ public abstract class Level {
     // add variables for holding loaded data here
     public abstract void generateColumn(int gap, int columnOffset, int lifeTime);
 
-    public abstract void generateLeftGround(int offsetX, int offsetY);
+    public abstract void generateLeftGround(int offsetX);
 
-    public abstract void generateRightGround(int offsetX, int offsetY);
+    public abstract void generateRightGround(int offsetX);
 
     public abstract void generateBackground();
+
+    // <editor-fold desc="get object methods">
+    public Column getColumn() {
+        return column;
+    }
+
+    public Ground getLeftGround() {
+        return ground_left;
+    }
+
+    public Ground getRightGround() {
+        return ground_right;
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="set object methods">
+    public void setLeftGround(Ground ground_left) {
+        this.ground_left = ground_left;
+    }
+
+    public void setRightGround(Ground ground_right) {
+        this.ground_right = ground_right;
+    }
+    // </editor-fold>
 
     // <editor-fold desc="get sprite methods">
     public Sprite getTopColumn() {
@@ -30,18 +54,14 @@ public abstract class Level {
         return column.getBottomSprite();
     }
 
-    public Column getColumn() {
-        return column;
-    }
-
-    public Sprite getLeftGround() {
+    public Sprite getLeftGroundSprite() {
         return ground_left.getSprite();
     }
 
-    public Sprite getRightGround() {
+    public Sprite getRightGroundSprite() {
         return ground_right.getSprite();
     }
-    
+
     public Sprite getBackground() {
         return background.getSprite();
     }
@@ -76,8 +96,5 @@ public abstract class Level {
         return ground_right.outOfBoundsDetection();
     }
     // </editor-fold>
-    
-    public void setBackgroundToBack() {
-        background.getSprite();
-    }
+
 }

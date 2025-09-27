@@ -2,8 +2,7 @@ package obstacles.grounds;
 
 public enum GroundSetting {
     NORMAL(0),
-    OFFSET(800),
-    LOWERED(200);
+    OFFSET(800);
     
     public final int value;
     

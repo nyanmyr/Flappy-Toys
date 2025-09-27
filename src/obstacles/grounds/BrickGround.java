@@ -8,8 +8,8 @@ import javax.imageio.ImageIO;
 
 public class BrickGround extends Ground {
 
-    public BrickGround(int offsetX, int offsetY){
-        super(offsetX, offsetY);
+    public BrickGround(int offsetX){
+        super(offsetX);
         LoadSprite();
     }
 
@@ -31,7 +31,7 @@ public class BrickGround extends Ground {
 
                 sprite = new Sprite(buffered);
 
-                sprite.setBounds(0 + offsetX, 450 + offsetY, 800, 150);
+                sprite.setBounds(0 + offsetX, 450, 800, 150);
             } else {
                 throw new RuntimeException("Image resource not found: /brickland_ground.png");
             }

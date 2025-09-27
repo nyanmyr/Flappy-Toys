@@ -12,13 +12,13 @@ public class BrickLand extends Level {
     }
 
     @Override
-    final public void generateLeftGround(int offsetX, int offsetY) {
-        ground_left = new BrickGround(offsetX, offsetY);
+    final public void generateLeftGround(int offsetX) {
+        ground_left = new BrickGround(offsetX);
     }
     
     @Override
-    final public void generateRightGround(int offsetX, int offsetY) {
-        ground_right = new BrickGround(offsetX, offsetY);
+    final public void generateRightGround(int offsetX) {
+        ground_right = new BrickGround(offsetX);
     }
 
     @Override
