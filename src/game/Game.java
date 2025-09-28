@@ -25,7 +25,8 @@ import levels.BrickLand;
 import levels.IceCreamLand;
 import utility.OrderLayer;
 // utilities
-import utility.PlayerInputHandler;
+import utility.KeyInputHandler;
+import utility.MouseInputHandler;
 
 public class Game extends javax.swing.JFrame {
 
@@ -36,7 +37,8 @@ public class Game extends javax.swing.JFrame {
     // if 10, then 100 is 1 second
     // if 0, then 1 is 1 second
     final int MILISECOND_DELAY = 10;
-    PlayerInputHandler playerInput = new PlayerInputHandler();
+    KeyInputHandler playerKeyInput = new KeyInputHandler();
+    MouseInputHandler playerMouseInput = new MouseInputHandler();
 
     int num = randomizer.nextInt(175, 425);
     int gap = 150;
@@ -92,8 +94,10 @@ public class Game extends javax.swing.JFrame {
         immunity = false;
 
         // give controls to player
-        playerInput.reset(); // makes sure to reset the controls
-        this.addKeyListener(playerInput);
+        playerKeyInput.reset(); // makes sure to reset the controls
+        playerMouseInput.reset(); // makes sure to reset the controls
+        this.addKeyListener(playerKeyInput);
+        this.addMouseListener(playerMouseInput);
 
         label_Score.setVisible(true);
         panel_Background.setComponentZOrder(label_Score, OrderLayer.UI.layer);
@@ -167,28 +171,28 @@ public class Game extends javax.swing.JFrame {
             }
             // handle player input
             if (!gameOver) {
-                if (playerInput.jumped) {
+                if (playerMouseInput.jumped) {
                     // turn this into method
                     toy.move(0, -JUMP_HEIGHT);
-                    playerInput.jumped = false;
+                    playerMouseInput.jumped = false;
                 } else {
                     toy.move(0, GRAVITY);
                 }
 
-                if (playerInput.moveLeft) {
+                if (playerKeyInput.moveLeft) {
                     toy.move(-MOVEMENT_SPEED, 0);
-                    playerInput.moveLeft = false;
+                    playerKeyInput.moveLeft = false;
                 }
-                if (playerInput.moveRight) {
+                if (playerKeyInput.moveRight) {
                     toy.move(MOVEMENT_SPEED, 0);
-                    playerInput.moveRight = false;
+                    playerKeyInput.moveRight = false;
                 }
 
-                if (playerInput.abilityUsed) {
+                if (playerKeyInput.abilityUsed) {
                     if (toy.useAbility()) {
                         label_Charges.setText("Charges: " + toy.charges);
                     }
-                    playerInput.abilityUsed = false;
+                    playerKeyInput.abilityUsed = false;
 
                     // if shield is activated then give player 5 sec immunity
                     if (toy.shield) {
@@ -197,7 +201,8 @@ public class Game extends javax.swing.JFrame {
                     }
                 }
             } else {
-                this.removeKeyListener(playerInput);
+                this.removeKeyListener(playerKeyInput);
+                this.removeMouseListener(playerMouseInput);
             }
 
             // sky and ground_left collision detection
@@ -575,7 +580,8 @@ public class Game extends javax.swing.JFrame {
         columnsList.clear();
 
         // disable controls
-        this.removeKeyListener(playerInput);
+        this.removeKeyListener(playerKeyInput);
+        this.removeMouseListener(playerMouseInput);
         toy.score = 0;
 
         gameOver = false;

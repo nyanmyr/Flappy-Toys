@@ -3,9 +3,9 @@ package utility;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class PlayerInputHandler implements KeyListener {
+public class KeyInputHandler implements KeyListener {
 
-    public boolean jumped, moveLeft, moveRight, abilityUsed = false;
+    public boolean moveLeft, moveRight, abilityUsed = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -32,13 +32,9 @@ public class PlayerInputHandler implements KeyListener {
         if (code == KeyEvent.VK_SPACE) {
             abilityUsed = true;
         }
-        if (code == KeyEvent.VK_W
-                || code == KeyEvent.VK_UP) {
-            jumped = true;
-        }
     }
-    
+
     public void reset() {
-        jumped = moveLeft = moveRight = abilityUsed = false;
+        moveLeft = moveRight = abilityUsed = false;
     }
 }
