@@ -1,22 +1,21 @@
-package obstacles.grounds;
+package levels.backgrounds;
 
-import utility.Sprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import utility.Sprite;
 
-public class BrickGround extends Ground {
+public class IceCreamLandBackground extends Background {
 
-    public BrickGround(int offsetX){
-        super(offsetX);
+    public IceCreamLandBackground() {
         LoadSprite();
     }
 
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/brickland_ground.png");
+            java.net.URL resource = getClass().getResource("/resources/icecream_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -30,18 +29,14 @@ public class BrickGround extends Ground {
                 g2d.dispose();
 
                 sprite = new Sprite(buffered);
-
-                sprite.setBounds(0 + offsetX, 450, 800, 200);
+                sprite.setOpaque(false);
+                sprite.setBounds(0, 0, 800, 600);
             } else {
-                throw new RuntimeException("Image resource not found: /brickland_ground.png");
+                throw new RuntimeException("Image resource not found: icecream_bg.jpg");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
         }
     }
-
-    @Override
-    public String killEffect() {
-        return "Killed by ground";
-    }
+    
 }

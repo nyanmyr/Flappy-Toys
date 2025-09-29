@@ -29,6 +29,7 @@ public class BrickLandBackground extends Background {
                 g2d.dispose();
 
                 sprite = new Sprite(buffered);
+                sprite.setOpaque(false);
 
                 sprite.setBounds(0, 0, 800, 600);
             } else {

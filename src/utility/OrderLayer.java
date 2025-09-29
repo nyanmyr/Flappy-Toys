@@ -7,8 +7,7 @@ public enum OrderLayer {
     COLUMNS(6),
     PARALLAX_1(8),
     PARALLAX_2(10),
-    PARALLAX_3(12),
-    BACKGROUND(14);
+    BACKGROUND(12);
 
     public final int layer;
 

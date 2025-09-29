@@ -1,6 +1,8 @@
 package levels;
 
 import levels.backgrounds.Background;
+import levels.parallaxes.Parallax;
+import levels.parallaxes.ParallaxLevel;
 import obstacles.columns.Column;
 import obstacles.grounds.Ground;
 import utility.Sprite;
@@ -12,6 +14,12 @@ public abstract class Level {
     protected Ground ground_right;
     protected Background background;
 
+    protected Parallax parallax1_left;
+    protected Parallax parallax1_right;
+
+    protected Parallax parallax2_left;
+    protected Parallax parallax2_right;
+
     // add variables for holding loaded data here
     public abstract void generateColumn(int gap, int columnOffset, int lifeTime);
 
@@ -21,7 +29,15 @@ public abstract class Level {
 
     public abstract void generateBackground();
 
+    public abstract void generateLeftParallax(int offsetX, ParallaxLevel level);
+
+    public abstract void generateRightParallax(int offsetX, ParallaxLevel level);
+
     // <editor-fold desc="get object methods">
+    public Background getBackground() {
+        return background;
+    }
+
     public Column getColumn() {
         return column;
     }
@@ -33,15 +49,71 @@ public abstract class Level {
     public Ground getRightGround() {
         return ground_right;
     }
+
+    public Parallax getLeftParallax(ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                return parallax1_left;
+            }
+            case LEVEL_2 -> {
+                return parallax2_left;
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
+    }
+
+    public Parallax getRightParallax(ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                return parallax1_right;
+            }
+            case LEVEL_2 -> {
+                return parallax2_right;
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
+    }
     // </editor-fold>
 
     // <editor-fold desc="set object methods">
+    public void setBackground(Background background) {
+        this.background = background;
+    }
+
     public void setLeftGround(Ground ground_left) {
         this.ground_left = ground_left;
     }
 
     public void setRightGround(Ground ground_right) {
         this.ground_right = ground_right;
+    }
+
+    public void setLeftParallax(Parallax parallax_left, ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                this.parallax1_left = parallax_left;
+            }
+            case LEVEL_2 -> {
+                this.parallax2_left = parallax_left;
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
+    }
+
+    public void setRightParallax(Parallax parallax_right, ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                this.parallax1_right = parallax_right;
+            }
+            case LEVEL_2 -> {
+                this.parallax2_right = parallax_right;
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
     // </editor-fold>
 
@@ -62,8 +134,34 @@ public abstract class Level {
         return ground_right.getSprite();
     }
 
-    public Sprite getBackground() {
+    public Sprite getBackgroundSprite() {
         return background.getSprite();
+    }
+
+    public Sprite getLeftParallaxSprite(ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                return parallax1_left.getSprite();
+            }
+            case LEVEL_2 -> {
+                return parallax2_left.getSprite();
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
+    }
+
+    public Sprite getRightParallaxSprite(ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                return parallax1_right.getSprite();
+            }
+            case LEVEL_2 -> {
+                return parallax2_right.getSprite();
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
     // </editor-fold>
 
@@ -85,6 +183,22 @@ public abstract class Level {
     public void moveRightGround(int x, int y) {
         ground_right.move(x, y);
     }
+
+    public void moveLeftParallax1(int x, int y) {
+        parallax1_left.move(x, y);
+    }
+
+    public void moveRightParallax1(int x, int y) {
+        parallax1_right.move(x, y);
+    }
+
+    public void moveLeftParallax2(int x, int y) {
+        parallax2_left.move(x, y);
+    }
+
+    public void moveRightParallax2(int x, int y) {
+        parallax2_right.move(x, y);
+    }
     // </editor-fold>
 
     // <editor-fold desc="out of bounds detection methods">
@@ -95,6 +209,21 @@ public abstract class Level {
     public boolean isRightGroundOutOfBounds() {
         return ground_right.outOfBoundsDetection();
     }
-    // </editor-fold>
 
+    public boolean isLeftParallax1OutOfBounds() {
+        return parallax1_left.outOfBoundsDetection();
+    }
+
+    public boolean isRightParallax1OutOfBounds() {
+        return parallax1_right.outOfBoundsDetection();
+    }
+
+    public boolean isLeftParallax2OutOfBounds() {
+        return parallax2_left.outOfBoundsDetection();
+    }
+
+    public boolean isRightParallax2OutOfBounds() {
+        return parallax2_right.outOfBoundsDetection();
+    }
+    // </editor-fold>
 }

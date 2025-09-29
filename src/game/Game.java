@@ -23,6 +23,8 @@ import obstacles.grounds.GroundSetting;
 import levels.Level;
 import levels.BrickLand;
 import levels.IceCreamLand;
+import levels.backgrounds.Background;
+import levels.parallaxes.ParallaxLevel;
 import utility.OrderLayer;
 // utilities
 import utility.KeyInputHandler;
@@ -50,7 +52,8 @@ public class Game extends javax.swing.JFrame {
     final int JUMP_HEIGHT = 50;
     final int GRAVITY = 2;
 
-    float speed = 2;
+    final int STARTING_SPEED = 2;
+    float speed;
 
     ToyCharacter selectedCharacter = ToyCharacter.TEDDYCOPTER;
     Toy toy = new Teddycopter();
@@ -67,6 +70,12 @@ public class Game extends javax.swing.JFrame {
     ArrayList<Column> columnsList = new ArrayList();
     int toAdd = 0;
 
+    int transitionTimer = 0;
+
+    final int LEVEL_CHANGE_TIME = 1500;
+    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 125;
+    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 125;
+
     public Game() {
         initComponents();
 
@@ -78,16 +87,9 @@ public class Game extends javax.swing.JFrame {
         WINDOW_WIDTH = screenSize.width;
     }
 
-    int transitionTimer = 0;
-
-    final int LEVEL_CHANGE_TIME = 1500;
-    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 125;
-    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 125;
+    Background temporaryBackground;
 
     private void startGame() {
-
-        System.out.println("LEVEL_SPEEDUP_CHECKPOINT: " + LEVEL_SPEEDUP_CHECKPOINT);
-        System.out.println("TRANSITION_TIME: " + TRANSITION_TIME);
 
         // could make all these methods
         countdown = 0;
@@ -109,8 +111,8 @@ public class Game extends javax.swing.JFrame {
 
         // initialize the background
         level.generateBackground();
-        panel_Background.add(level.getBackground());
-        panel_Background.setComponentZOrder(level.getBackground(), OrderLayer.BACKGROUND.layer);
+        panel_Background.add(level.getBackgroundSprite());
+        panel_Background.setComponentZOrder(level.getBackgroundSprite(), OrderLayer.BACKGROUND.layer);
 
         // initialize objects here
         level.generateLeftGround(GroundSetting.NORMAL.value);
@@ -121,6 +123,26 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(level.getRightGroundSprite());
         panel_Background.setComponentZOrder(level.getRightGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
 
+        // generate first layer of parallax
+        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_1);
+        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_1);
+
+        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
+        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+        
+        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
+        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+
+        // generate second layer of parallax
+        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_2);
+        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_2);
+
+        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
+        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+        
+        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
+        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+        
         // add player
         panel_Background.add(toy.getSprite());
         panel_Background.setComponentZOrder(toy.getSprite(), OrderLayer.FOREGROUND.layer);
@@ -136,7 +158,7 @@ public class Game extends javax.swing.JFrame {
             // make constants for both starting speed (2)
             // and speed time increase (500)
             if (toy.score % LEVEL_SPEEDUP_CHECKPOINT == 0) {
-                speed = (2 + toy.score / LEVEL_SPEEDUP_CHECKPOINT);
+                speed = (STARTING_SPEED + toy.score / LEVEL_SPEEDUP_CHECKPOINT);
 
                 // calculate lifetime of the column using
                 // Time = Distance / Speed formula
@@ -145,8 +167,6 @@ public class Game extends javax.swing.JFrame {
 
             if (toy.score > 0 && toy.score % LEVEL_SPEEDUP_CHECKPOINT == 0) {
                 transitionTimer = TRANSITION_TIME;
-
-                panel_Background.remove(level.getBackground());
 
                 Level oldLevel = level;
                 if (level instanceof BrickLand) {
@@ -157,13 +177,27 @@ public class Game extends javax.swing.JFrame {
                     level = new BrickLand();
                 }
 
+                temporaryBackground = oldLevel.getBackground();
+                panel_Background.setComponentZOrder(temporaryBackground.getSprite(), OrderLayer.BACKGROUND.layer - 1);
+
                 level.setLeftGround(oldLevel.getLeftGround());
                 level.setRightGround(oldLevel.getRightGround());
 
+                level.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
+                level.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
+                
+//                level.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
+//                level.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
+
                 // initialize the background
                 level.generateBackground();
-                panel_Background.add(level.getBackground());
-                panel_Background.setComponentZOrder(level.getBackground(), OrderLayer.BACKGROUND.layer);
+                panel_Background.add(level.getBackgroundSprite());
+                panel_Background.setComponentZOrder(level.getBackgroundSprite(), OrderLayer.BACKGROUND.layer);
+            }
+
+            if (temporaryBackground != null
+                    && temporaryBackground.getOpacity() > 0) {
+                temporaryBackground.decrementOpacity(speed);
             }
 
             if (transitionTimer > 0) {
@@ -215,13 +249,21 @@ public class Game extends javax.swing.JFrame {
                 System.out.println(level.groundKillEffect());
             }
 
-            // move the ground left
+            // move ground to the left
             level.moveLeftGround((int) -speed, 0);
             level.moveRightGround((int) -speed, 0);
 
+            // move parallax to the left
+            level.moveLeftParallax1((int) -(Math.max(1, speed - 1)), 0);
+            level.moveRightParallax1((int) -(Math.max(1, speed - 1)), 0);
+
+            level.moveLeftParallax2((int) -(Math.max(1, speed - 2)), 0);
+            level.moveRightParallax2((int) -(Math.max(1, speed - 2)), 0);
+            
             // could generate first gound here instead of outside
             // detect if ground has gone out of bounds to delete it and spawn a new one
             checkGroundOutOfBounds();
+            checkParallaxOutOfBounds();
 
             if (!columnsList.isEmpty()) {
                 // randomize where the column spawns
@@ -231,7 +273,7 @@ public class Game extends javax.swing.JFrame {
                 // 5 spaces in the y axis
                 // every 1 speed added
                 // with a max of 100
-                gap = (int) Math.max(100, 150 - ((speed - 2) * 5));
+                gap = (int) Math.max(100, 150 - ((speed - STARTING_SPEED) * 5));
 
                 ArrayList<Column> toRemove = new ArrayList();
 
@@ -333,6 +375,32 @@ public class Game extends javax.swing.JFrame {
             level.generateRightGround(offsetX);
             panel_Background.add(level.getRightGroundSprite());
             panel_Background.setComponentZOrder(level.getRightGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+        }
+    }
+
+    private void checkParallaxOutOfBounds() {
+        int offsetX = GroundSetting.OFFSET.value;
+
+        if (level.isLeftParallax1OutOfBounds()) {
+            level.generateLeftParallax(offsetX, ParallaxLevel.LEVEL_1);
+            panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
+            panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+        }
+        if (level.isRightParallax1OutOfBounds()) {
+            level.generateRightParallax(offsetX, ParallaxLevel.LEVEL_1);
+            panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
+            panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+        }
+        
+        if (level.isLeftParallax2OutOfBounds()) {
+            level.generateLeftParallax(offsetX, ParallaxLevel.LEVEL_2);
+            panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
+            panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+        }
+        if (level.isRightParallax2OutOfBounds()) {
+            level.generateRightParallax(offsetX, ParallaxLevel.LEVEL_2);
+            panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
+            panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
         }
     }
 
@@ -564,7 +632,7 @@ public class Game extends javax.swing.JFrame {
         // remove obstacles and player
         hideGame();
 
-        panel_Background.remove(level.getBackground());
+        panel_Background.remove(level.getBackgroundSprite());
 
         panel_Background.remove(toy.getSprite());
 

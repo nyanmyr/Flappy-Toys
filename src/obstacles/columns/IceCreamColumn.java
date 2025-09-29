@@ -16,30 +16,43 @@ public class IceCreamColumn extends Column {
     @Override
     public final void LoadSprite(int gap, int offset) {
         try {
-            java.net.URL resource = getClass().getResource("/resources/popsicle_column.png");
-            if (resource != null) {
-                Image img = ImageIO.read(resource);
-                java.awt.image.BufferedImage buffered
+            java.net.URL topSprite = getClass().getResource("/resources/popsicle_top_column.png");
+            java.net.URL bottomSprite = getClass().getResource("/resources/popsicle_bottom_column.png");
+            if (topSprite != null && bottomSprite != null) {
+                Image topImage = ImageIO.read(topSprite);
+                Image bottomImage = ImageIO.read(bottomSprite);
+
+                java.awt.image.BufferedImage bufferedTop
                         = new java.awt.image.BufferedImage(
-                                img.getWidth(null),
-                                img.getHeight(null),
+                                topImage.getWidth(null),
+                                topImage.getHeight(null),
                                 java.awt.image.BufferedImage.TYPE_INT_ARGB
                         );
-                Graphics2D g2d = buffered.createGraphics();
-                g2d.drawImage(img, 0, 0, null);
-                g2d.dispose();
+                Graphics2D g2dTop = bufferedTop.createGraphics();
+                g2dTop.drawImage(topImage, 0, 0, null);
+                g2dTop.dispose();
+
+                java.awt.image.BufferedImage bufferedBottom
+                        = new java.awt.image.BufferedImage(
+                                bottomImage.getWidth(null),
+                                bottomImage.getHeight(null),
+                                java.awt.image.BufferedImage.TYPE_INT_ARGB
+                        );
+                Graphics2D g2dBottom = bufferedBottom.createGraphics();
+                g2dBottom.drawImage(bottomImage, 0, 0, null);
+                g2dBottom.dispose();
 
                 // 0 gap
                 // -425 upper bound
                 // -175 lower bound
-                top = new Sprite(buffered);
-                bottom = new Sprite(buffered);
+                top = new Sprite(bufferedTop);
+                bottom = new Sprite(bufferedBottom);
 
                 // texture does not have enough bricks
                 top.setBounds(785, -(offset + gap), 90, 600);
                 bottom.setBounds(785, (top.getY() + top.getHeight()) + gap, 90, 600);
             } else {
-                throw new RuntimeException("Image resource not found: /popsicle_column.png");
+                throw new RuntimeException("Image resource not found: popsicle_top_column.png or popsicle_bottom_column.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

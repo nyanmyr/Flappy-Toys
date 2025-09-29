@@ -6,14 +6,14 @@ import java.awt.event.MouseListener;
 public class MouseInputHandler implements MouseListener {
 
     public boolean jumped;
-    
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        jumped = true;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        jumped = true;
     }
 
     @Override

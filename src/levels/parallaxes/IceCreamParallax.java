@@ -1,22 +1,37 @@
-package obstacles.grounds;
+package levels.parallaxes;
 
-import utility.Sprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import utility.Sprite;
 
-public class BrickGround extends Ground {
+public class IceCreamParallax extends Parallax {
 
-    public BrickGround(int offsetX){
-        super(offsetX);
+    public IceCreamParallax(int offsetX, ParallaxLevel level) {
+        super(offsetX, level);
         LoadSprite();
     }
 
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/brickland_ground.png");
+
+            int offsetY = 0;
+            
+            java.net.URL resource;
+            switch (level) {
+                case LEVEL_1 -> {
+                    resource = getClass().getResource("/resources/icecream_parallax1.png");
+                }
+                case LEVEL_2 -> {
+                    resource = getClass().getResource("/resources/icecream_parallax2.png");
+                    offsetY = 100;
+                }
+                default ->
+                    throw new AssertionError(level.name());
+            }
+
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -31,17 +46,14 @@ public class BrickGround extends Ground {
 
                 sprite = new Sprite(buffered);
 
-                sprite.setBounds(0 + offsetX, 450, 800, 200);
+                // adjust
+                sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 150);
             } else {
-                throw new RuntimeException("Image resource not found: /brickland_ground.png");
+                throw new RuntimeException("Image resource not found: icecream_parallax1 or icecream_parallax2.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
         }
     }
 
-    @Override
-    public String killEffect() {
-        return "Killed by ground";
-    }
 }

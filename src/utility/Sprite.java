@@ -1,12 +1,15 @@
 package utility;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 
 public class Sprite extends JComponent {
 
     private BufferedImage image;
+    private float opacity = 100.f; // default fully opaque
 
     public Sprite(BufferedImage image) {
         this.image = image;
@@ -24,11 +27,27 @@ public class Sprite extends JComponent {
         return image;
     }
 
+    public void setOpacity(float opacity) {
+        // clamp between 0 and 100
+        this.opacity = Math.max(0.f, Math.min(100.f, opacity));
+        repaint();
+    }
+
+    public float getOpacity() {
+        return opacity;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (image != null) {
-            g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            float alpha = opacity / 100.0f;
+
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+            g2d.dispose();
         }
     }
 }
