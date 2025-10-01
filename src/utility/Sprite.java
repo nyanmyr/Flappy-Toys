@@ -17,6 +17,20 @@ public class Sprite extends JComponent {
         setOpaque(false); // transparent background
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (image != null) {
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            float alpha = opacity / 100.0f;
+
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+            g2d.dispose();
+        }
+    }
+
     public void setImage(BufferedImage image) {
         this.image = image;
         setSize(image.getWidth(), image.getHeight());
@@ -37,17 +51,8 @@ public class Sprite extends JComponent {
         return opacity;
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (image != null) {
-            Graphics2D g2d = (Graphics2D) g.create();
-
-            float alpha = opacity / 100.0f;
-
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-            g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-            g2d.dispose();
-        }
+    public int getCenterX() {
+        return getX() + (getWidth() / 2);
     }
+    
 }

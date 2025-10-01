@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class KeyInputHandler implements KeyListener {
 
-    public boolean moveLeft, moveRight, abilityUsed = false;
+    public boolean abilityUsed = false;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -13,16 +13,6 @@ public class KeyInputHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int code = e.getKeyCode();
-
-        if (code == KeyEvent.VK_A
-                || code == KeyEvent.VK_LEFT) {
-            moveLeft = true;
-        }
-        if (code == KeyEvent.VK_D
-                || code == KeyEvent.VK_RIGHT) {
-            moveRight = true;
-        }
     }
 
     @Override
@@ -35,6 +25,6 @@ public class KeyInputHandler implements KeyListener {
     }
 
     public void reset() {
-        moveLeft = moveRight = abilityUsed = false;
+        abilityUsed = false;
     }
 }

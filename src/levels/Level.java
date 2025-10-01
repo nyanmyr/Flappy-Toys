@@ -184,20 +184,30 @@ public abstract class Level {
         ground_right.move(x, y);
     }
 
-    public void moveLeftParallax1(int x, int y) {
-        parallax1_left.move(x, y);
+    public void moveLeftParallax(int x, int y, ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                parallax1_left.move(x, y);
+            }
+            case LEVEL_2 -> {
+                parallax2_left.move(x, y);
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
 
-    public void moveRightParallax1(int x, int y) {
-        parallax1_right.move(x, y);
-    }
-
-    public void moveLeftParallax2(int x, int y) {
-        parallax2_left.move(x, y);
-    }
-
-    public void moveRightParallax2(int x, int y) {
-        parallax2_right.move(x, y);
+    public void moveRightParallax(int x, int y, ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                parallax1_right.move(x, y);
+            }
+            case LEVEL_2 -> {
+                parallax2_right.move(x, y);
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
     // </editor-fold>
 
@@ -210,20 +220,30 @@ public abstract class Level {
         return ground_right.outOfBoundsDetection();
     }
 
-    public boolean isLeftParallax1OutOfBounds() {
-        return parallax1_left.outOfBoundsDetection();
+    public boolean isLeftParallaxOutOfBounds(ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                return parallax1_left.outOfBoundsDetection();
+            }
+            case LEVEL_2 -> {
+                return parallax2_left.outOfBoundsDetection();
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
 
-    public boolean isRightParallax1OutOfBounds() {
-        return parallax1_right.outOfBoundsDetection();
-    }
-
-    public boolean isLeftParallax2OutOfBounds() {
-        return parallax2_left.outOfBoundsDetection();
-    }
-
-    public boolean isRightParallax2OutOfBounds() {
-        return parallax2_right.outOfBoundsDetection();
+    public boolean isRightParallaxOutOfBounds(ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                return parallax1_right.outOfBoundsDetection();
+            }
+            case LEVEL_2 -> {
+                return parallax1_right.outOfBoundsDetection();
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
     // </editor-fold>
 }

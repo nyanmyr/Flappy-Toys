@@ -2,11 +2,11 @@ package utility;
 
 public enum OrderLayer {
     UI(0),
-    FOREGROUND(2),
-    MIDDLEGROUND(4),
+    FOREGROUND(1),
+    MIDDLEGROUND(3),
     COLUMNS(6),
     PARALLAX_1(8),
-    PARALLAX_2(10),
+    PARALLAX_2(11),
     BACKGROUND(12);
 
     public final int layer;

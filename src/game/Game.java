@@ -36,11 +36,15 @@ public class Game extends javax.swing.JFrame {
     boolean gameOver = false;
     Random randomizer = new Random();
 
-    // if 10, then 100 is 1 second
+    // if 15, then 150 is 1 second
     // if 0, then 1 is 1 second
-    final int MILISECOND_DELAY = 10;
+    final int MILISECOND_DELAY = 15;
     KeyInputHandler playerKeyInput = new KeyInputHandler();
     MouseInputHandler playerMouseInput = new MouseInputHandler();
+
+    final int MIMIMUM_GAP = 100;
+    final int STARTING_GAP = 150;
+    final int GAP_DECREASE = 5;
 
     int num = randomizer.nextInt(175, 425);
     int gap = 150;
@@ -48,11 +52,11 @@ public class Game extends javax.swing.JFrame {
 
     final int GROUND_HEIGHT = 420;
 
-    final int MOVEMENT_SPEED = 10;
+    final int MOVEMENT_SPEED = 3;
     final int JUMP_HEIGHT = 50;
     final int GRAVITY = 2;
 
-    final int STARTING_SPEED = 2;
+    final int STARTING_SPEED = 3;
     float speed;
 
     ToyCharacter selectedCharacter = ToyCharacter.TEDDYCOPTER;
@@ -100,6 +104,7 @@ public class Game extends javax.swing.JFrame {
         playerMouseInput.reset(); // makes sure to reset the controls
         this.addKeyListener(playerKeyInput);
         this.addMouseListener(playerMouseInput);
+        this.addMouseMotionListener(playerMouseInput);
 
         label_Score.setVisible(true);
         panel_Background.setComponentZOrder(label_Score, OrderLayer.UI.layer);
@@ -129,7 +134,7 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
         panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
-        
+
         panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
         panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
 
@@ -139,10 +144,10 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
         panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
-        
+
         panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
         panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
-        
+
         // add player
         panel_Background.add(toy.getSprite());
         panel_Background.setComponentZOrder(toy.getSprite(), OrderLayer.FOREGROUND.layer);
@@ -151,6 +156,7 @@ public class Game extends javax.swing.JFrame {
         // place toy into center
         toy.setLocation((WINDOW_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 0);
 
+        // game loop is here
         ActionListener update = (ActionEvent evt) -> {
 
             // ALPHA feature in the making
@@ -164,7 +170,7 @@ public class Game extends javax.swing.JFrame {
                 // Time = Distance / Speed formula
                 spawnTime = (int) ((785 + 90) / speed);
             }
-
+            
             if (toy.score > 0 && toy.score % LEVEL_SPEEDUP_CHECKPOINT == 0) {
                 transitionTimer = TRANSITION_TIME;
 
@@ -178,21 +184,21 @@ public class Game extends javax.swing.JFrame {
                 }
 
                 temporaryBackground = oldLevel.getBackground();
-                panel_Background.setComponentZOrder(temporaryBackground.getSprite(), OrderLayer.BACKGROUND.layer - 1);
+                panel_Background.setComponentZOrder(temporaryBackground.getSprite(), panel_Background.getComponentCount() - 2);
 
                 level.setLeftGround(oldLevel.getLeftGround());
                 level.setRightGround(oldLevel.getRightGround());
 
                 level.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
                 level.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
-                
+
                 level.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
                 level.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
 
                 // initialize the background
                 level.generateBackground();
                 panel_Background.add(level.getBackgroundSprite());
-                panel_Background.setComponentZOrder(level.getBackgroundSprite(), OrderLayer.BACKGROUND.layer);
+                panel_Background.setComponentZOrder(level.getBackgroundSprite(), panel_Background.getComponentCount() - 1);
             }
 
             if (temporaryBackground != null
@@ -205,6 +211,9 @@ public class Game extends javax.swing.JFrame {
             }
             // handle player input
             if (!gameOver) {
+                playerMouseInput.updateMovement();
+                playerMouseInput.givePlayerX(toy.getSprite().getCenterX());
+                
                 if (playerMouseInput.jumped) {
                     // turn this into method
                     toy.move(0, -JUMP_HEIGHT);
@@ -213,13 +222,13 @@ public class Game extends javax.swing.JFrame {
                     toy.move(0, GRAVITY);
                 }
 
-                if (playerKeyInput.moveLeft) {
+                if (playerMouseInput.moveLeft) {
                     toy.move(-MOVEMENT_SPEED, 0);
-                    playerKeyInput.moveLeft = false;
+                    playerMouseInput.moveLeft = false;
                 }
-                if (playerKeyInput.moveRight) {
+                if (playerMouseInput.moveRight) {
                     toy.move(MOVEMENT_SPEED, 0);
-                    playerKeyInput.moveRight = false;
+                    playerMouseInput.moveRight = false;
                 }
 
                 if (playerKeyInput.abilityUsed) {
@@ -237,6 +246,7 @@ public class Game extends javax.swing.JFrame {
             } else {
                 this.removeKeyListener(playerKeyInput);
                 this.removeMouseListener(playerMouseInput);
+                this.removeMouseMotionListener(playerMouseInput);
             }
 
             // sky and ground_left collision detection
@@ -254,12 +264,11 @@ public class Game extends javax.swing.JFrame {
             level.moveRightGround((int) -speed, 0);
 
             // move parallax to the left
-            level.moveLeftParallax1((int) -(Math.max(1, speed - 1)), 0);
-            level.moveRightParallax1((int) -(Math.max(1, speed - 1)), 0);
+            for (ParallaxLevel parallaxLevel : ParallaxLevel.values()) {
+                level.moveLeftParallax((int) -(Math.max(1, speed - 1)), 0, parallaxLevel);
+                level.moveRightParallax((int) -(Math.max(1, speed - 1)), 0, parallaxLevel);
+            }
 
-            level.moveLeftParallax2((int) -(Math.max(1, speed - 2)), 0);
-            level.moveRightParallax2((int) -(Math.max(1, speed - 2)), 0);
-            
             // could generate first gound here instead of outside
             // detect if ground has gone out of bounds to delete it and spawn a new one
             checkGroundOutOfBounds();
@@ -273,7 +282,7 @@ public class Game extends javax.swing.JFrame {
                 // 5 spaces in the y axis
                 // every 1 speed added
                 // with a max of 100
-                gap = (int) Math.max(100, 150 - ((speed - STARTING_SPEED) * 5));
+                gap = (int) Math.max(MIMIMUM_GAP, STARTING_GAP - ((speed - STARTING_SPEED) * GAP_DECREASE));
 
                 ArrayList<Column> toRemove = new ArrayList();
 
@@ -380,27 +389,29 @@ public class Game extends javax.swing.JFrame {
 
     private void checkParallaxOutOfBounds() {
         int offsetX = GroundSetting.OFFSET.value;
+        int orderLayer;
 
-        if (level.isLeftParallax1OutOfBounds()) {
-            level.generateLeftParallax(offsetX, ParallaxLevel.LEVEL_1);
-            panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
-            panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
-        }
-        if (level.isRightParallax1OutOfBounds()) {
-            level.generateRightParallax(offsetX, ParallaxLevel.LEVEL_1);
-            panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
-            panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
-        }
-        
-        if (level.isLeftParallax2OutOfBounds()) {
-            level.generateLeftParallax(offsetX, ParallaxLevel.LEVEL_2);
-            panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
-            panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
-        }
-        if (level.isRightParallax2OutOfBounds()) {
-            level.generateRightParallax(offsetX, ParallaxLevel.LEVEL_2);
-            panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
-            panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+        for (ParallaxLevel parallaxLevel : ParallaxLevel.values()) {
+            switch (parallaxLevel) {
+                case LEVEL_1 -> {
+                    orderLayer = OrderLayer.PARALLAX_1.layer;
+                }
+                case LEVEL_2 -> {
+                    orderLayer = OrderLayer.PARALLAX_2.layer;
+                }
+                default -> throw new AssertionError(parallaxLevel.name());
+            }
+
+            if (level.isLeftParallaxOutOfBounds(parallaxLevel)) {
+                level.generateLeftParallax(offsetX, parallaxLevel);
+                panel_Background.add(level.getLeftParallaxSprite(parallaxLevel));
+                panel_Background.setComponentZOrder(level.getLeftParallaxSprite(parallaxLevel), orderLayer);
+            }
+            if (level.isRightParallaxOutOfBounds(parallaxLevel)) {
+                level.generateRightParallax(offsetX, parallaxLevel);
+                panel_Background.add(level.getRightParallaxSprite(parallaxLevel));
+                panel_Background.setComponentZOrder(level.getRightParallaxSprite(parallaxLevel), orderLayer);
+            }
         }
     }
 
@@ -535,7 +546,7 @@ public class Game extends javax.swing.JFrame {
 
         label_Title.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
         label_Title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_Title.setText("FLAPPY TOYBOX");
+        label_Title.setText("FLAPPY TOYS");
         panel_Background.add(label_Title);
         label_Title.setBounds(170, 160, 460, 110);
 
@@ -640,6 +651,8 @@ public class Game extends javax.swing.JFrame {
         panel_Background.remove(level.getLeftGroundSprite());
         panel_Background.remove(level.getRightGroundSprite());
 
+        // add removal for parallaxes here
+        
         // remove every spawned column from the screen
         for (Column col : columnsList) {
             panel_Background.remove(col.bottom);

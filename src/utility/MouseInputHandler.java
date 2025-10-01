@@ -6,7 +6,11 @@ import java.awt.event.MouseMotionListener;
 
 public class MouseInputHandler implements MouseListener, MouseMotionListener {
 
-    public boolean jumped;
+    public boolean moveLeft, moveRight, jumped;
+
+    int mouseX;
+
+    int playerX;
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -35,10 +39,22 @@ public class MouseInputHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        System.out.println("X: " + e.getX());
+        mouseX = e.getX();
     }
-    
+
+    public void updateMovement() {
+        if (mouseX > playerX + 10) {
+            moveRight = true;
+        } else if (mouseX < playerX - 10) {
+            moveLeft = true;
+        }
+    }
+
+    public void givePlayerX(int playerX) {
+        this.playerX = playerX;
+    }
+
     public void reset() {
-        jumped = false;
+        moveLeft = moveRight = jumped = false;
     }
 }
