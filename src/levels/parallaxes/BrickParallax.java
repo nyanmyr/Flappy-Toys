@@ -45,7 +45,7 @@ public class BrickParallax extends Parallax {
                 g2d.dispose();
 
                 sprite = new Sprite(buffered);
-
+                
                 sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 200);
             } else {
                 throw new RuntimeException("Image resource not found: brick_parallax1.png");

@@ -7,11 +7,15 @@ import utility.Sprite;
 public abstract class Toy implements Moveable {
 
     protected Sprite sprite;
-    public Ability ability;
-    public int charges = 3;
-    
-    public int score = 0;
-    public boolean shield = false;
+    protected Ability ability;
+    protected int charges = 3;
+
+    private int score = 0;
+    private boolean hasShield = false;
+
+    public Toy(Ability ability) {
+        this.ability = ability;
+    }
 
     abstract public void LoadSprite();
 
@@ -24,12 +28,32 @@ public abstract class Toy implements Moveable {
         return false;
     }
 
-    public void setAbility(Ability ability) {
-        this.ability = ability;
-    }
-    
     public Sprite getSprite() {
         return sprite;
+    }
+
+    public int getCharges() {
+        return charges;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public boolean hasShield() {
+        return hasShield;
+    }
+
+    public void setShield(boolean status) {
+        this.hasShield = status;
+    }
+    
+    public void incrementScore() {
+        score++;
+    }
+    
+    public void resetScore() {
+        score = 0;
     }
     
     @Override

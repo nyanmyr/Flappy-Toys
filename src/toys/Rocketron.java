@@ -1,5 +1,6 @@
 package toys;
 
+import abilities.Ability;
 import utility.Sprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -8,7 +9,8 @@ import javax.imageio.ImageIO;
 
 public class Rocketron extends Toy {
 
-    public Rocketron() {
+    public Rocketron(Ability ability) {
+        super(ability);
         LoadSprite();
     }
 
