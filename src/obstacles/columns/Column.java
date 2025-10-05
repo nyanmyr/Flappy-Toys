@@ -4,12 +4,12 @@ package obstacles.columns;
 import obstacles.Obstacle;
 import utility.Moveable;
 import utility.Decays;
-import utility.Sprite;
+import utility.StaticSprite;
 
 public abstract class Column extends Obstacle implements Moveable, Decays {
 
-    public Sprite top;
-    public Sprite bottom;
+    public StaticSprite top;
+    public StaticSprite bottom;
 
     protected int lifeTime;
 
@@ -51,11 +51,11 @@ public abstract class Column extends Obstacle implements Moveable, Decays {
         return lifeTime > 0;
     }
     
-    public Sprite getTopSprite() {
+    public StaticSprite getTopSprite() {
         return top;
     }
     
-    public Sprite getBottomSprite() {
+    public StaticSprite getBottomSprite() {
         return bottom;
     }
 }

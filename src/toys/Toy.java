@@ -1,12 +1,12 @@
 package toys;
 
 import abilities.Ability;
+import utility.DynamicSprite;
 import utility.Moveable;
-import utility.Sprite;
 
 public abstract class Toy implements Moveable {
 
-    protected Sprite sprite;
+    protected DynamicSprite sprite;
     protected Ability ability;
     protected int charges = 3;
 
@@ -28,7 +28,7 @@ public abstract class Toy implements Moveable {
         return false;
     }
 
-    public Sprite getSprite() {
+    public DynamicSprite getSprite() {
         return sprite;
     }
 

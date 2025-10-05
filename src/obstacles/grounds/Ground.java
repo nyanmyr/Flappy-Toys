@@ -2,11 +2,11 @@ package obstacles.grounds;
 
 import obstacles.Obstacle;
 import utility.Moveable;
-import utility.Sprite;
+import utility.StaticSprite;
 
 public abstract class Ground extends Obstacle implements Moveable {
 
-    protected Sprite sprite;
+    protected StaticSprite sprite;
     protected final int offsetX;
 
     public Ground(int offsetX){
@@ -38,7 +38,7 @@ public abstract class Ground extends Obstacle implements Moveable {
         return sprite.getX() + sprite.getWidth() < 0;
     }
     
-    public Sprite getSprite() {
+    public StaticSprite getSprite() {
         return sprite;
     }
 }

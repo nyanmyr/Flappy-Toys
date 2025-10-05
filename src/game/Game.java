@@ -207,8 +207,11 @@ public class Game extends javax.swing.JFrame {
             if (transitionTimer > 0) {
                 transitionTimer--;
             }
+
             // handle player input
             if (!gameOver) {
+                toy.getSprite().update();
+
                 playerMouseInput.updateMovement();
                 playerMouseInput.givePlayerX(toy.getSprite().getCenterX());
 

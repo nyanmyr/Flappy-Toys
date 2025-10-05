@@ -1,14 +1,14 @@
 package levels.backgrounds;
 
-import utility.Sprite;
+import utility.StaticSprite;
 
 public abstract class Background {
 
-    protected Sprite sprite;
+    protected StaticSprite sprite;
 
     abstract public void LoadSprite();
 
-    public Sprite getSprite() {
+    public StaticSprite getSprite() {
         return sprite;
     }
 

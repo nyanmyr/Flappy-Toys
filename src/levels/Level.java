@@ -5,7 +5,7 @@ import levels.parallaxes.Parallax;
 import levels.parallaxes.ParallaxLevel;
 import obstacles.columns.Column;
 import obstacles.grounds.Ground;
-import utility.Sprite;
+import utility.StaticSprite;
 
 public abstract class Level {
 
@@ -118,27 +118,27 @@ public abstract class Level {
     // </editor-fold>
 
     // <editor-fold desc="get sprite methods">
-    public Sprite getTopColumn() {
+    public StaticSprite getTopColumn() {
         return column.getTopSprite();
     }
 
-    public Sprite getBottomColumn() {
+    public StaticSprite getBottomColumn() {
         return column.getBottomSprite();
     }
 
-    public Sprite getLeftGroundSprite() {
+    public StaticSprite getLeftGroundSprite() {
         return ground_left.getSprite();
     }
 
-    public Sprite getRightGroundSprite() {
+    public StaticSprite getRightGroundSprite() {
         return ground_right.getSprite();
     }
 
-    public Sprite getBackgroundSprite() {
+    public StaticSprite getBackgroundSprite() {
         return background.getSprite();
     }
 
-    public Sprite getLeftParallaxSprite(ParallaxLevel level) {
+    public StaticSprite getLeftParallaxSprite(ParallaxLevel level) {
         switch (level) {
             case LEVEL_1 -> {
                 return parallax1_left.getSprite();
@@ -151,7 +151,7 @@ public abstract class Level {
         }
     }
 
-    public Sprite getRightParallaxSprite(ParallaxLevel level) {
+    public StaticSprite getRightParallaxSprite(ParallaxLevel level) {
         switch (level) {
             case LEVEL_1 -> {
                 return parallax1_right.getSprite();

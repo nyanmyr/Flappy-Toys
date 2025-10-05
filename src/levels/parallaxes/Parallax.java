@@ -1,11 +1,11 @@
 package levels.parallaxes;
 
 import utility.Moveable;
-import utility.Sprite;
+import utility.StaticSprite;
 
 public abstract class Parallax implements Moveable {
 
-    protected Sprite sprite;
+    protected StaticSprite sprite;
     protected final int offsetX;
     protected final ParallaxLevel level;
 
@@ -39,7 +39,7 @@ public abstract class Parallax implements Moveable {
         return sprite.getX() + sprite.getWidth() < 0;
     }
     
-    public Sprite getSprite() {
+    public StaticSprite getSprite() {
         return sprite;
     }
 }

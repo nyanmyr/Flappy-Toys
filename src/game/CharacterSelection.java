@@ -13,7 +13,7 @@ import toys.Rocketron;
 import toys.Teddycopter;
 import toys.Toy;
 import toys.ToyCharacter;
-import utility.Sprite;
+import utility.StaticSprite;
 
 public class CharacterSelection extends javax.swing.JFrame {
 
@@ -22,7 +22,7 @@ public class CharacterSelection extends javax.swing.JFrame {
 
     private final int RESIZED_WIDTH;
 
-    private Sprite background;
+    private StaticSprite background;
 
     Toy toy;
     ToyCharacter selectedCharacter = ToyCharacter.TEDDYCOPTER;
@@ -44,7 +44,7 @@ public class CharacterSelection extends javax.swing.JFrame {
 
     private void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/brickland_bg.jpg");
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/brickland_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -57,7 +57,7 @@ public class CharacterSelection extends javax.swing.JFrame {
                 g2d.drawImage(img, 0, 0, null);
                 g2d.dispose();
 
-                background = new Sprite(buffered);
+                background = new StaticSprite(buffered);
 
                 background.setBounds(0, 0, WINDOW_HEIGHT, WINDOW_WIDTH);
             } else {
@@ -96,6 +96,7 @@ public class CharacterSelection extends javax.swing.JFrame {
                 throw new AssertionError(character.name());
         }
 
+        toy.setSize(200, 200);
         toy.setLocation((RESIZED_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 25);
         panel_Background.add(toy.getSprite());
         panel_Background.setComponentZOrder(toy.getSprite(), 0);

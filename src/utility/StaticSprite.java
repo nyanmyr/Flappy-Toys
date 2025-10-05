@@ -6,12 +6,12 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 
-public class Sprite extends JComponent {
+public class StaticSprite extends JComponent {
 
-    private BufferedImage image;
+    protected BufferedImage image;
     private float opacity = 100.f; // default fully opaque
 
-    public Sprite(BufferedImage image) {
+    public StaticSprite(BufferedImage image) {
         this.image = image;
         setSize(image.getWidth(), image.getHeight());
         setOpaque(false); // transparent background

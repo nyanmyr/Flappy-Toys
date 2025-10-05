@@ -1,6 +1,6 @@
 package obstacles.grounds;
 
-import utility.Sprite;
+import utility.StaticSprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class BrickGround extends Ground {
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/brickland_ground.png");
+            java.net.URL resource = getClass().getResource("/resources/grounds/brickland_ground.png");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -29,7 +29,7 @@ public class BrickGround extends Ground {
                 g2d.drawImage(img, 0, 0, null);
                 g2d.dispose();
 
-                sprite = new Sprite(buffered);
+                sprite = new StaticSprite(buffered);
 
                 sprite.setBounds(0 + offsetX, 450, 800, 200);
             } else {

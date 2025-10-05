@@ -4,14 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import utility.Sprite;
+import utility.StaticSprite;
 
 public class Menu extends javax.swing.JFrame {
 
     private final int WINDOW_WIDTH;
     private final int WINDOW_HEIGHT;
 
-    private Sprite background;
+    private StaticSprite background;
 
     public Menu(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.WINDOW_HEIGHT = SCREEN_HEIGHT;
@@ -25,7 +25,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/brickland_bg.jpg");
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/brickland_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -38,7 +38,7 @@ public class Menu extends javax.swing.JFrame {
                 g2d.drawImage(img, 0, 0, null);
                 g2d.dispose();
 
-                background = new Sprite(buffered);
+                background = new StaticSprite(buffered);
 
                 background.setBounds(0, 0, WINDOW_HEIGHT, WINDOW_WIDTH);
             } else {

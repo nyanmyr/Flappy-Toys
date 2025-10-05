@@ -1,6 +1,6 @@
 package obstacles.columns;
 
-import utility.Sprite;
+import utility.StaticSprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
@@ -16,8 +16,8 @@ public class IceCreamColumn extends Column {
     @Override
     public final void LoadSprite(int gap, int offset) {
         try {
-            java.net.URL topSprite = getClass().getResource("/resources/popsicle_top_column.png");
-            java.net.URL bottomSprite = getClass().getResource("/resources/popsicle_bottom_column.png");
+            java.net.URL topSprite = getClass().getResource("/resources/columns/popsicle_top_column.png");
+            java.net.URL bottomSprite = getClass().getResource("/resources/columns/popsicle_bottom_column.png");
             if (topSprite != null && bottomSprite != null) {
                 Image topImage = ImageIO.read(topSprite);
                 Image bottomImage = ImageIO.read(bottomSprite);
@@ -45,8 +45,8 @@ public class IceCreamColumn extends Column {
                 // 0 gap
                 // -425 upper bound
                 // -175 lower bound
-                top = new Sprite(bufferedTop);
-                bottom = new Sprite(bufferedBottom);
+                top = new StaticSprite(bufferedTop);
+                bottom = new StaticSprite(bufferedBottom);
 
                 // texture does not have enough bricks
                 top.setBounds(785, -(offset + gap), 90, 600);
