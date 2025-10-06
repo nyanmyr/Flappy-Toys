@@ -1,5 +1,6 @@
 package levels;
 
+import collectibles.BrickToken;
 import levels.backgrounds.BrickLandBackground;
 import levels.parallaxes.BrickParallax;
 import levels.parallaxes.ParallaxLevel;
@@ -54,5 +55,10 @@ public class BrickLand extends Level {
             default ->
                 throw new AssertionError(level.name());
         }
+    }
+
+    @Override
+    public void generateToken(int lifeTime) {
+        token = new BrickToken(lifeTime);
     }
 }

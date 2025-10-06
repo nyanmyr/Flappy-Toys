@@ -1,5 +1,6 @@
 package levels;
 
+import collectibles.PopsicleToken;
 import levels.backgrounds.IceCreamLandBackground;
 import levels.parallaxes.IceCreamParallax;
 import levels.parallaxes.ParallaxLevel;
@@ -54,5 +55,10 @@ public class IceCreamLand extends Level {
             default ->
                 throw new AssertionError(level.name());
         }
+    }
+    
+    @Override
+    public void generateToken(int lifeTime) {
+        token = new PopsicleToken(lifeTime);
     }
 }

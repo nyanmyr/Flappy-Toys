@@ -1,11 +1,12 @@
 package levels;
 
+import collectibles.Collectible;
 import levels.backgrounds.Background;
 import levels.parallaxes.Parallax;
 import levels.parallaxes.ParallaxLevel;
 import obstacles.columns.Column;
 import obstacles.grounds.Ground;
-import utility.StaticSprite;
+import utility.sprites.StaticSprite;
 
 public abstract class Level {
 
@@ -20,6 +21,8 @@ public abstract class Level {
     protected Parallax parallax2_left;
     protected Parallax parallax2_right;
 
+    protected Collectible token;
+
     // add variables for holding loaded data here
     public abstract void generateColumn(int gap, int columnOffset, int lifeTime);
 
@@ -33,6 +36,8 @@ public abstract class Level {
 
     public abstract void generateRightParallax(int offsetX, ParallaxLevel level);
 
+    public abstract void generateToken(int lifeTime);
+    
     // <editor-fold desc="get object methods">
     public Background getBackground() {
         return background;
@@ -75,6 +80,10 @@ public abstract class Level {
                 throw new AssertionError(level.name());
         }
     }
+
+    public Collectible getToken() {
+        return token;
+    }
     // </editor-fold>
 
     // <editor-fold desc="set object methods">
@@ -115,8 +124,13 @@ public abstract class Level {
                 throw new AssertionError(level.name());
         }
     }
-    // </editor-fold>
 
+    public void setToken(Collectible token) {
+        this.token = token;
+    }
+
+    // </editor-fold>
+    
     // <editor-fold desc="get sprite methods">
     public StaticSprite getTopColumn() {
         return column.getTopSprite();
@@ -163,6 +177,10 @@ public abstract class Level {
                 throw new AssertionError(level.name());
         }
     }
+
+    public StaticSprite getTokenSprite() {
+        return token.getSprite();
+    }
     // </editor-fold>
 
     // <editor-fold desc="get kill effect methods">
@@ -208,6 +226,10 @@ public abstract class Level {
             default ->
                 throw new AssertionError(level.name());
         }
+    }
+
+    public void moveToken(int x, int y) {
+        token.move(x, y);
     }
     // </editor-fold>
 

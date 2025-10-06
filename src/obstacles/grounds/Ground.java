@@ -1,10 +1,11 @@
 package obstacles.grounds;
 
 import obstacles.Obstacle;
-import utility.Moveable;
-import utility.StaticSprite;
+import utility.interfaces.Moveable;
+import utility.interfaces.OutOfBoundsDetection;
+import utility.sprites.StaticSprite;
 
-public abstract class Ground extends Obstacle implements Moveable {
+public abstract class Ground extends Obstacle implements Moveable, OutOfBoundsDetection {
 
     protected StaticSprite sprite;
     protected final int offsetX;
@@ -34,6 +35,7 @@ public abstract class Ground extends Obstacle implements Moveable {
         sprite.setSize(x, y);
     }
 
+    @Override
     public boolean outOfBoundsDetection() {
         return sprite.getX() + sprite.getWidth() < 0;
     }

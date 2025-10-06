@@ -1,6 +1,5 @@
-package toys;
+package collectibles;
 
-import abilities.Ability;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -9,19 +8,24 @@ import javax.imageio.ImageIO;
 import utility.sprites.DynamicSprite;
 import utility.sprites.SpriteUtils;
 
-public class Foldy extends Toy {
+public class BrickToken extends Collectible {
 
-    public Foldy(Ability ability) {
-        super(ability);
-        LoadSprite();
+    public BrickToken(int lifeTime) {
+        super(lifeTime);
+        loadSprite();
     }
 
     @Override
-    public final void LoadSprite() {
+    public CollectibleType giveReward() {
+        return CollectibleType.SCORE;
+    }
+
+    @Override
+    public final void loadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/animations/characters/foldy_anim.png");
+            java.net.URL resource = getClass().getResource("/resources/animations/collectibles/brick_token_anim.png");
             if (resource == null) {
-                throw new RuntimeException("Image resource not found: /resources/animations/characters/foldy_anim.png");
+                throw new RuntimeException("Image resource not found: /brick_token_anim.png");
             }
 
             // Read and convert to BufferedImage
@@ -41,7 +45,8 @@ public class Foldy extends Toy {
 
             // Use DynamicSprite for animation
             sprite = new DynamicSprite(frames);
-            sprite.setBounds(0, 0, frames[0].getWidth(), frames[0].getHeight());
+            sprite.setBounds(100, 0, frames[0].getWidth(), frames[0].getHeight());
+            setSize(30, 30);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

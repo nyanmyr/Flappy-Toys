@@ -2,9 +2,9 @@ package obstacles.columns;
 
 // turn into abstract eventually
 import obstacles.Obstacle;
-import utility.Moveable;
-import utility.Decays;
-import utility.StaticSprite;
+import utility.interfaces.Moveable;
+import utility.interfaces.Decays;
+import utility.sprites.StaticSprite;
 
 public abstract class Column extends Obstacle implements Moveable, Decays {
 
@@ -16,6 +16,15 @@ public abstract class Column extends Obstacle implements Moveable, Decays {
     public Column(int lifeTime) {
         this.lifeTime = lifeTime;
     }
+
+    public StaticSprite getTopSprite() {
+        return top;
+    }
+
+    public StaticSprite getBottomSprite() {
+        return bottom;
+    }
+
     public abstract void LoadSprite(int gap, int offset);
 
     @Override
@@ -42,20 +51,17 @@ public abstract class Column extends Obstacle implements Moveable, Decays {
             lifeTime--;
             return false;
         }
-        
+
         return true;
     }
-    
+
     @Override
     public boolean isAlive() {
         return lifeTime > 0;
     }
     
-    public StaticSprite getTopSprite() {
-        return top;
-    }
-    
-    public StaticSprite getBottomSprite() {
-        return bottom;
+    @Override
+    public void kill() {
+        lifeTime = 0;
     }
 }

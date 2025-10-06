@@ -1,4 +1,4 @@
-package utility;
+package utility.enums;
 
 public enum OrderLayer {
     UI(0),

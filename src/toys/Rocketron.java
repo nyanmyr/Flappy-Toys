@@ -6,8 +6,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import utility.DynamicSprite;
-import utility.SpriteUtils;
+import utility.sprites.DynamicSprite;
+import utility.sprites.SpriteUtils;
 
 public class Rocketron extends Toy {
 
@@ -19,9 +19,9 @@ public class Rocketron extends Toy {
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/animations/rocketron_anim.png");
+            java.net.URL resource = getClass().getResource("/resources/animations/characters/rocketron_anim.png");
             if (resource == null) {
-                throw new RuntimeException("Image resource not found: /resources/animations/rocketron_anim.png");
+                throw new RuntimeException("Image resource not found: /resources/animations/characters/rocketron_anim.png");
             }
 
             // Read and convert to BufferedImage

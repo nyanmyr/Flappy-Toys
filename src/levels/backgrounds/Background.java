@@ -1,6 +1,6 @@
 package levels.backgrounds;
 
-import utility.StaticSprite;
+import utility.sprites.StaticSprite;
 
 public abstract class Background {
 

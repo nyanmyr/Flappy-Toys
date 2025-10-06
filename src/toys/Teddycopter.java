@@ -6,8 +6,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import utility.DynamicSprite;
-import utility.SpriteUtils;
+import utility.sprites.DynamicSprite;
+import utility.sprites.SpriteUtils;
 
 public class Teddycopter extends Toy {
 
@@ -19,9 +19,9 @@ public class Teddycopter extends Toy {
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/animations/teddycopter_anim.png");
+            java.net.URL resource = getClass().getResource("/resources/animations/characters/teddycopter_anim.png");
             if (resource == null) {
-                throw new RuntimeException("Image resource not found: /animations/teddycopter_anim.png");
+                throw new RuntimeException("Image resource not found: /animations/characters/teddycopter_anim.png");
             }
 
             // Read and convert to BufferedImage

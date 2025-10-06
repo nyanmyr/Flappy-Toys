@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import utility.StaticSprite;
+import utility.sprites.StaticSprite;
 
 public class BrickLandBackground extends Background {
 

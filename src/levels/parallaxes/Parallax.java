@@ -1,19 +1,24 @@
 package levels.parallaxes;
 
-import utility.Moveable;
-import utility.StaticSprite;
+import utility.interfaces.Moveable;
+import utility.interfaces.OutOfBoundsDetection;
+import utility.sprites.StaticSprite;
 
-public abstract class Parallax implements Moveable {
+public abstract class Parallax implements Moveable, OutOfBoundsDetection {
 
     protected StaticSprite sprite;
     protected final int offsetX;
     protected final ParallaxLevel level;
 
-    public Parallax(int offsetX, ParallaxLevel level){
+    public Parallax(int offsetX, ParallaxLevel level) {
         this.offsetX = offsetX;
         this.level = level;
     }
-    
+
+    public StaticSprite getSprite() {
+        return sprite;
+    }
+
     abstract public void LoadSprite();
 
     @Override
@@ -35,11 +40,8 @@ public abstract class Parallax implements Moveable {
         sprite.setSize(x, y);
     }
 
+    @Override
     public boolean outOfBoundsDetection() {
         return sprite.getX() + sprite.getWidth() < 0;
-    }
-    
-    public StaticSprite getSprite() {
-        return sprite;
     }
 }

@@ -1,6 +1,8 @@
 package game;
 
 // misc.
+import collectibles.Charge;
+import collectibles.Collectible;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Timer;
@@ -17,10 +19,12 @@ import levels.BrickLand;
 import levels.IceCreamLand;
 import levels.backgrounds.Background;
 import levels.parallaxes.ParallaxLevel;
-import utility.OrderLayer;
+import sfx.sounds.SoundEffectPlayer;
+import sfx.sounds.SoundFile;
+import utility.enums.OrderLayer;
 // utilities
-import utility.KeyInputHandler;
-import utility.MouseInputHandler;
+import utility.inputhandling.KeyInputHandler;
+import utility.inputhandling.MouseInputHandler;
 
 public class Game extends javax.swing.JFrame {
 
@@ -31,16 +35,13 @@ public class Game extends javax.swing.JFrame {
     // if 15, then 150 is 1 second
     // if 0, then 1 is 1 second
     final int MILISECOND_DELAY = 15;
+
     KeyInputHandler playerKeyInput = new KeyInputHandler();
     MouseInputHandler playerMouseInput = new MouseInputHandler();
 
     final int MIMIMUM_GAP = 100;
     final int STARTING_GAP = 150;
     final int GAP_DECREASE = 5;
-
-    int num = randomizer.nextInt(175, 425);
-    int gap = 150;
-    int spawnTime;
 
     final int GROUND_HEIGHT = 420;
 
@@ -49,7 +50,7 @@ public class Game extends javax.swing.JFrame {
     final int GRAVITY = 2;
 
     final int STARTING_SPEED = 3;
-    float speed;
+    int speed;
 
     Toy toy;
     final int CHARACTER_SIZE = 40;
@@ -65,8 +66,24 @@ public class Game extends javax.swing.JFrame {
 
     Level level;
 
+    int columnRandomY = randomizer.nextInt(175, 425);
+    int columnGap = 150;
+    int aliveTime;
+
+    final int COLUMN_RESPAWN_GAP = 150;
+    final int COLUMN_RESPAWN_DECREMENT = 15;
+
+    int columnRespawnTimer = 0;
     ArrayList<Column> columnsList = new ArrayList();
-    int toAdd = 0;
+
+    int tokenRandomY = randomizer.nextInt(20, 400);
+
+    int tokenRespawnTimer = COLUMN_RESPAWN_GAP / 2;
+    ArrayList<Collectible> tokenList = new ArrayList();
+
+    final int CHARGE_COOLDOWN_START = 6;
+    int chargeCooldown = CHARGE_COOLDOWN_START;
+    ArrayList<Charge> chargeList = new ArrayList();
 
     int transitionTimer = 0;
 
@@ -166,7 +183,7 @@ public class Game extends javax.swing.JFrame {
 
                 // calculate lifetime of the column using
                 // Time = Distance / Speed formula
-                spawnTime = (int) ((785 + 90) / speed);
+                aliveTime = (int) ((785 + 90) / speed);
             }
 
             if (toy.getScore() > 0 && toy.getScore() % LEVEL_SPEEDUP_CHECKPOINT == 0) {
@@ -216,6 +233,7 @@ public class Game extends javax.swing.JFrame {
                 playerMouseInput.givePlayerX(toy.getSprite().getCenterX());
 
                 if (playerMouseInput.jumped) {
+                    SoundEffectPlayer.playSound(SoundFile.JUMP);
                     // turn this into method
                     toy.move(0, -JUMP_HEIGHT);
                     playerMouseInput.jumped = false;
@@ -234,6 +252,7 @@ public class Game extends javax.swing.JFrame {
 
                 if (playerKeyInput.abilityUsed) {
                     if (toy.useAbility()) {
+                        SoundEffectPlayer.playSound(SoundFile.ABILITY);
                         label_Charges.setText("Charges: " + toy.getCharges());
                     }
                     playerKeyInput.abilityUsed = false;
@@ -276,17 +295,21 @@ public class Game extends javax.swing.JFrame {
             checkGroundOutOfBounds();
             checkParallaxOutOfBounds();
 
+            // !!! probably should organize this !!!
+            // !!! and comments too !!!
             if (!columnsList.isEmpty()) {
                 // randomize where the column spawns
-                num = randomizer.nextInt(175, 425);
+                columnRandomY = randomizer.nextInt(175, 425);
+
                 // could add constants here
-                // reduces the gap between the columns by
+                // reduces the columnGap between the columns by
                 // 5 spaces in the y axis
                 // every 1 speed added
                 // with a max of 100
-                gap = (int) Math.max(MIMIMUM_GAP, STARTING_GAP - ((speed - STARTING_SPEED) * GAP_DECREASE));
+                columnGap = (int) Math.max(MIMIMUM_GAP, STARTING_GAP - ((speed - STARTING_SPEED) * GAP_DECREASE));
 
-                ArrayList<Column> toRemove = new ArrayList();
+                ArrayList<Column> columnsToRemove = new ArrayList();
+                ArrayList<Collectible> chargesToRemove = new ArrayList();
 
                 // iterate through every spawned column
                 for (Column col : columnsList) {
@@ -316,23 +339,53 @@ public class Game extends javax.swing.JFrame {
                         panel_Background.remove(col.top);
 
                         if (transitionTimer <= 0) {
-                            toRemove.add(col);
+                            columnsToRemove.add(col);
                         }
                     }
                 }
 
-                // set the amoutn of columns to spawn to the amount deleted before
-                toAdd = toRemove.size();
+                // iterate through every spawned column
+                for (Collectible charge : chargeList) {
+                    charge.getSprite().update();
+
+                    // move column to the sprite
+                    charge.move((int) -speed, 0);
+
+                    // charge collision detection
+                    if ((toy.getSprite().getX() < charge.getSprite().getX() + charge.getSprite().getWidth()
+                            && toy.getSprite().getX() + toy.getSprite().getWidth() > charge.getSprite().getX()
+                            && toy.getSprite().getY() < charge.getSprite().getY() + charge.getSprite().getHeight()
+                            && toy.getSprite().getY() + toy.getSprite().getHeight() > charge.getSprite().getY())
+                            && charge.isAlive()) {
+                        SoundEffectPlayer.playSound(SoundFile.CHARGE);
+                        toy.receiveCollectible(charge);
+                        label_Charges.setText("Charges: " + toy.getCharges());
+                        charge.kill();
+                    }
+
+                    // delete the column after lifeTime expires
+                    if (charge.decay()) {
+                        // remove decayed column
+                        panel_Background.remove(charge.getSprite());
+
+                        if (transitionTimer <= 0) {
+                            chargesToRemove.add(charge);
+                        }
+                    }
+                }
 
                 // delete all the decayed columns
-                columnsList.removeAll(toRemove);
+                columnsList.removeAll(columnsToRemove);
+                // including all the charges
+                columnsList.removeAll(chargesToRemove);
             }
 
             // adds a new column to replace the decayed columns
-            if ((toAdd > 0
-                    || columnsList.isEmpty())
+            if (columnRespawnTimer == 0
                     && transitionTimer <= 0) {
-                level.generateColumn(gap, num, spawnTime);
+                columnRespawnTimer = getColumnRespawnTime();
+
+                level.generateColumn(columnGap, columnRandomY, aliveTime);
 
                 panel_Background.add(level.getBottomColumn());
                 panel_Background.setComponentZOrder(level.getBottomColumn(), OrderLayer.COLUMNS.layer);
@@ -340,6 +393,83 @@ public class Game extends javax.swing.JFrame {
                 panel_Background.setComponentZOrder(level.getTopColumn(), OrderLayer.COLUMNS.layer);
 
                 columnsList.add(level.getColumn());
+
+                // only spawns the charge every 6th column
+                if (chargeCooldown > 0) {
+                    chargeCooldown--;
+                } else {
+                    chargeCooldown = CHARGE_COOLDOWN_START;
+                    Charge charge = new Charge(aliveTime);
+
+                    panel_Background.add(charge.getSprite());
+                    panel_Background.setComponentZOrder(charge.getSprite(), OrderLayer.UI.layer);
+                    // spawns the charge in between the gap
+                    charge.getSprite().setLocation(815,
+                            level.getTopColumn().getY() + level.getTopColumn().getHeight() + (columnGap / 2) - 20);
+
+                    chargeList.add(charge);
+                }
+            }
+
+            if (!tokenList.isEmpty()) {
+                ArrayList<Collectible> tokensToRemove = new ArrayList();
+
+                tokenRandomY = randomizer.nextInt(20, 400);
+
+                // iterate through every spawned column
+                for (Collectible token : tokenList) {
+                    // animate token
+                    token.getSprite().update();
+
+                    // move column to the sprite
+                    token.move((int) -speed, 0);
+
+                    // column collision detection
+                    if ((toy.getSprite().getX() < token.getSprite().getX() + token.getSprite().getWidth()
+                            && toy.getSprite().getX() + toy.getSprite().getWidth() > token.getSprite().getX()
+                            && toy.getSprite().getY() < token.getSprite().getY() + token.getSprite().getHeight()
+                            && toy.getSprite().getY() + toy.getSprite().getHeight() > token.getSprite().getY())
+                            && token.isAlive()) {
+
+                        SoundEffectPlayer.playSound(SoundFile.TOKEN);
+                        toy.receiveCollectible(token);
+                        token.kill();
+                    }
+
+                    // delete the token after lifeTime expires
+                    // or token is killed
+                    if (token.decay()) {
+                        // remove decayed column
+                        panel_Background.remove(token.getSprite());
+
+                        if (transitionTimer <= 0) {
+                            tokensToRemove.add(token);
+                        }
+                    }
+                }
+
+                // delete all the decayed columns
+                tokenList.removeAll(tokensToRemove);
+            }
+
+            if (tokenRespawnTimer == 0
+                    && transitionTimer <= 0) {
+                tokenRespawnTimer = getColumnRespawnTime();
+
+                level.generateToken(aliveTime);
+
+                panel_Background.add(level.getTokenSprite());
+                // place the token to the offscreen right
+                level.getTokenSprite().setLocation(815, tokenRandomY);
+                panel_Background.setComponentZOrder(level.getTokenSprite(), OrderLayer.COLUMNS.layer);
+
+                tokenList.add(level.getToken());
+            }
+
+            // decrement the column respawn timer
+            if (transitionTimer <= 0) {
+                columnRespawnTimer--;
+                tokenRespawnTimer--;
             }
 
             // increment the score every frame
@@ -357,6 +487,8 @@ public class Game extends javax.swing.JFrame {
 
             // handle game over
             if (gameOver) {
+                SoundEffectPlayer.playSound(SoundFile.HURT);
+
                 Timer localTimer = (Timer) evt.getSource();
                 localTimer.stop();
 
@@ -416,6 +548,12 @@ public class Game extends javax.swing.JFrame {
                 panel_Background.setComponentZOrder(level.getRightParallaxSprite(parallaxLevel), orderLayer);
             }
         }
+    }
+
+    // calculates the columnGap between columns while taking speed into account
+    private int getColumnRespawnTime() {
+        return COLUMN_RESPAWN_GAP - ((COLUMN_RESPAWN_DECREMENT * (speed - STARTING_SPEED)) / speed) <= 0
+                ? 1 : COLUMN_RESPAWN_GAP - ((COLUMN_RESPAWN_DECREMENT * (speed - STARTING_SPEED)) / speed);
     }
 
     private void hideButtons() {

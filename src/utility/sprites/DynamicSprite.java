@@ -1,4 +1,4 @@
-package utility;
+package utility.sprites;
 
 import java.awt.image.BufferedImage;
 

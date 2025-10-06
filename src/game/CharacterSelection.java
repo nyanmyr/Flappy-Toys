@@ -13,7 +13,7 @@ import toys.Rocketron;
 import toys.Teddycopter;
 import toys.Toy;
 import toys.ToyCharacter;
-import utility.StaticSprite;
+import utility.sprites.StaticSprite;
 
 public class CharacterSelection extends javax.swing.JFrame {
 
