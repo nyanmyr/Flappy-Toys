@@ -1,7 +1,5 @@
 package game;
 
-import toys.ToyCharacter;
-
 public class Main {
 
     private static final int SCREEN_WIDTH = 800;
@@ -9,7 +7,5 @@ public class Main {
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> new Menu(SCREEN_WIDTH, SCREEN_HEIGHT).setVisible(true));
-        ToyCharacter character = ToyCharacter.ROCKETRON;
-//        java.awt.EventQueue.invokeLater(() -> new Game(character).setVisible(true));
     }
 }

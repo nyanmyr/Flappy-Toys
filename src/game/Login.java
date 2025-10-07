@@ -6,14 +6,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class Option extends javax.swing.JFrame {
+public class Login extends javax.swing.JFrame {
 
     private final int WINDOW_WIDTH;
     private final int WINDOW_HEIGHT;
 
     private StaticSprite background;
 
-    public Option(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
+    public Login(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.WINDOW_HEIGHT = SCREEN_HEIGHT;
         this.WINDOW_WIDTH = SCREEN_WIDTH;
 
@@ -55,10 +55,12 @@ public class Option extends javax.swing.JFrame {
 
         panel_Background = new javax.swing.JPanel();
         label_Title = new javax.swing.JLabel();
-        button_SoundEffects = new javax.swing.JButton();
-        button_Music = new javax.swing.JButton();
-        button_Language = new javax.swing.JButton();
-        button_Tutorial = new javax.swing.JButton();
+        label_Username = new javax.swing.JLabel();
+        textField_Username = new javax.swing.JTextField();
+        label_Password = new javax.swing.JLabel();
+        passwordField_Password = new javax.swing.JPasswordField();
+        button_Login = new javax.swing.JButton();
+        button_CreateAccount = new javax.swing.JButton();
         button_Return = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -74,53 +76,55 @@ public class Option extends javax.swing.JFrame {
 
         label_Title.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
         label_Title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_Title.setText("OPTIONS");
+        label_Title.setText("LOGIN");
         panel_Background.add(label_Title);
         label_Title.setBounds(50, 50, 290, 80);
 
-        button_SoundEffects.setBackground(new java.awt.Color(0, 74, 173));
-        button_SoundEffects.setForeground(new java.awt.Color(255, 255, 255));
-        button_SoundEffects.setText("SOUND EFFECTS: ON");
-        button_SoundEffects.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_SoundEffectsActionPerformed(evt);
-            }
-        });
-        panel_Background.add(button_SoundEffects);
-        button_SoundEffects.setBounds(150, 200, 220, 50);
+        label_Username.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        label_Username.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Username.setText("USERNAME");
+        panel_Background.add(label_Username);
+        label_Username.setBounds(270, 170, 260, 30);
 
-        button_Music.setBackground(new java.awt.Color(0, 74, 173));
-        button_Music.setForeground(new java.awt.Color(255, 255, 255));
-        button_Music.setText("MUSIC: ON");
-        button_Music.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_MusicActionPerformed(evt);
-            }
-        });
-        panel_Background.add(button_Music);
-        button_Music.setBounds(430, 200, 220, 50);
+        textField_Username.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        panel_Background.add(textField_Username);
+        textField_Username.setBounds(270, 210, 260, 30);
 
-        button_Language.setBackground(new java.awt.Color(0, 74, 173));
-        button_Language.setForeground(new java.awt.Color(255, 255, 255));
-        button_Language.setText("LANGUAGE: ENGLISH");
-        button_Language.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_LanguageActionPerformed(evt);
-            }
-        });
-        panel_Background.add(button_Language);
-        button_Language.setBounds(150, 340, 220, 50);
+        label_Password.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        label_Password.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Password.setText("PASSWORD");
+        panel_Background.add(label_Password);
+        label_Password.setBounds(270, 250, 260, 30);
 
-        button_Tutorial.setBackground(new java.awt.Color(0, 74, 173));
-        button_Tutorial.setForeground(new java.awt.Color(255, 255, 255));
-        button_Tutorial.setText("TUTORIAL: ON");
-        button_Tutorial.addActionListener(new java.awt.event.ActionListener() {
+        passwordField_Password.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                button_TutorialActionPerformed(evt);
+                passwordField_PasswordActionPerformed(evt);
             }
         });
-        panel_Background.add(button_Tutorial);
-        button_Tutorial.setBounds(430, 340, 220, 50);
+        panel_Background.add(passwordField_Password);
+        passwordField_Password.setBounds(270, 290, 260, 30);
+
+        button_Login.setBackground(new java.awt.Color(0, 74, 173));
+        button_Login.setForeground(new java.awt.Color(255, 255, 255));
+        button_Login.setText("Login");
+        button_Login.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_LoginActionPerformed(evt);
+            }
+        });
+        panel_Background.add(button_Login);
+        button_Login.setBounds(290, 380, 220, 50);
+
+        button_CreateAccount.setBackground(new java.awt.Color(0, 74, 173));
+        button_CreateAccount.setForeground(new java.awt.Color(255, 255, 255));
+        button_CreateAccount.setText("Create Account");
+        button_CreateAccount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_CreateAccountActionPerformed(evt);
+            }
+        });
+        panel_Background.add(button_CreateAccount);
+        button_CreateAccount.setBounds(290, 440, 220, 30);
 
         button_Return.setBackground(new java.awt.Color(0, 74, 173));
         button_Return.setForeground(new java.awt.Color(255, 255, 255));
@@ -131,7 +135,7 @@ public class Option extends javax.swing.JFrame {
             }
         });
         panel_Background.add(button_Return);
-        button_Return.setBounds(290, 460, 220, 50);
+        button_Return.setBounds(290, 480, 220, 30);
 
         getContentPane().add(panel_Background);
         panel_Background.setBounds(0, 0, 800, 600);
@@ -145,30 +149,29 @@ public class Option extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new Menu(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
     }//GEN-LAST:event_button_ReturnActionPerformed
 
-    private void button_MusicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_MusicActionPerformed
+    private void button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LoginActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_button_MusicActionPerformed
+    }//GEN-LAST:event_button_LoginActionPerformed
 
-    private void button_TutorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_TutorialActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button_TutorialActionPerformed
+    private void button_CreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreateAccountActionPerformed
+        dispose();
+        java.awt.EventQueue.invokeLater(() -> new Register(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
+    }//GEN-LAST:event_button_CreateAccountActionPerformed
 
-    private void button_SoundEffectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SoundEffectsActionPerformed
+    private void passwordField_PasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordField_PasswordActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_button_SoundEffectsActionPerformed
-
-    private void button_LanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LanguageActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_button_LanguageActionPerformed
+    }//GEN-LAST:event_passwordField_PasswordActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton button_Language;
-    private javax.swing.JButton button_Music;
+    private javax.swing.JButton button_CreateAccount;
+    private javax.swing.JButton button_Login;
     private javax.swing.JButton button_Return;
-    private javax.swing.JButton button_SoundEffects;
-    private javax.swing.JButton button_Tutorial;
+    private javax.swing.JLabel label_Password;
     private javax.swing.JLabel label_Title;
+    private javax.swing.JLabel label_Username;
     private javax.swing.JPanel panel_Background;
+    private javax.swing.JPasswordField passwordField_Password;
+    private javax.swing.JTextField textField_Username;
     // End of variables declaration//GEN-END:variables
 }

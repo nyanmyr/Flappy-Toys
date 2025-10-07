@@ -9,10 +9,12 @@ public abstract class Toy implements Moveable {
 
     protected DynamicSprite sprite;
     protected Ability ability;
-    protected int charges = 0;
+    protected int charges;
 
-    private int score = 0;
+    private int score;
     private boolean hasShield = false;
+
+    private int collected;
 
     public Toy(Ability ability) {
         this.ability = ability;
@@ -41,6 +43,10 @@ public abstract class Toy implements Moveable {
         return score;
     }
 
+    public int getCollected() {
+        return collected;
+    }
+
     public boolean hasShield() {
         return hasShield;
     }
@@ -57,15 +63,23 @@ public abstract class Toy implements Moveable {
         score = 0;
     }
 
-    public void receiveCollectible(Collectible collectible) {
+    public void setCharges(int charges) {
+        this.charges = charges;
+    }
 
+    public void setCollected(int collected) {
+        this.collected = collected;
+    }
+
+    public void receiveCollectible(Collectible collectible) {
+        collected++;
+        
         switch (collectible.giveReward()) {
             case CHARGE -> {
                 charges++;
             }
             case SCORE -> {
 //                score += 500;
-                
             }
             default ->
                 throw new AssertionError(collectible.giveReward().name());

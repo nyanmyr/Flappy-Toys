@@ -125,11 +125,21 @@ public class Menu extends javax.swing.JFrame {
 
         button_Account.setBackground(new java.awt.Color(0, 74, 173));
         button_Account.setForeground(new java.awt.Color(255, 255, 255));
+        button_Account.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_AccountActionPerformed(evt);
+            }
+        });
         panel_Background.add(button_Account);
         button_Account.setBounds(680, 80, 60, 60);
 
         button_Settings.setBackground(new java.awt.Color(0, 74, 173));
         button_Settings.setForeground(new java.awt.Color(255, 255, 255));
+        button_Settings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_SettingsActionPerformed(evt);
+            }
+        });
         panel_Background.add(button_Settings);
         button_Settings.setBounds(590, 80, 60, 60);
 
@@ -149,13 +159,24 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_button_LeaderboardsActionPerformed
 
     private void button_CreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreditsActionPerformed
-        // TODO add your handling code here:
+        dispose();
+        new Credits(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_CreditsActionPerformed
 
     private void button_PlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PlayActionPerformed
         dispose();
         new CharacterSelection(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_PlayActionPerformed
+
+    private void button_SettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SettingsActionPerformed
+        dispose();
+        new Option(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+    }//GEN-LAST:event_button_SettingsActionPerformed
+
+    private void button_AccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AccountActionPerformed
+        dispose();
+        new Login(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+    }//GEN-LAST:event_button_AccountActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_Account;

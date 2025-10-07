@@ -1,6 +1,7 @@
 package game;
 
 // misc.
+import collectibles.BrickToken;
 import collectibles.Charge;
 import collectibles.Collectible;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import utility.inputhandling.MouseInputHandler;
 
 public class Game extends javax.swing.JFrame {
 
-    // probably reorganize these variables
+    // eh. good enough
     boolean gameOver = false;
     Random randomizer = new Random();
 
@@ -54,42 +55,38 @@ public class Game extends javax.swing.JFrame {
 
     Toy toy;
     final int CHARACTER_SIZE = 40;
+    int countdown;
+    boolean immunity;
 
     // values set after constructor call
     private final int WINDOW_HEIGHT;
     private final int WINDOW_WIDTH;
-
     private final int RESIZED_WIDTH;
-
-    int countdown;
-    boolean immunity;
 
     Level level;
 
-    int columnRandomY = randomizer.nextInt(175, 425);
-    int columnGap = 150;
-    int aliveTime;
-
-    final int COLUMN_RESPAWN_GAP = 150;
-    final int COLUMN_RESPAWN_DECREMENT = 15;
-
-    int columnRespawnTimer = 0;
-    ArrayList<Column> columnsList = new ArrayList();
-
-    int tokenRandomY = randomizer.nextInt(20, 400);
-
-    int tokenRespawnTimer = COLUMN_RESPAWN_GAP / 2;
-    ArrayList<Collectible> tokenList = new ArrayList();
-
-    final int CHARGE_COOLDOWN_START = 6;
-    int chargeCooldown = CHARGE_COOLDOWN_START;
-    ArrayList<Charge> chargeList = new ArrayList();
-
-    int transitionTimer = 0;
+    int transitionTimer;
 
     final int LEVEL_CHANGE_TIME = 1500;
     final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 125;
     final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 125;
+
+    int columnRandomY;
+    int columnGap;
+    int aliveTime;
+
+    final int COLUMN_RESPAWN_GAP = 150;
+    final int COLUMN_RESPAWN_DECREMENT = 15;
+    int columnRespawnTimer;
+    ArrayList<Column> columnsList = new ArrayList();
+
+    int tokenRandomY;
+    int tokenRespawnTimer;
+    ArrayList<Collectible> tokenList = new ArrayList();
+
+    final int CHARGE_COOLDOWN_START = 6;
+    int chargeCooldown;
+    ArrayList<Charge> chargeList = new ArrayList();
 
     public Game(int WINDOW_WIDTH, int WINDOW_HEIGHT, Toy toy) {
         this.WINDOW_WIDTH = WINDOW_WIDTH;
@@ -102,77 +99,37 @@ public class Game extends javax.swing.JFrame {
 
         this.toy = toy;
 
-        label_Charges.setText("Charges: " + toy.getCharges());
-
         startGame();
     }
 
     Background temporaryBackground;
 
+    Collectible screenCharge;
+    Collectible screenToken;
+
     private void startGame() {
 
-        hideButtons();
+        initializeVariables();
 
-        // could make all these methods
+        // probably should encapsulate these
         countdown = 0;
         immunity = false;
 
-        // give controls to player
-        playerKeyInput.reset(); // makes sure to reset the controls
-        playerMouseInput.reset(); // makes sure to reset the controls
-        this.addKeyListener(playerKeyInput);
-        this.addMouseListener(playerMouseInput);
-        this.addMouseMotionListener(playerMouseInput);
+        hideButtons();
 
-        label_Charges.setVisible(true);
-        panel_Background.setComponentZOrder(label_Charges, OrderLayer.UI.layer);
+        giveControls();
+        resetCollectibles();
+        generateLevel();
+        addPlayer();
 
-        level = new BrickLand();
-
-        // initialize objects here
-        level.generateLeftGround(GroundSetting.NORMAL.value);
-        level.generateRightGround(GroundSetting.OFFSET.value);
-
-        panel_Background.add(level.getLeftGroundSprite());
-        panel_Background.setComponentZOrder(level.getLeftGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
-        panel_Background.add(level.getRightGroundSprite());
-        panel_Background.setComponentZOrder(level.getRightGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
-
-        // generate first layer of parallax
-        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_1);
-        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_1);
-
-        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
-        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
-
-        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
-        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
-
-        // generate second layer of parallax
-        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_2);
-        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_2);
-
-        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
-        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
-
-        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
-        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
-
-        // add player
-        panel_Background.add(toy.getSprite());
-        panel_Background.setComponentZOrder(toy.getSprite(), OrderLayer.FOREGROUND.layer);
-        // make toy to small
-        toy.setSize(CHARACTER_SIZE, CHARACTER_SIZE);
-        // place toy into center
-        toy.setLocation((RESIZED_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 0);
-
-        // initialize the background
-        level.generateBackground();
-        panel_Background.add(level.getBackgroundSprite());
-        panel_Background.setComponentZOrder(level.getBackgroundSprite(), panel_Background.getComponentCount() - 1);
+        addScreenIcons();
 
         // game loop is here
         ActionListener update = (ActionEvent evt) -> {
+
+            // update screen charge
+            screenCharge.getSprite().update();
+            screenToken.getSprite().update();
 
             // ALPHA feature in the making
             // calculate speed over time
@@ -186,6 +143,7 @@ public class Game extends javax.swing.JFrame {
                 aliveTime = (int) ((785 + 90) / speed);
             }
 
+            // change level
             if (toy.getScore() > 0 && toy.getScore() % LEVEL_SPEEDUP_CHECKPOINT == 0) {
                 transitionTimer = TRANSITION_TIME;
 
@@ -214,6 +172,8 @@ public class Game extends javax.swing.JFrame {
                 level.generateBackground();
                 panel_Background.add(level.getBackgroundSprite());
                 panel_Background.setComponentZOrder(level.getBackgroundSprite(), panel_Background.getComponentCount() - 1);
+                
+                
             }
 
             if (temporaryBackground != null
@@ -327,7 +287,6 @@ public class Game extends javax.swing.JFrame {
                             && toy.getSprite().getY() + toy.getSprite().getHeight() > col.top.getY())))
                             && !immunity
                             && col.isAlive()) {
-
                         gameOver = true;
                         System.out.println(col.killEffect());
                     }
@@ -430,9 +389,9 @@ public class Game extends javax.swing.JFrame {
                             && toy.getSprite().getY() < token.getSprite().getY() + token.getSprite().getHeight()
                             && toy.getSprite().getY() + toy.getSprite().getHeight() > token.getSprite().getY())
                             && token.isAlive()) {
-
                         SoundEffectPlayer.playSound(SoundFile.TOKEN);
                         toy.receiveCollectible(token);
+                        label_Collectibles.setText(String.valueOf(toy.getCollected()));
                         token.kill();
                     }
 
@@ -504,6 +463,107 @@ public class Game extends javax.swing.JFrame {
 
         Timer timer = new Timer(MILISECOND_DELAY, update);
         timer.start();
+    }
+
+    // partition in add charge and token icon
+    // make token icon dynamic
+    private void addScreenIcons() {
+        screenCharge = new Charge(0);
+        panel_Background.add(screenCharge.getSprite());
+        screenCharge.setLocation(10, 10);
+        screenCharge.setSize(50, 50);
+        panel_Background.setComponentZOrder(screenCharge.getSprite(), OrderLayer.UI.layer);
+        
+        // should probably make this change
+        screenToken = new BrickToken(0);
+        panel_Background.add(screenToken.getSprite());
+        screenToken.setLocation(10, 90);
+        screenToken.setSize(50, 50);
+        panel_Background.setComponentZOrder(screenToken.getSprite(), OrderLayer.UI.layer);
+    }
+
+    private void initializeVariables() {
+        transitionTimer = 0;
+
+        columnGap = 150;
+
+        columnRespawnTimer = 0;
+        columnRandomY = randomizer.nextInt(175, 425);
+
+        tokenRandomY = randomizer.nextInt(20, 400);
+        tokenRespawnTimer = COLUMN_RESPAWN_GAP / 2;
+
+        chargeCooldown = CHARGE_COOLDOWN_START;
+    }
+
+    private void addPlayer() {
+        // add player
+        panel_Background.add(toy.getSprite());
+        panel_Background.setComponentZOrder(toy.getSprite(), OrderLayer.FOREGROUND.layer);
+        // make toy to small
+        toy.setSize(CHARACTER_SIZE, CHARACTER_SIZE);
+        // place toy into center`
+        toy.setLocation((RESIZED_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 0);
+    }
+
+    private void generateLevel() {
+        level = new BrickLand();
+
+        // initialize objects here
+        level.generateLeftGround(GroundSetting.NORMAL.value);
+        level.generateRightGround(GroundSetting.OFFSET.value);
+
+        panel_Background.add(level.getLeftGroundSprite());
+        panel_Background.setComponentZOrder(level.getLeftGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+        panel_Background.add(level.getRightGroundSprite());
+        panel_Background.setComponentZOrder(level.getRightGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+
+        // generate first layer of parallax
+        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_1);
+        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_1);
+
+        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
+        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+
+        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
+        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+
+        // generate second layer of parallax
+        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_2);
+        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_2);
+
+        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
+        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+
+        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
+        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+
+        // initialize the background
+        level.generateBackground();
+        panel_Background.add(level.getBackgroundSprite());
+        panel_Background.setComponentZOrder(level.getBackgroundSprite(), panel_Background.getComponentCount() - 1);
+    }
+
+    private void resetCollectibles() {
+        toy.setCharges(0);
+        label_Charges.setText(String.valueOf(toy.getCharges()));
+        label_Charges.setVisible(true);
+        panel_Background.setComponentZOrder(label_Charges, OrderLayer.UI.layer);
+
+        toy.setCollected(0);
+        label_Collectibles.setText(String.valueOf(toy.getCollected()));
+        label_Collectibles.setVisible(true);
+        panel_Background.setComponentZOrder(label_Collectibles, OrderLayer.UI.layer);
+    }
+
+    private void giveControls() {
+        // give controls to player
+        playerKeyInput.reset();
+        playerMouseInput.reset();
+
+        this.addKeyListener(playerKeyInput);
+        this.addMouseListener(playerMouseInput);
+        this.addMouseMotionListener(playerMouseInput);
     }
 
     private void checkGroundOutOfBounds() {
@@ -585,10 +645,26 @@ public class Game extends javax.swing.JFrame {
         }
         columnsList.clear();
 
+        // remove every spawned charge from the screen
+        for (Collectible charge : chargeList) {
+            panel_Background.remove(charge.getSprite());
+        }
+        chargeList.clear();
+
+        // remove every spawned token from the screen
+        for (Collectible token : tokenList) {
+            panel_Background.remove(token.getSprite());
+        }
+        tokenList.clear();
+
         // disable controls
         this.removeKeyListener(playerKeyInput);
         this.removeMouseListener(playerMouseInput);
         toy.resetScore();
+
+        // remove screen icons
+        panel_Background.remove(screenCharge.getSprite());
+        panel_Background.remove(screenToken.getSprite());
 
         gameOver = false;
 
@@ -600,6 +676,7 @@ public class Game extends javax.swing.JFrame {
     private void initComponents() {
 
         panel_Background = new javax.swing.JPanel();
+        label_Collectibles = new javax.swing.JLabel();
         label_Charges = new javax.swing.JLabel();
         label_Score = new javax.swing.JLabel();
         label_GameOver = new javax.swing.JLabel();
@@ -617,11 +694,17 @@ public class Game extends javax.swing.JFrame {
         panel_Background.setMinimumSize(new java.awt.Dimension(800, 600));
         panel_Background.setLayout(null);
 
+        label_Collectibles.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
+        label_Collectibles.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Collectibles.setText("Tokens");
+        panel_Background.add(label_Collectibles);
+        label_Collectibles.setBounds(70, 90, 170, 50);
+
         label_Charges.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
-        label_Charges.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_Charges.setText("Charges: ");
+        label_Charges.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Charges.setText("Charges ");
         panel_Background.add(label_Charges);
-        label_Charges.setBounds(10, 10, 170, 50);
+        label_Charges.setBounds(70, 10, 170, 50);
 
         label_Score.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
         label_Score.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -678,6 +761,7 @@ public class Game extends javax.swing.JFrame {
     private javax.swing.JButton button_ChooseCharacter;
     private javax.swing.JButton button_PlayAgain;
     private javax.swing.JLabel label_Charges;
+    private javax.swing.JLabel label_Collectibles;
     private javax.swing.JLabel label_GameOver;
     private javax.swing.JLabel label_Score;
     private javax.swing.JPanel panel_Background;
