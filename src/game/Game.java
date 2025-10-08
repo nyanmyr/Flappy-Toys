@@ -124,6 +124,10 @@ public class Game extends javax.swing.JFrame {
 
         addScreenIcons();
 
+        panel_Background.setComponentZOrder(label_Collectibles, getOrderLayer(OrderLayer.UI));
+        panel_Background.setComponentZOrder(label_Charges, getOrderLayer(OrderLayer.UI));
+        panel_Background.setComponentZOrder(label_Score, getOrderLayer(OrderLayer.UI));
+
         // game loop is here
         ActionListener update = (ActionEvent evt) -> {
 
@@ -157,7 +161,6 @@ public class Game extends javax.swing.JFrame {
                 }
 
                 temporaryBackground = oldLevel.getBackground();
-                panel_Background.setComponentZOrder(temporaryBackground.getSprite(), panel_Background.getComponentCount() - 2);
 
                 level.setLeftGround(oldLevel.getLeftGround());
                 level.setRightGround(oldLevel.getRightGround());
@@ -171,9 +174,15 @@ public class Game extends javax.swing.JFrame {
                 // initialize the background
                 level.generateBackground();
                 panel_Background.add(level.getBackgroundSprite());
-                panel_Background.setComponentZOrder(level.getBackgroundSprite(), panel_Background.getComponentCount() - 1);
+
+                panel_Background.setComponentZOrder(oldLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
+                panel_Background.setComponentZOrder(oldLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
                 
-                
+                panel_Background.setComponentZOrder(oldLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
+                panel_Background.setComponentZOrder(oldLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
+
+                panel_Background.setComponentZOrder(level.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
+                panel_Background.setComponentZOrder(temporaryBackground.getSprite(), getOrderLayer(OrderLayer.BACKGROUND) - 1);
             }
 
             if (temporaryBackground != null
@@ -472,14 +481,14 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(screenCharge.getSprite());
         screenCharge.setLocation(10, 10);
         screenCharge.setSize(50, 50);
-        panel_Background.setComponentZOrder(screenCharge.getSprite(), OrderLayer.UI.layer);
-        
+        panel_Background.setComponentZOrder(screenCharge.getSprite(), getOrderLayer(OrderLayer.UI));
+
         // should probably make this change
         screenToken = new BrickToken(0);
         panel_Background.add(screenToken.getSprite());
         screenToken.setLocation(10, 90);
         screenToken.setSize(50, 50);
-        panel_Background.setComponentZOrder(screenToken.getSprite(), OrderLayer.UI.layer);
+        panel_Background.setComponentZOrder(screenToken.getSprite(), getOrderLayer(OrderLayer.UI));
     }
 
     private void initializeVariables() {
@@ -514,46 +523,46 @@ public class Game extends javax.swing.JFrame {
         level.generateRightGround(GroundSetting.OFFSET.value);
 
         panel_Background.add(level.getLeftGroundSprite());
-        panel_Background.setComponentZOrder(level.getLeftGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+        panel_Background.setComponentZOrder(level.getLeftGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
         panel_Background.add(level.getRightGroundSprite());
-        panel_Background.setComponentZOrder(level.getRightGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+        panel_Background.setComponentZOrder(level.getRightGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
 
         // generate first layer of parallax
         level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_1);
         level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_1);
 
         panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
-        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
 
         panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
-        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), OrderLayer.PARALLAX_1.layer);
+        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
 
         // generate second layer of parallax
         level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_2);
         level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_2);
 
         panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
-        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
 
         panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
-        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), OrderLayer.PARALLAX_2.layer);
+        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
 
         // initialize the background
         level.generateBackground();
         panel_Background.add(level.getBackgroundSprite());
-        panel_Background.setComponentZOrder(level.getBackgroundSprite(), panel_Background.getComponentCount() - 1);
+        panel_Background.setComponentZOrder(level.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
     }
 
     private void resetCollectibles() {
         toy.setCharges(0);
         label_Charges.setText(String.valueOf(toy.getCharges()));
         label_Charges.setVisible(true);
-        panel_Background.setComponentZOrder(label_Charges, OrderLayer.UI.layer);
+        panel_Background.setComponentZOrder(label_Charges, getOrderLayer(OrderLayer.UI));
 
         toy.setCollected(0);
         label_Collectibles.setText(String.valueOf(toy.getCollected()));
         label_Collectibles.setVisible(true);
-        panel_Background.setComponentZOrder(label_Collectibles, OrderLayer.UI.layer);
+        panel_Background.setComponentZOrder(label_Collectibles, getOrderLayer(OrderLayer.UI));
     }
 
     private void giveControls() {
@@ -572,12 +581,12 @@ public class Game extends javax.swing.JFrame {
         if (level.isLeftGroundOutOfBounds()) {
             level.generateLeftGround(offsetX);
             panel_Background.add(level.getLeftGroundSprite());
-            panel_Background.setComponentZOrder(level.getLeftGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+            panel_Background.setComponentZOrder(level.getLeftGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
         }
         if (level.isRightGroundOutOfBounds()) {
             level.generateRightGround(offsetX);
             panel_Background.add(level.getRightGroundSprite());
-            panel_Background.setComponentZOrder(level.getRightGroundSprite(), OrderLayer.MIDDLEGROUND.layer);
+            panel_Background.setComponentZOrder(level.getRightGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
         }
     }
 
@@ -588,10 +597,10 @@ public class Game extends javax.swing.JFrame {
         for (ParallaxLevel parallaxLevel : ParallaxLevel.values()) {
             switch (parallaxLevel) {
                 case LEVEL_1 -> {
-                    orderLayer = OrderLayer.PARALLAX_1.layer;
+                    orderLayer =  getOrderLayer(OrderLayer.PARALLAX_1);
                 }
                 case LEVEL_2 -> {
-                    orderLayer = OrderLayer.PARALLAX_2.layer;
+                    orderLayer = getOrderLayer(OrderLayer.PARALLAX_2);
                 }
                 default ->
                     throw new AssertionError(parallaxLevel.name());
@@ -669,6 +678,34 @@ public class Game extends javax.swing.JFrame {
         gameOver = false;
 
         repaint();
+    }
+
+    private int getOrderLayer(OrderLayer layer) {
+        switch (layer) {
+            case UI -> {
+                return 0;
+            }
+            case FOREGROUND -> {
+                return 1;
+            }
+            case MIDDLEGROUND -> {
+                return 2;
+            }
+            case COLUMNS -> {
+                return panel_Background.getComponentCount() - 7;
+            }
+            case PARALLAX_1 -> {
+                return panel_Background.getComponentCount() - 5;
+            }
+            case PARALLAX_2 -> {
+                return panel_Background.getComponentCount() - 3;
+            }
+            case BACKGROUND -> {
+                return panel_Background.getComponentCount() - 1;
+            }
+            default ->
+                throw new AssertionError(layer.name());
+        }
     }
 
     @SuppressWarnings("unchecked")
