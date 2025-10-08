@@ -12,9 +12,11 @@ public abstract class Toy implements Moveable {
     protected int charges;
 
     private int score;
-    private boolean hasShield = false;
 
     private int collected;
+
+    private boolean immune = false;
+    private int immunityTimer = 0;
 
     public Toy(Ability ability) {
         this.ability = ability;
@@ -22,6 +24,7 @@ public abstract class Toy implements Moveable {
 
     abstract public void LoadSprite();
 
+    // <editor-fold desc="ability methods">
     public boolean useAbility() {
         if (charges > 0) {
             charges--;
@@ -30,7 +33,26 @@ public abstract class Toy implements Moveable {
         }
         return false;
     }
+    
+    public void setImmunity(int immunity) {
+        immune = true;
+        immunityTimer = immunity;
+    }
+    
+    public boolean isImmune() {
+        return immune;
+    }
+    
+    public void decrementImmunity() {
+        immunityTimer--;
+        
+        if (immunityTimer <= 0) {
+            immune = false;
+        }
+    }
+    // </editor-fold>
 
+    // <editor-fold desc="getters">
     public DynamicSprite getSprite() {
         return sprite;
     }
@@ -46,15 +68,19 @@ public abstract class Toy implements Moveable {
     public int getCollected() {
         return collected;
     }
+    // </editor-fold>
 
-    public boolean hasShield() {
-        return hasShield;
+    // <editor-fold desc="setters">
+    public void setCharges(int charges) {
+        this.charges = charges;
     }
 
-    public void setShield(boolean status) {
-        this.hasShield = status;
+    public void setCollected(int collected) {
+        this.collected = collected;
     }
+    // </editor-fold>
 
+    // <editor-fold desc="score methods">
     public void incrementScore() {
         score++;
     }
@@ -63,17 +89,9 @@ public abstract class Toy implements Moveable {
         score = 0;
     }
 
-    public void setCharges(int charges) {
-        this.charges = charges;
-    }
-
-    public void setCollected(int collected) {
-        this.collected = collected;
-    }
-
     public void receiveCollectible(Collectible collectible) {
         collected++;
-        
+
         switch (collectible.giveReward()) {
             case CHARGE -> {
                 charges++;
@@ -85,7 +103,9 @@ public abstract class Toy implements Moveable {
                 throw new AssertionError(collectible.giveReward().name());
         }
     }
+    // </editor-fold>
 
+    // <editor-fold desc="moveable methods">
     @Override
     public void move(int x, int y) {
         sprite.setLocation(sprite.getX() + x, sprite.getY() + y);
@@ -100,4 +120,5 @@ public abstract class Toy implements Moveable {
     public void setSize(int x, int y) {
         sprite.setSize(x, y);
     }
+    // </editor-fold>
 }

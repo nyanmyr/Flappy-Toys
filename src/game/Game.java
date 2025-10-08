@@ -4,6 +4,7 @@ package game;
 import collectibles.BrickToken;
 import collectibles.Charge;
 import collectibles.Collectible;
+import collectibles.PopsicleToken;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Timer;
@@ -35,7 +36,7 @@ public class Game extends javax.swing.JFrame {
 
     // if 15, then 150 is 1 second
     // if 0, then 1 is 1 second
-    final int MILISECOND_DELAY = 15;
+    public static final int MILISECOND_DELAY = 15;
 
     KeyInputHandler playerKeyInput = new KeyInputHandler();
     MouseInputHandler playerMouseInput = new MouseInputHandler();
@@ -55,8 +56,8 @@ public class Game extends javax.swing.JFrame {
 
     Toy toy;
     final int CHARACTER_SIZE = 40;
-    int countdown;
-    boolean immunity;
+//    int countdown;
+//    boolean immunity;
 
     // values set after constructor call
     private final int WINDOW_HEIGHT;
@@ -111,10 +112,6 @@ public class Game extends javax.swing.JFrame {
 
         initializeVariables();
 
-        // probably should encapsulate these
-        countdown = 0;
-        immunity = false;
-
         hideButtons();
 
         giveControls();
@@ -122,11 +119,10 @@ public class Game extends javax.swing.JFrame {
         generateLevel();
         addPlayer();
 
-        addScreenIcons();
+        addChargeIcon();
+        addTokenIcon(new BrickToken(0));
 
-        panel_Background.setComponentZOrder(label_Collectibles, getOrderLayer(OrderLayer.UI));
-        panel_Background.setComponentZOrder(label_Charges, getOrderLayer(OrderLayer.UI));
-        panel_Background.setComponentZOrder(label_Score, getOrderLayer(OrderLayer.UI));
+        setUIFront();
 
         // game loop is here
         ActionListener update = (ActionEvent evt) -> {
@@ -151,12 +147,16 @@ public class Game extends javax.swing.JFrame {
             if (toy.getScore() > 0 && toy.getScore() % LEVEL_SPEEDUP_CHECKPOINT == 0) {
                 transitionTimer = TRANSITION_TIME;
 
+                panel_Background.remove(screenToken.getSprite());
+
                 Level oldLevel = level;
                 if (level instanceof BrickLand) {
                     System.out.println("Icecreamland");
+                    addTokenIcon(new PopsicleToken(0));
                     level = new IceCreamLand();
                 } else {
                     System.out.println("Brickland");
+                    addTokenIcon(new BrickToken(0));
                     level = new BrickLand();
                 }
 
@@ -177,7 +177,7 @@ public class Game extends javax.swing.JFrame {
 
                 panel_Background.setComponentZOrder(oldLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
                 panel_Background.setComponentZOrder(oldLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
-                
+
                 panel_Background.setComponentZOrder(oldLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
                 panel_Background.setComponentZOrder(oldLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
 
@@ -222,15 +222,9 @@ public class Game extends javax.swing.JFrame {
                 if (playerKeyInput.abilityUsed) {
                     if (toy.useAbility()) {
                         SoundEffectPlayer.playSound(SoundFile.ABILITY);
-                        label_Charges.setText("Charges: " + toy.getCharges());
+                        label_Charges.setText(String.valueOf(toy.getCharges()));
                     }
                     playerKeyInput.abilityUsed = false;
-
-                    // if shield is activated then give player 5 sec immunity
-                    if (toy.hasShield()) {
-                        countdown = (MILISECOND_DELAY * 10) * 5;
-                        immunity = true;
-                    }
                 }
             } else {
                 this.removeKeyListener(playerKeyInput);
@@ -258,11 +252,6 @@ public class Game extends javax.swing.JFrame {
 
             level.moveLeftParallax((int) -(Math.max(1, speed - 2)), 0, ParallaxLevel.LEVEL_2);
             level.moveRightParallax((int) -(Math.max(1, speed - 2)), 0, ParallaxLevel.LEVEL_2);
-
-            // could generate first gound here instead of outside
-            // detect if ground has gone out of bounds to delete it and spawn a new one
-            checkGroundOutOfBounds();
-            checkParallaxOutOfBounds();
 
             // !!! probably should organize this !!!
             // !!! and comments too !!!
@@ -294,7 +283,7 @@ public class Game extends javax.swing.JFrame {
                             && toy.getSprite().getX() + toy.getSprite().getWidth() > col.top.getX()
                             && toy.getSprite().getY() < col.top.getY() + col.top.getHeight()
                             && toy.getSprite().getY() + toy.getSprite().getHeight() > col.top.getY())))
-                            && !immunity
+                            && !toy.isImmune()
                             && col.isAlive()) {
                         gameOver = true;
                         System.out.println(col.killEffect());
@@ -327,7 +316,7 @@ public class Game extends javax.swing.JFrame {
                             && charge.isAlive()) {
                         SoundEffectPlayer.playSound(SoundFile.CHARGE);
                         toy.receiveCollectible(charge);
-                        label_Charges.setText("Charges: " + toy.getCharges());
+                        label_Charges.setText(String.valueOf(toy.getCharges()));
                         charge.kill();
                     }
 
@@ -356,9 +345,9 @@ public class Game extends javax.swing.JFrame {
                 level.generateColumn(columnGap, columnRandomY, aliveTime);
 
                 panel_Background.add(level.getBottomColumn());
-                panel_Background.setComponentZOrder(level.getBottomColumn(), OrderLayer.COLUMNS.layer);
+                panel_Background.setComponentZOrder(level.getBottomColumn(), getOrderLayer(OrderLayer.COLUMNS));
                 panel_Background.add(level.getTopColumn());
-                panel_Background.setComponentZOrder(level.getTopColumn(), OrderLayer.COLUMNS.layer);
+                panel_Background.setComponentZOrder(level.getTopColumn(), getOrderLayer(OrderLayer.COLUMNS));
 
                 columnsList.add(level.getColumn());
 
@@ -429,7 +418,7 @@ public class Game extends javax.swing.JFrame {
                 panel_Background.add(level.getTokenSprite());
                 // place the token to the offscreen right
                 level.getTokenSprite().setLocation(815, tokenRandomY);
-                panel_Background.setComponentZOrder(level.getTokenSprite(), OrderLayer.COLUMNS.layer);
+                panel_Background.setComponentZOrder(level.getTokenSprite(), getOrderLayer(OrderLayer.COLUMNS));
 
                 tokenList.add(level.getToken());
             }
@@ -440,17 +429,19 @@ public class Game extends javax.swing.JFrame {
                 tokenRespawnTimer--;
             }
 
+            // could generate first gound here instead of outside
+            // detect if ground has gone out of bounds to delete it and spawn a new one
+            checkGroundOutOfBounds();
+            checkParallaxOutOfBounds();
+
             // increment the score every frame
             toy.incrementScore();
             String text = "Score: " + toy.getScore();
             label_Score.setText(text);
 
             // decrement the countdown
-            if (countdown > 0) {
-                countdown--;
-            } else {
-                toy.setShield(false);
-                immunity = false;
+            if (toy.isImmune()) {
+                toy.decrementImmunity();
             }
 
             // handle game over
@@ -474,17 +465,23 @@ public class Game extends javax.swing.JFrame {
         timer.start();
     }
 
-    // partition in add charge and token icon
-    // make token icon dynamic
-    private void addScreenIcons() {
+    private void setUIFront() {
+        panel_Background.setComponentZOrder(label_Collectibles, getOrderLayer(OrderLayer.UI));
+        panel_Background.setComponentZOrder(label_Charges, getOrderLayer(OrderLayer.UI));
+        panel_Background.setComponentZOrder(label_Score, getOrderLayer(OrderLayer.UI));
+    }
+
+    private void addChargeIcon() {
         screenCharge = new Charge(0);
         panel_Background.add(screenCharge.getSprite());
         screenCharge.setLocation(10, 10);
         screenCharge.setSize(50, 50);
         panel_Background.setComponentZOrder(screenCharge.getSprite(), getOrderLayer(OrderLayer.UI));
+    }
 
+    public void addTokenIcon(Collectible token) {
         // should probably make this change
-        screenToken = new BrickToken(0);
+        screenToken = token;
         panel_Background.add(screenToken.getSprite());
         screenToken.setLocation(10, 90);
         screenToken.setSize(50, 50);
@@ -597,7 +594,7 @@ public class Game extends javax.swing.JFrame {
         for (ParallaxLevel parallaxLevel : ParallaxLevel.values()) {
             switch (parallaxLevel) {
                 case LEVEL_1 -> {
-                    orderLayer =  getOrderLayer(OrderLayer.PARALLAX_1);
+                    orderLayer = getOrderLayer(OrderLayer.PARALLAX_1);
                 }
                 case LEVEL_2 -> {
                     orderLayer = getOrderLayer(OrderLayer.PARALLAX_2);
@@ -692,7 +689,7 @@ public class Game extends javax.swing.JFrame {
                 return 2;
             }
             case COLUMNS -> {
-                return panel_Background.getComponentCount() - 7;
+                return panel_Background.getComponentCount() - 9;
             }
             case PARALLAX_1 -> {
                 return panel_Background.getComponentCount() - 5;
