@@ -47,9 +47,9 @@ public class Game extends javax.swing.JFrame {
 
     final int GROUND_HEIGHT = 420;
 
-    final int MOVEMENT_SPEED = 3;
-    final int JUMP_HEIGHT = 50;
-    final int GRAVITY = 2;
+//    final int MOVEMENT_SPEED = 3;
+//    final int JUMP_HEIGHT = 50;
+//    final int GRAVITY = 2;
 
     final int STARTING_SPEED = 3;
     int speed;
@@ -76,7 +76,8 @@ public class Game extends javax.swing.JFrame {
     int columnGap;
     int aliveTime;
 
-    final int COLUMN_RESPAWN_GAP = 150;
+    final int MIN_COLUMN_RESPAWN_GAP = 20;
+    final int COLUMN_RESPAWN_GAP = 200;
     final int COLUMN_RESPAWN_DECREMENT = 15;
     int columnRespawnTimer;
     ArrayList<Column> columnsList = new ArrayList();
@@ -204,18 +205,18 @@ public class Game extends javax.swing.JFrame {
                 if (playerMouseInput.jumped) {
                     SoundEffectPlayer.playSound(SoundFile.JUMP);
                     // turn this into method
-                    toy.move(0, -JUMP_HEIGHT);
+                    toy.move(0, -toy.getJumpHeight());
                     playerMouseInput.jumped = false;
                 } else {
-                    toy.move(0, GRAVITY);
+                    toy.move(0, toy.getFallSpeed());
                 }
 
                 if (playerMouseInput.moveLeft) {
-                    toy.move(-MOVEMENT_SPEED, 0);
+                    toy.move(-toy.getMovementSpeed(), 0);
                     playerMouseInput.moveLeft = false;
                 }
                 if (playerMouseInput.moveRight) {
-                    toy.move(MOVEMENT_SPEED, 0);
+                    toy.move(toy.getMovementSpeed(), 0);
                     playerMouseInput.moveRight = false;
                 }
 
@@ -427,6 +428,9 @@ public class Game extends javax.swing.JFrame {
             if (transitionTimer <= 0) {
                 columnRespawnTimer--;
                 tokenRespawnTimer--;
+            } else {
+                columnRespawnTimer = getColumnRespawnTime();
+                tokenRespawnTimer = getColumnRespawnTime() / 2;
             }
 
             // could generate first gound here instead of outside
@@ -458,7 +462,8 @@ public class Game extends javax.swing.JFrame {
                 button_PlayAgain.setVisible(true);
                 panel_Background.setComponentZOrder(button_PlayAgain, OrderLayer.UI.layer);
             }
-            repaint();
+            panel_Background.revalidate();
+            panel_Background.repaint();
         };
 
         Timer timer = new Timer(MILISECOND_DELAY, update);
@@ -496,8 +501,8 @@ public class Game extends javax.swing.JFrame {
         columnRespawnTimer = 0;
         columnRandomY = randomizer.nextInt(175, 425);
 
-        tokenRandomY = randomizer.nextInt(20, 400);
         tokenRespawnTimer = COLUMN_RESPAWN_GAP / 2;
+        tokenRandomY = randomizer.nextInt(20, 400);
 
         chargeCooldown = CHARGE_COOLDOWN_START;
     }
@@ -618,8 +623,10 @@ public class Game extends javax.swing.JFrame {
 
     // calculates the columnGap between columns while taking speed into account
     private int getColumnRespawnTime() {
-        return COLUMN_RESPAWN_GAP - ((COLUMN_RESPAWN_DECREMENT * (speed - STARTING_SPEED)) / speed) <= 0
-                ? 1 : COLUMN_RESPAWN_GAP - ((COLUMN_RESPAWN_DECREMENT * (speed - STARTING_SPEED)) / speed);
+        int baseTime = (int) ((double) COLUMN_RESPAWN_GAP * STARTING_SPEED / speed);
+        int decrement = (speed - STARTING_SPEED) * COLUMN_RESPAWN_DECREMENT;
+        int adjustedTime = baseTime - decrement;
+        return Math.max(adjustedTime, MIN_COLUMN_RESPAWN_GAP); // Prevents timer from becoming too small or negative
     }
 
     private void hideButtons() {
@@ -629,6 +636,10 @@ public class Game extends javax.swing.JFrame {
     }
 
     private void resetGame() {
+
+        if (temporaryBackground != null) {
+            panel_Background.remove(temporaryBackground.getSprite());
+        }
 
         panel_Background.remove(level.getBackgroundSprite());
 
@@ -674,7 +685,8 @@ public class Game extends javax.swing.JFrame {
 
         gameOver = false;
 
-        repaint();
+        panel_Background.revalidate();
+        panel_Background.repaint();
     }
 
     private int getOrderLayer(OrderLayer layer) {
@@ -683,19 +695,19 @@ public class Game extends javax.swing.JFrame {
                 return 0;
             }
             case FOREGROUND -> {
-                return 1;
-            }
-            case MIDDLEGROUND -> {
                 return 2;
             }
+            case MIDDLEGROUND -> {
+                return panel_Background.getComponentZOrder(toy.getSprite()) + 2;
+            }
             case COLUMNS -> {
-                return panel_Background.getComponentCount() - 9;
+                return panel_Background.getComponentZOrder(level.getRightGroundSprite()) + 2;
             }
             case PARALLAX_1 -> {
-                return panel_Background.getComponentCount() - 5;
+                return panel_Background.getComponentCount() - 3;
             }
             case PARALLAX_2 -> {
-                return panel_Background.getComponentCount() - 3;
+                return panel_Background.getComponentCount() - 2;
             }
             case BACKGROUND -> {
                 return panel_Background.getComponentCount() - 1;

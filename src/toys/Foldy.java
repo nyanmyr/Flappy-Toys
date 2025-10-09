@@ -6,13 +6,19 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import toys.stats.FallSpeed;
+import toys.stats.JumpHeight;
+import toys.stats.MovementSpeed;
 import utility.sprites.DynamicSprite;
 import utility.sprites.SpriteUtils;
 
 public class Foldy extends Toy {
 
     public Foldy(Ability ability) {
-        super(ability);
+        super(ability,
+                FallSpeed.NORMAL.speed,
+                MovementSpeed.FAST.speed,
+                JumpHeight.LOW.height);
         LoadSprite();
     }
 

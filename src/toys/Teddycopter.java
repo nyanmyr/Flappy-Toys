@@ -6,13 +6,19 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import toys.stats.FallSpeed;
+import toys.stats.JumpHeight;
+import toys.stats.MovementSpeed;
 import utility.sprites.DynamicSprite;
 import utility.sprites.SpriteUtils;
 
 public class Teddycopter extends Toy {
 
     public Teddycopter(Ability ability) {
-        super(ability);
+        super(ability,
+                FallSpeed.SLOW.speed,
+                MovementSpeed.SLOW.speed,
+                JumpHeight.HIGH.height);
         LoadSprite();
     }
 

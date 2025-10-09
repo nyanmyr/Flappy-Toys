@@ -6,14 +6,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class Option extends javax.swing.JFrame {
+public class Options extends javax.swing.JFrame {
 
     private final int WINDOW_WIDTH;
     private final int WINDOW_HEIGHT;
 
     private StaticSprite background;
 
-    public Option(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
+    public Options(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.WINDOW_HEIGHT = SCREEN_HEIGHT;
         this.WINDOW_WIDTH = SCREEN_WIDTH;
 

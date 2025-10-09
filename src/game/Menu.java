@@ -1,9 +1,16 @@
 package game;
 
+import static game.Game.MILISECOND_DELAY;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
+import utility.sprites.DynamicSprite;
+import utility.sprites.SpriteUtils;
 import utility.sprites.StaticSprite;
 
 public class Menu extends javax.swing.JFrame {
@@ -13,17 +20,32 @@ public class Menu extends javax.swing.JFrame {
 
     private StaticSprite background;
 
+    private DynamicSprite accountIcon;
+    private DynamicSprite optionsIcon;
+
     public Menu(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.WINDOW_HEIGHT = SCREEN_HEIGHT;
         this.WINDOW_WIDTH = SCREEN_WIDTH;
 
         initComponents();
 
-        LoadSprite();
+        loadBackgroundSprite();
+        loadOptionSprite();
+        LoadAccountSprite();
+        panel_Background.add(optionsIcon);
+        panel_Background.add(accountIcon);
         panel_Background.add(background);
+
+        ActionListener update = (ActionEvent evt) -> {
+            accountIcon.update();
+            optionsIcon.update();
+        };
+
+        Timer timer = new Timer(MILISECOND_DELAY, update);
+        timer.start();
     }
 
-    private void LoadSprite() {
+    private void loadBackgroundSprite() {
         try {
             java.net.URL resource = getClass().getResource("/resources/backgrounds/brickland_bg.jpg");
             if (resource != null) {
@@ -44,6 +66,96 @@ public class Menu extends javax.swing.JFrame {
             } else {
                 throw new RuntimeException("Image resource not found: brickland_bg.jpg");
             }
+
+            java.net.URL accountResource = getClass().getResource("/resources/animations/icons/account_anim.png");
+            if (accountResource == null) {
+                throw new RuntimeException("Image resource not found: /account_anim.png");
+            }
+
+            // Read and convert to BufferedImage
+            Image img = ImageIO.read(accountResource);
+            java.awt.image.BufferedImage buffered
+                    = new java.awt.image.BufferedImage(
+                            img.getWidth(null),
+                            img.getHeight(null),
+                            java.awt.image.BufferedImage.TYPE_INT_ARGB
+                    );
+            Graphics2D accountG2D = buffered.createGraphics();
+            accountG2D.drawImage(img, 0, 0, null);
+            accountG2D.dispose();
+
+            // Split horizontally into frames
+            BufferedImage[] accountFrames = SpriteUtils.sliceHorizontalFrames(buffered, 12);
+
+            // Use DynamicSprite for animation
+            accountIcon = new DynamicSprite(accountFrames);
+            accountIcon.setBounds(0, 0, accountFrames[0].getWidth(), accountFrames[0].getHeight());
+            accountIcon.setSize(60, 60);
+            accountIcon.setLocation(590, 80);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load sprite image", e);
+        }
+    }
+
+    private void loadOptionSprite() {
+        try {
+            java.net.URL accountResource = getClass().getResource("/resources/animations/icons/account_anim.png");
+            if (accountResource == null) {
+                throw new RuntimeException("Image resource not found: /account_anim.png");
+            }
+
+            // Read and convert to BufferedImage
+            Image img = ImageIO.read(accountResource);
+            java.awt.image.BufferedImage buffered
+                    = new java.awt.image.BufferedImage(
+                            img.getWidth(null),
+                            img.getHeight(null),
+                            java.awt.image.BufferedImage.TYPE_INT_ARGB
+                    );
+            Graphics2D accountG2D = buffered.createGraphics();
+            accountG2D.drawImage(img, 0, 0, null);
+            accountG2D.dispose();
+
+            // Split horizontally into frames
+            BufferedImage[] accountFrames = SpriteUtils.sliceHorizontalFrames(buffered, 12);
+
+            // Use DynamicSprite for animation
+            accountIcon = new DynamicSprite(accountFrames);
+            accountIcon.setBounds(0, 0, accountFrames[0].getWidth(), accountFrames[0].getHeight());
+            accountIcon.setSize(60, 60);
+            accountIcon.setLocation(690, 80);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load sprite image", e);
+        }
+    }
+
+    private void LoadAccountSprite() {
+        try {
+            java.net.URL settingsResource = getClass().getResource("/resources/animations/icons/options_anim.png");
+            if (settingsResource == null) {
+                throw new RuntimeException("Image resource not found: /options_anim.png");
+            }
+
+            // Read and convert to BufferedImage
+            Image optionsIMG = ImageIO.read(settingsResource);
+            java.awt.image.BufferedImage optionsBuffered
+                    = new java.awt.image.BufferedImage(
+                            optionsIMG.getWidth(null),
+                            optionsIMG.getHeight(null),
+                            java.awt.image.BufferedImage.TYPE_INT_ARGB
+                    );
+            Graphics2D optionsG2D = optionsBuffered.createGraphics();
+            optionsG2D.drawImage(optionsIMG, 0, 0, null);
+            optionsG2D.dispose();
+
+            // Split horizontally into frames
+            BufferedImage[] optionsFrames = SpriteUtils.sliceHorizontalFrames(optionsBuffered, 12);
+
+            // Use DynamicSprite for animation
+            optionsIcon = new DynamicSprite(optionsFrames);
+            optionsIcon.setBounds(0, 0, optionsFrames[0].getWidth(), optionsFrames[0].getHeight());
+            optionsIcon.setSize(60, 60);
+            optionsIcon.setLocation(590, 80);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
         }
@@ -125,6 +237,8 @@ public class Menu extends javax.swing.JFrame {
 
         button_Account.setBackground(new java.awt.Color(0, 74, 173));
         button_Account.setForeground(new java.awt.Color(255, 255, 255));
+        button_Account.setBorderPainted(false);
+        button_Account.setContentAreaFilled(false);
         button_Account.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_AccountActionPerformed(evt);
@@ -133,8 +247,10 @@ public class Menu extends javax.swing.JFrame {
         panel_Background.add(button_Account);
         button_Account.setBounds(680, 80, 60, 60);
 
-        button_Settings.setBackground(new java.awt.Color(0, 74, 173));
+        button_Settings.setBackground(new java.awt.Color(255, 255, 255, 0));
         button_Settings.setForeground(new java.awt.Color(255, 255, 255));
+        button_Settings.setBorderPainted(false);
+        button_Settings.setContentAreaFilled(false);
         button_Settings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_SettingsActionPerformed(evt);
@@ -170,7 +286,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void button_SettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SettingsActionPerformed
         dispose();
-        new Option(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+        new Options(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_SettingsActionPerformed
 
     private void button_AccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AccountActionPerformed

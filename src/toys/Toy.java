@@ -18,12 +18,33 @@ public abstract class Toy implements Moveable {
     private boolean immune = false;
     private int immunityTimer = 0;
 
-    public Toy(Ability ability) {
+    private final int FALL_SPEED;
+    private final int MOVEMENT_SPEED;
+    private final int JUMP_HEIGHT;
+
+    public Toy(Ability ability, int FALL_SPEED, int MOVEMENT_SPEED, int JUMP_HEIGHT) {
         this.ability = ability;
+        this.FALL_SPEED = FALL_SPEED;
+        this.MOVEMENT_SPEED = MOVEMENT_SPEED;
+        this.JUMP_HEIGHT = JUMP_HEIGHT;
     }
 
     abstract public void LoadSprite();
 
+    // <editor-fold desc="ability methods">
+    public int getFallSpeed() {
+        return FALL_SPEED;
+    }
+    
+    public int getMovementSpeed() {
+        return MOVEMENT_SPEED;
+    }
+    
+    public int getJumpHeight() {
+        return JUMP_HEIGHT;
+    }
+    // </editor-fold>
+    
     // <editor-fold desc="ability methods">
     public boolean useAbility() {
         if (charges > 0) {
@@ -33,19 +54,19 @@ public abstract class Toy implements Moveable {
         }
         return false;
     }
-    
+
     public void setImmunity(int immunity) {
         immune = true;
         immunityTimer = immunity;
     }
-    
+
     public boolean isImmune() {
         return immune;
     }
-    
+
     public void decrementImmunity() {
         immunityTimer--;
-        
+
         if (immunityTimer <= 0) {
             immune = false;
         }
