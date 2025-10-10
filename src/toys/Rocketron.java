@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import sfx.sounds.SoundFile;
 import toys.stats.FallSpeed;
 import toys.stats.JumpHeight;
 import toys.stats.MovementSpeed;
@@ -18,7 +19,8 @@ public class Rocketron extends Toy {
         super(ability,
                 FallSpeed.FAST.speed,
                 MovementSpeed.SLOW.speed,
-                JumpHeight.NORMAL.height);
+                JumpHeight.NORMAL.height,
+                SoundFile.ROCKETRON_JUMP);
         LoadSprite();
     }
 

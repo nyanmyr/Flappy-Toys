@@ -3,16 +3,24 @@ package game;
 import abilities.Dash;
 import abilities.JumpBoost;
 import abilities.Shield;
+import static game.Game.MILISECOND_DELAY;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
+import sfx.sounds.SoundPlayer;
 import toys.Foldy;
 import toys.Rocketron;
 import toys.Teddycopter;
 import toys.Toy;
 import toys.ToyCharacter;
+import toys.stats.FallSpeed;
+import toys.stats.JumpHeight;
+import toys.stats.MovementSpeed;
 import utility.sprites.StaticSprite;
 
 public class CharacterSelection extends javax.swing.JFrame {
@@ -27,6 +35,8 @@ public class CharacterSelection extends javax.swing.JFrame {
     Toy toy;
     ToyCharacter selectedCharacter = ToyCharacter.TEDDYCOPTER;
 
+    Timer timer;
+    
     public CharacterSelection(int WINDOW_WIDTH, int WINDOW_HEIGHT) {
         this.WINDOW_WIDTH = WINDOW_WIDTH;
         this.WINDOW_HEIGHT = WINDOW_HEIGHT;
@@ -40,6 +50,13 @@ public class CharacterSelection extends javax.swing.JFrame {
 
         LoadSprite();
         panel_Background.add(background);
+
+        ActionListener update = (ActionEvent evt) -> {
+            toy.getSprite().update();
+        };
+
+        timer = new Timer(MILISECOND_DELAY, update);
+        timer.start();
     }
 
     private void LoadSprite() {
@@ -96,6 +113,10 @@ public class CharacterSelection extends javax.swing.JFrame {
                 throw new AssertionError(character.name());
         }
 
+        bar_Falling.setValue(toy.getFallSpeed());
+        bar_Moving.setValue(toy.getMovementSpeed());
+        bar_Jumping.setValue(toy.getJumpHeight());
+
         toy.setSize(200, 200);
         toy.setLocation((RESIZED_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 25);
         panel_Background.add(toy.getSprite());
@@ -108,6 +129,12 @@ public class CharacterSelection extends javax.swing.JFrame {
     private void initComponents() {
 
         panel_Background = new javax.swing.JPanel();
+        label_Falling = new javax.swing.JLabel();
+        label_Moving = new javax.swing.JLabel();
+        label_Jumping = new javax.swing.JLabel();
+        bar_Falling = new javax.swing.JProgressBar();
+        bar_Moving = new javax.swing.JProgressBar();
+        bar_Jumping = new javax.swing.JProgressBar();
         label_Objectives = new javax.swing.JLabel();
         label_Tutorial = new javax.swing.JLabel();
         label_Ability = new javax.swing.JLabel();
@@ -126,6 +153,47 @@ public class CharacterSelection extends javax.swing.JFrame {
         panel_Background.setMaximumSize(new java.awt.Dimension(800, 600));
         panel_Background.setMinimumSize(new java.awt.Dimension(800, 600));
         panel_Background.setLayout(null);
+
+        label_Falling.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        label_Falling.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Falling.setText("Falling:");
+        label_Falling.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        panel_Background.add(label_Falling);
+        label_Falling.setBounds(500, 70, 140, 30);
+
+        label_Moving.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        label_Moving.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Moving.setText("Moving:");
+        label_Moving.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        panel_Background.add(label_Moving);
+        label_Moving.setBounds(500, 110, 140, 30);
+
+        label_Jumping.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        label_Jumping.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Jumping.setText("Jumping:");
+        label_Jumping.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        panel_Background.add(label_Jumping);
+        label_Jumping.setBounds(500, 150, 140, 30);
+
+        bar_Falling.setForeground(new java.awt.Color(0, 74, 173));
+        bar_Falling.setMaximum(FallSpeed.FAST.speed);
+        bar_Falling.setValue(2);
+        panel_Background.add(bar_Falling);
+        bar_Falling.setBounds(650, 70, 120, 30);
+
+        bar_Moving.setForeground(new java.awt.Color(0, 74, 173));
+        bar_Moving.setMaximum(MovementSpeed.FAST.speed);
+        bar_Moving.setMinimum(1);
+        panel_Background.add(bar_Moving);
+        bar_Moving.setBounds(650, 110, 120, 30);
+
+        bar_Jumping.setForeground(new java.awt.Color(0, 74, 173));
+        bar_Jumping.setMaximum(JumpHeight.HIGH.height);
+        bar_Jumping.setMinimum(30);
+        bar_Jumping.setToolTipText("");
+        bar_Jumping.setValue(50);
+        panel_Background.add(bar_Jumping);
+        bar_Jumping.setBounds(650, 150, 120, 30);
 
         label_Objectives.setFont(new java.awt.Font("Comic Sans MS", 0, 19)); // NOI18N
         label_Objectives.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -196,23 +264,34 @@ public class CharacterSelection extends javax.swing.JFrame {
     private void button_NextCharacterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_NextCharacterActionPerformed
         selectedCharacter = selectedCharacter.nextCharacter();
         setSelectedCharacter(selectedCharacter);
+        SoundPlayer.playSound(toy.getJumpSoundFile());
     }//GEN-LAST:event_button_NextCharacterActionPerformed
 
     private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed
+        timer.stop();
+
         dispose();
         java.awt.EventQueue.invokeLater(() -> new Menu(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
     }//GEN-LAST:event_button_ReturnActionPerformed
 
     private void button_StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_StartActionPerformed
+        timer.stop();
+
         dispose();
         java.awt.EventQueue.invokeLater(() -> new Game(WINDOW_HEIGHT, WINDOW_WIDTH, toy).setVisible(true));
     }//GEN-LAST:event_button_StartActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar bar_Falling;
+    private javax.swing.JProgressBar bar_Jumping;
+    private javax.swing.JProgressBar bar_Moving;
     private javax.swing.JButton button_NextCharacter;
     private javax.swing.JButton button_Return;
     private javax.swing.JButton button_Start;
     private javax.swing.JLabel label_Ability;
+    private javax.swing.JLabel label_Falling;
+    private javax.swing.JLabel label_Jumping;
+    private javax.swing.JLabel label_Moving;
     private javax.swing.JLabel label_Name;
     private javax.swing.JLabel label_Objectives;
     private javax.swing.JLabel label_Tutorial;

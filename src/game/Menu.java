@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
+import sfx.sounds.SoundFile;
+import sfx.sounds.SoundPlayer;
 import utility.sprites.DynamicSprite;
 import utility.sprites.SpriteUtils;
 import utility.sprites.StaticSprite;
@@ -22,6 +24,8 @@ public class Menu extends javax.swing.JFrame {
 
     private DynamicSprite accountIcon;
     private DynamicSprite optionsIcon;
+
+    Timer timer;
 
     public Menu(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.WINDOW_HEIGHT = SCREEN_HEIGHT;
@@ -41,7 +45,7 @@ public class Menu extends javax.swing.JFrame {
             optionsIcon.update();
         };
 
-        Timer timer = new Timer(MILISECOND_DELAY, update);
+        timer = new Timer(MILISECOND_DELAY, update);
         timer.start();
     }
 
@@ -194,6 +198,11 @@ public class Menu extends javax.swing.JFrame {
         button_Play.setBackground(new java.awt.Color(0, 74, 173));
         button_Play.setForeground(new java.awt.Color(255, 255, 255));
         button_Play.setText("Play");
+        button_Play.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_PlayMouseEntered(evt);
+            }
+        });
         button_Play.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_PlayActionPerformed(evt);
@@ -205,6 +214,11 @@ public class Menu extends javax.swing.JFrame {
         button_Leaderboards.setBackground(new java.awt.Color(0, 74, 173));
         button_Leaderboards.setForeground(new java.awt.Color(255, 255, 255));
         button_Leaderboards.setText("Leaderboards");
+        button_Leaderboards.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_LeaderboardsMouseEntered(evt);
+            }
+        });
         button_Leaderboards.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_LeaderboardsActionPerformed(evt);
@@ -216,6 +230,11 @@ public class Menu extends javax.swing.JFrame {
         button_Credits.setBackground(new java.awt.Color(0, 74, 173));
         button_Credits.setForeground(new java.awt.Color(255, 255, 255));
         button_Credits.setText("Credits");
+        button_Credits.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_CreditsMouseEntered(evt);
+            }
+        });
         button_Credits.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_CreditsActionPerformed(evt);
@@ -227,6 +246,11 @@ public class Menu extends javax.swing.JFrame {
         button_Exit.setBackground(new java.awt.Color(0, 74, 173));
         button_Exit.setForeground(new java.awt.Color(255, 255, 255));
         button_Exit.setText("Exit");
+        button_Exit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_ExitMouseEntered(evt);
+            }
+        });
         button_Exit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_ExitActionPerformed(evt);
@@ -239,6 +263,11 @@ public class Menu extends javax.swing.JFrame {
         button_Account.setForeground(new java.awt.Color(255, 255, 255));
         button_Account.setBorderPainted(false);
         button_Account.setContentAreaFilled(false);
+        button_Account.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_AccountMouseEntered(evt);
+            }
+        });
         button_Account.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_AccountActionPerformed(evt);
@@ -251,6 +280,11 @@ public class Menu extends javax.swing.JFrame {
         button_Settings.setForeground(new java.awt.Color(255, 255, 255));
         button_Settings.setBorderPainted(false);
         button_Settings.setContentAreaFilled(false);
+        button_Settings.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_SettingsMouseEntered(evt);
+            }
+        });
         button_Settings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_SettingsActionPerformed(evt);
@@ -275,24 +309,64 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_button_LeaderboardsActionPerformed
 
     private void button_CreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreditsActionPerformed
+        timer.stop();
+
+        SoundPlayer.playSound(SoundFile.CLICK);
+        
         dispose();
         new Credits(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_CreditsActionPerformed
 
     private void button_PlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PlayActionPerformed
+        timer.stop();
+
+        SoundPlayer.playSound(SoundFile.CLICK);
+        
         dispose();
         new CharacterSelection(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_PlayActionPerformed
 
     private void button_SettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SettingsActionPerformed
+        timer.stop();
+
+        SoundPlayer.playSound(SoundFile.CLICK);
+        
         dispose();
         new Options(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_SettingsActionPerformed
 
     private void button_AccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AccountActionPerformed
+        timer.stop();
+
+        SoundPlayer.playSound(SoundFile.CLICK);
+        
         dispose();
         new Login(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
     }//GEN-LAST:event_button_AccountActionPerformed
+
+    private void button_PlayMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PlayMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_PlayMouseEntered
+
+    private void button_LeaderboardsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_LeaderboardsMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_LeaderboardsMouseEntered
+
+    private void button_CreditsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_CreditsMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_CreditsMouseEntered
+
+    private void button_ExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ExitMouseEntered
+       SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_ExitMouseEntered
+
+    private void button_AccountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_AccountMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_AccountMouseEntered
+
+    private void button_SettingsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_SettingsMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_SettingsMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_Account;

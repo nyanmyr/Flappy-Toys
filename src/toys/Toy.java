@@ -2,53 +2,65 @@ package toys;
 
 import abilities.Ability;
 import collectibles.Collectible;
+import sfx.sounds.SoundFile;
 import utility.sprites.DynamicSprite;
 import utility.interfaces.Moveable;
 
 public abstract class Toy implements Moveable {
 
-    protected DynamicSprite sprite;
-    protected Ability ability;
-    protected int charges;
-
-    private int score;
-
-    private int collected;
-
-    private boolean immune = false;
-    private int immunityTimer = 0;
-
     private final int FALL_SPEED;
     private final int MOVEMENT_SPEED;
     private final int JUMP_HEIGHT;
 
-    public Toy(Ability ability, int FALL_SPEED, int MOVEMENT_SPEED, int JUMP_HEIGHT) {
+    protected DynamicSprite sprite;
+
+    protected Ability ability;
+    protected int charges;
+    private final int ABILITY_COOLDOWN_RATE = 150;
+    private int abilityCooldown = ABILITY_COOLDOWN_RATE;
+
+    private int score;
+
+    private int tokensCollected;
+    private int chargesUsed;
+
+    private boolean immune = false;
+    private int immunityTimer = 0;
+
+    private final SoundFile jumpSoundFile;
+
+    public Toy(Ability ability, int FALL_SPEED, int MOVEMENT_SPEED, int JUMP_HEIGHT, SoundFile jumpSoundFile) {
         this.ability = ability;
         this.FALL_SPEED = FALL_SPEED;
         this.MOVEMENT_SPEED = MOVEMENT_SPEED;
         this.JUMP_HEIGHT = JUMP_HEIGHT;
+        this.jumpSoundFile = jumpSoundFile;
     }
 
     abstract public void LoadSprite();
 
-    // <editor-fold desc="ability methods">
+    // <editor-fold desc="stats methods">
     public int getFallSpeed() {
         return FALL_SPEED;
     }
-    
+
     public int getMovementSpeed() {
         return MOVEMENT_SPEED;
     }
-    
+
     public int getJumpHeight() {
         return JUMP_HEIGHT;
     }
     // </editor-fold>
-    
+
     // <editor-fold desc="ability methods">
     public boolean useAbility() {
-        if (charges > 0) {
+        if (charges > 0 && abilityCooldown <= 0) {
+            abilityCooldown = ABILITY_COOLDOWN_RATE;
+
             charges--;
+            chargesUsed++;
+
             ability.useAbility(this);
             return true;
         }
@@ -71,6 +83,12 @@ public abstract class Toy implements Moveable {
             immune = false;
         }
     }
+
+    public void decrementAbilityCooldown() {
+        if (abilityCooldown > 0) {
+            abilityCooldown--;
+        }
+    }
     // </editor-fold>
 
     // <editor-fold desc="getters">
@@ -86,8 +104,16 @@ public abstract class Toy implements Moveable {
         return score;
     }
 
-    public int getCollected() {
-        return collected;
+    public int getTokensCollected() {
+        return tokensCollected;
+    }
+
+    public int getChargesUsed() {
+        return chargesUsed;
+    }
+    
+    public SoundFile getJumpSoundFile() {
+        return jumpSoundFile;
     }
     // </editor-fold>
 
@@ -96,8 +122,8 @@ public abstract class Toy implements Moveable {
         this.charges = charges;
     }
 
-    public void setCollected(int collected) {
-        this.collected = collected;
+    public void setTokensCollected(int tokensCollected) {
+        this.tokensCollected = tokensCollected;
     }
     // </editor-fold>
 
@@ -111,7 +137,7 @@ public abstract class Toy implements Moveable {
     }
 
     public void receiveCollectible(Collectible collectible) {
-        collected++;
+        tokensCollected++;
 
         switch (collectible.giveReward()) {
             case CHARGE -> {

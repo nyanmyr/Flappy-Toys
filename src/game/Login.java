@@ -150,7 +150,9 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_button_ReturnActionPerformed
 
     private void button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LoginActionPerformed
-        // TODO add your handling code here:
+        // implement login system here
+        dispose();
+        java.awt.EventQueue.invokeLater(() -> new Account(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
     }//GEN-LAST:event_button_LoginActionPerformed
 
     private void button_CreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreateAccountActionPerformed

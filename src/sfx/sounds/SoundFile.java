@@ -6,10 +6,15 @@ public enum SoundFile {
 
     ABILITY("/resources/sounds/ability.wav"),
     HURT("/resources/sounds/hurt.wav"),
-    JUMP("/resources/sounds/jump.wav"),
-    SELECT("/resources/sounds/select.wav"),
+    TEDDYCOPTER_JUMP("/resources/sounds/teddycopter_jump.wav"),
+    ROCKETRON_JUMP("/resources/sounds/rocketron_jump.wav"),
+    FOLDY_JUMP("/resources/sounds/foldy_jump.wav"),
+    SELECT("/resources/sounds/select.wav"), // not fully implemented
+    CLICK("/resources/sounds/click.wav"), // not fully implemented
+    INCORRECT("/resources/sounds/incorrect.wav"), // unused
     CHARGE("/resources/sounds/charge.wav"),
-    TOKEN("/resources/sounds/token.wav");
+    TOKEN("/resources/sounds/token.wav"),
+    NO_CHARGES("/resources/sounds/nocharges.wav");
     
     private final URL FILE_PATH;
     

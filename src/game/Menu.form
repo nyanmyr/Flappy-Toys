@@ -79,6 +79,7 @@
             <Property name="text" type="java.lang.String" value="Play"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="button_PlayMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_PlayActionPerformed"/>
           </Events>
           <Constraints>
@@ -98,6 +99,7 @@
             <Property name="text" type="java.lang.String" value="Leaderboards"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="button_LeaderboardsMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_LeaderboardsActionPerformed"/>
           </Events>
           <Constraints>
@@ -117,6 +119,7 @@
             <Property name="text" type="java.lang.String" value="Credits"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="button_CreditsMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_CreditsActionPerformed"/>
           </Events>
           <Constraints>
@@ -136,6 +139,7 @@
             <Property name="text" type="java.lang.String" value="Exit"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="button_ExitMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_ExitActionPerformed"/>
           </Events>
           <Constraints>
@@ -156,6 +160,7 @@
             <Property name="contentAreaFilled" type="boolean" value="false"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="button_AccountMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_AccountActionPerformed"/>
           </Events>
           <Constraints>
@@ -176,6 +181,7 @@
             <Property name="contentAreaFilled" type="boolean" value="false"/>
           </Properties>
           <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="button_SettingsMouseEntered"/>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_SettingsActionPerformed"/>
           </Events>
           <Constraints>

@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class DynamicSprite extends StaticSprite {
 
-    private BufferedImage[] frames;
+    private final BufferedImage[] frames;
     private int currentFrame = 0;
     private int frameDelay = 12; // how many ticks per frame
     private int tickCounter = 0;
