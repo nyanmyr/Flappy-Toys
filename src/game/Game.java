@@ -65,8 +65,6 @@ public class Game extends javax.swing.JFrame {
 //    boolean immunity;
 
     // values set after constructor call
-    private final int WINDOW_HEIGHT;
-    private final int WINDOW_WIDTH;
     private final int RESIZED_WIDTH;
 
     Level level;
@@ -95,10 +93,7 @@ public class Game extends javax.swing.JFrame {
     int chargeCooldown;
     ArrayList<Charge> chargeList = new ArrayList();
 
-    public Game(int WINDOW_WIDTH, int WINDOW_HEIGHT, Toy toy) {
-        this.WINDOW_WIDTH = WINDOW_WIDTH;
-        this.WINDOW_HEIGHT = WINDOW_HEIGHT;
-
+    public Game(Toy toy) {
         initComponents();
 
         Dimension screenSize = panel_Background.getSize();
@@ -804,7 +799,6 @@ public class Game extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
         setSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(null);
 
@@ -840,6 +834,11 @@ public class Game extends javax.swing.JFrame {
         button_PlayAgain.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         button_PlayAgain.setText("PLAY AGAIN");
         button_PlayAgain.setFocusable(false);
+        button_PlayAgain.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_PlayAgainMouseEntered(evt);
+            }
+        });
         button_PlayAgain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_PlayAgainActionPerformed(evt);
@@ -851,6 +850,11 @@ public class Game extends javax.swing.JFrame {
         button_ChooseCharacter.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         button_ChooseCharacter.setText("CHOOSE A NEW CHARACTER");
         button_ChooseCharacter.setFocusable(false);
+        button_ChooseCharacter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_ChooseCharacterMouseEntered(evt);
+            }
+        });
         button_ChooseCharacter.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_ChooseCharacterActionPerformed(evt);
@@ -867,14 +871,24 @@ public class Game extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_ChooseCharacterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ChooseCharacterActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
-        new CharacterSelection(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+        new CharacterSelection().setVisible(true);
     }//GEN-LAST:event_button_ChooseCharacterActionPerformed
 
     private void button_PlayAgainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PlayAgainActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK);
         resetGame();
         startGame();
     }//GEN-LAST:event_button_PlayAgainActionPerformed
+
+    private void button_ChooseCharacterMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ChooseCharacterMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_ChooseCharacterMouseEntered
+
+    private void button_PlayAgainMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PlayAgainMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_PlayAgainMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_ChooseCharacter;

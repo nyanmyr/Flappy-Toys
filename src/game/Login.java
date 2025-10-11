@@ -1,22 +1,20 @@
 package game;
 
+import static game.Main.SCREEN_HEIGHT;
+import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import sfx.sounds.SoundFile;
+import sfx.sounds.SoundPlayer;
 import utility.sprites.StaticSprite;
 
 public class Login extends javax.swing.JFrame {
 
-    private final int WINDOW_WIDTH;
-    private final int WINDOW_HEIGHT;
-
     private StaticSprite background;
 
-    public Login(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-        this.WINDOW_HEIGHT = SCREEN_HEIGHT;
-        this.WINDOW_WIDTH = SCREEN_WIDTH;
-
+    public Login() {
         initComponents();
 
         LoadSprite();
@@ -40,7 +38,7 @@ public class Login extends javax.swing.JFrame {
 
                 background = new StaticSprite(buffered);
 
-                background.setBounds(0, 0, WINDOW_HEIGHT, WINDOW_WIDTH);
+                background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             } else {
                 throw new RuntimeException("Image resource not found: icecream_bg.jpg");
             }
@@ -65,7 +63,6 @@ public class Login extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
         setSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(null);
 
@@ -107,6 +104,11 @@ public class Login extends javax.swing.JFrame {
         button_Login.setBackground(new java.awt.Color(0, 74, 173));
         button_Login.setForeground(new java.awt.Color(255, 255, 255));
         button_Login.setText("Login");
+        button_Login.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_LoginMouseEntered(evt);
+            }
+        });
         button_Login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_LoginActionPerformed(evt);
@@ -118,6 +120,11 @@ public class Login extends javax.swing.JFrame {
         button_CreateAccount.setBackground(new java.awt.Color(0, 74, 173));
         button_CreateAccount.setForeground(new java.awt.Color(255, 255, 255));
         button_CreateAccount.setText("Create Account");
+        button_CreateAccount.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_CreateAccountMouseEntered(evt);
+            }
+        });
         button_CreateAccount.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_CreateAccountActionPerformed(evt);
@@ -129,6 +136,11 @@ public class Login extends javax.swing.JFrame {
         button_Return.setBackground(new java.awt.Color(0, 74, 173));
         button_Return.setForeground(new java.awt.Color(255, 255, 255));
         button_Return.setText("Return");
+        button_Return.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_ReturnMouseEntered(evt);
+            }
+        });
         button_Return.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_ReturnActionPerformed(evt);
@@ -145,24 +157,39 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK); 
         dispose();
-        java.awt.EventQueue.invokeLater(() -> new Menu(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
     }//GEN-LAST:event_button_ReturnActionPerformed
 
     private void button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LoginActionPerformed
         // implement login system here
+        SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
-        java.awt.EventQueue.invokeLater(() -> new Account(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Account().setVisible(true));
     }//GEN-LAST:event_button_LoginActionPerformed
 
     private void button_CreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreateAccountActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
-        java.awt.EventQueue.invokeLater(() -> new Register(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Register().setVisible(true));
     }//GEN-LAST:event_button_CreateAccountActionPerformed
 
     private void passwordField_PasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordField_PasswordActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_passwordField_PasswordActionPerformed
+
+    private void button_LoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_LoginMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_LoginMouseEntered
+
+    private void button_CreateAccountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_CreateAccountMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_CreateAccountMouseEntered
+
+    private void button_ReturnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ReturnMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_ReturnMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

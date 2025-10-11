@@ -1,22 +1,20 @@
 package game;
 
+import static game.Main.SCREEN_HEIGHT;
+import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import sfx.sounds.SoundFile;
+import sfx.sounds.SoundPlayer;
 import utility.sprites.StaticSprite;
 
 public class Options extends javax.swing.JFrame {
 
-    private final int WINDOW_WIDTH;
-    private final int WINDOW_HEIGHT;
-
     private StaticSprite background;
 
-    public Options(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-        this.WINDOW_HEIGHT = SCREEN_HEIGHT;
-        this.WINDOW_WIDTH = SCREEN_WIDTH;
-
+    public Options() {
         initComponents();
 
         LoadSprite();
@@ -40,7 +38,7 @@ public class Options extends javax.swing.JFrame {
 
                 background = new StaticSprite(buffered);
 
-                background.setBounds(0, 0, WINDOW_HEIGHT, WINDOW_WIDTH);
+                background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             } else {
                 throw new RuntimeException("Image resource not found: icecream_bg.jpg");
             }
@@ -63,7 +61,6 @@ public class Options extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
         setSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(null);
 
@@ -81,6 +78,11 @@ public class Options extends javax.swing.JFrame {
         button_SoundEffects.setBackground(new java.awt.Color(0, 74, 173));
         button_SoundEffects.setForeground(new java.awt.Color(255, 255, 255));
         button_SoundEffects.setText("SOUND EFFECTS: ON");
+        button_SoundEffects.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_SoundEffectsMouseEntered(evt);
+            }
+        });
         button_SoundEffects.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_SoundEffectsActionPerformed(evt);
@@ -92,6 +94,11 @@ public class Options extends javax.swing.JFrame {
         button_Music.setBackground(new java.awt.Color(0, 74, 173));
         button_Music.setForeground(new java.awt.Color(255, 255, 255));
         button_Music.setText("MUSIC: ON");
+        button_Music.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_MusicMouseEntered(evt);
+            }
+        });
         button_Music.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_MusicActionPerformed(evt);
@@ -103,6 +110,11 @@ public class Options extends javax.swing.JFrame {
         button_Language.setBackground(new java.awt.Color(0, 74, 173));
         button_Language.setForeground(new java.awt.Color(255, 255, 255));
         button_Language.setText("LANGUAGE: ENGLISH");
+        button_Language.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_LanguageMouseEntered(evt);
+            }
+        });
         button_Language.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_LanguageActionPerformed(evt);
@@ -114,6 +126,11 @@ public class Options extends javax.swing.JFrame {
         button_Tutorial.setBackground(new java.awt.Color(0, 74, 173));
         button_Tutorial.setForeground(new java.awt.Color(255, 255, 255));
         button_Tutorial.setText("TUTORIAL: ON");
+        button_Tutorial.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_TutorialMouseEntered(evt);
+            }
+        });
         button_Tutorial.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_TutorialActionPerformed(evt);
@@ -125,6 +142,11 @@ public class Options extends javax.swing.JFrame {
         button_Return.setBackground(new java.awt.Color(0, 74, 173));
         button_Return.setForeground(new java.awt.Color(255, 255, 255));
         button_Return.setText("Return");
+        button_Return.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_ReturnMouseEntered(evt);
+            }
+        });
         button_Return.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_ReturnActionPerformed(evt);
@@ -141,25 +163,46 @@ public class Options extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
-        java.awt.EventQueue.invokeLater(() -> new Menu(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
     }//GEN-LAST:event_button_ReturnActionPerformed
 
     private void button_MusicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_MusicActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_button_MusicActionPerformed
 
     private void button_TutorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_TutorialActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_button_TutorialActionPerformed
 
     private void button_SoundEffectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SoundEffectsActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_button_SoundEffectsActionPerformed
 
     private void button_LanguageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LanguageActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_button_LanguageActionPerformed
+
+    private void button_ReturnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ReturnMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_ReturnMouseEntered
+
+    private void button_TutorialMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_TutorialMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_TutorialMouseEntered
+
+    private void button_LanguageMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_LanguageMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_LanguageMouseEntered
+
+    private void button_MusicMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_MusicMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_MusicMouseEntered
+
+    private void button_SoundEffectsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_SoundEffectsMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_SoundEffectsMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

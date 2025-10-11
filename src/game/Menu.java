@@ -1,5 +1,7 @@
 package game;
 
+import static game.Main.SCREEN_WIDTH;
+import static game.Main.SCREEN_HEIGHT;
 import static game.Game.MILISECOND_DELAY;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,9 +19,6 @@ import utility.sprites.StaticSprite;
 
 public class Menu extends javax.swing.JFrame {
 
-    private final int WINDOW_WIDTH;
-    private final int WINDOW_HEIGHT;
-
     private StaticSprite background;
 
     private DynamicSprite accountIcon;
@@ -27,10 +26,7 @@ public class Menu extends javax.swing.JFrame {
 
     Timer timer;
 
-    public Menu(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-        this.WINDOW_HEIGHT = SCREEN_HEIGHT;
-        this.WINDOW_WIDTH = SCREEN_WIDTH;
-
+    public Menu() {
         initComponents();
 
         loadBackgroundSprite();
@@ -66,7 +62,7 @@ public class Menu extends javax.swing.JFrame {
 
                 background = new StaticSprite(buffered);
 
-                background.setBounds(0, 0, WINDOW_HEIGHT, WINDOW_WIDTH);
+                background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             } else {
                 throw new RuntimeException("Image resource not found: brickland_bg.jpg");
             }
@@ -87,15 +83,6 @@ public class Menu extends javax.swing.JFrame {
             Graphics2D accountG2D = buffered.createGraphics();
             accountG2D.drawImage(img, 0, 0, null);
             accountG2D.dispose();
-
-            // Split horizontally into frames
-            BufferedImage[] accountFrames = SpriteUtils.sliceHorizontalFrames(buffered, 12);
-
-            // Use DynamicSprite for animation
-            accountIcon = new DynamicSprite(accountFrames);
-            accountIcon.setBounds(0, 0, accountFrames[0].getWidth(), accountFrames[0].getHeight());
-            accountIcon.setSize(60, 60);
-            accountIcon.setLocation(590, 80);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
         }
@@ -180,13 +167,17 @@ public class Menu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
         setSize(new java.awt.Dimension(800, 600));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
         panel_Background.setBackground(new java.awt.Color(51, 102, 255));
-        panel_Background.setMaximumSize(new java.awt.Dimension(WINDOW_HEIGHT, WINDOW_WIDTH));
-        panel_Background.setMinimumSize(new java.awt.Dimension(WINDOW_HEIGHT, WINDOW_WIDTH));
+        panel_Background.setMaximumSize(new java.awt.Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
+        panel_Background.setMinimumSize(new java.awt.Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         panel_Background.setLayout(null);
 
         label_Title.setFont(new java.awt.Font("Comic Sans MS", 0, 64)); // NOI18N
@@ -305,43 +296,43 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_button_ExitActionPerformed
 
     private void button_LeaderboardsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LeaderboardsActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_button_LeaderboardsActionPerformed
 
     private void button_CreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreditsActionPerformed
         timer.stop();
 
         SoundPlayer.playSound(SoundFile.CLICK);
-        
+
         dispose();
-        new Credits(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+        new Credits().setVisible(true);
     }//GEN-LAST:event_button_CreditsActionPerformed
 
     private void button_PlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PlayActionPerformed
         timer.stop();
 
         SoundPlayer.playSound(SoundFile.CLICK);
-        
+
         dispose();
-        new CharacterSelection(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+        new CharacterSelection().setVisible(true);
     }//GEN-LAST:event_button_PlayActionPerformed
 
     private void button_SettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SettingsActionPerformed
         timer.stop();
 
         SoundPlayer.playSound(SoundFile.CLICK);
-        
+
         dispose();
-        new Options(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+        new Options().setVisible(true);
     }//GEN-LAST:event_button_SettingsActionPerformed
 
     private void button_AccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AccountActionPerformed
         timer.stop();
 
         SoundPlayer.playSound(SoundFile.CLICK);
-        
+
         dispose();
-        new Login(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true);
+        new Login().setVisible(true);
     }//GEN-LAST:event_button_AccountActionPerformed
 
     private void button_PlayMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PlayMouseEntered
@@ -357,7 +348,7 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_button_CreditsMouseEntered
 
     private void button_ExitMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ExitMouseEntered
-       SoundPlayer.playSound(SoundFile.SELECT);
+        SoundPlayer.playSound(SoundFile.SELECT);
     }//GEN-LAST:event_button_ExitMouseEntered
 
     private void button_AccountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_AccountMouseEntered
@@ -367,6 +358,9 @@ public class Menu extends javax.swing.JFrame {
     private void button_SettingsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_SettingsMouseEntered
         SoundPlayer.playSound(SoundFile.SELECT);
     }//GEN-LAST:event_button_SettingsMouseEntered
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+    }//GEN-LAST:event_formComponentResized
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_Account;

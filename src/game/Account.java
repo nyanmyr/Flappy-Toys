@@ -1,22 +1,20 @@
 package game;
 
+import static game.Main.SCREEN_HEIGHT;
+import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import sfx.sounds.SoundFile;
+import sfx.sounds.SoundPlayer;
 import utility.sprites.StaticSprite;
 
 public class Account extends javax.swing.JFrame {
 
-    private final int WINDOW_WIDTH;
-    private final int WINDOW_HEIGHT;
-
     private StaticSprite background;
 
-    public Account(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-        this.WINDOW_HEIGHT = SCREEN_HEIGHT;
-        this.WINDOW_WIDTH = SCREEN_WIDTH;
-
+    public Account() {
         initComponents();
 
         LoadSprite();
@@ -40,7 +38,7 @@ public class Account extends javax.swing.JFrame {
 
                 background = new StaticSprite(buffered);
 
-                background.setBounds(0, 0, WINDOW_HEIGHT, WINDOW_WIDTH);
+                background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             } else {
                 throw new RuntimeException("Image resource not found: icecream_bg.jpg");
             }
@@ -72,7 +70,6 @@ public class Account extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
-        setResizable(false);
         setSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(null);
 
@@ -162,6 +159,11 @@ public class Account extends javax.swing.JFrame {
         button_Return.setBackground(new java.awt.Color(0, 74, 173));
         button_Return.setForeground(new java.awt.Color(255, 255, 255));
         button_Return.setText("Return");
+        button_Return.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_ReturnMouseEntered(evt);
+            }
+        });
         button_Return.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_ReturnActionPerformed(evt);
@@ -173,6 +175,11 @@ public class Account extends javax.swing.JFrame {
         button_Logout.setBackground(new java.awt.Color(0, 74, 173));
         button_Logout.setForeground(new java.awt.Color(255, 255, 255));
         button_Logout.setText("Logout");
+        button_Logout.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_LogoutMouseEntered(evt);
+            }
+        });
         button_Logout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_LogoutActionPerformed(evt);
@@ -189,13 +196,22 @@ public class Account extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LogoutActionPerformed
-        // TODO add your handling code here:
+        SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_button_LogoutActionPerformed
 
     private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
-        java.awt.EventQueue.invokeLater(() -> new Menu(WINDOW_HEIGHT, WINDOW_WIDTH).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
     }//GEN-LAST:event_button_ReturnActionPerformed
+
+    private void button_ReturnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ReturnMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_ReturnMouseEntered
+
+    private void button_LogoutMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_LogoutMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_LogoutMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
