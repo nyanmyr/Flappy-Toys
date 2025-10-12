@@ -3,6 +3,7 @@ package toys;
 import abilities.Ability;
 import collectibles.Collectible;
 import sfx.sounds.SoundFile;
+import sfx.sounds.SoundPlayer;
 import utility.sprites.DynamicSprite;
 import utility.interfaces.Moveable;
 
@@ -54,6 +55,14 @@ public abstract class Toy implements Moveable {
     // </editor-fold>
 
     // <editor-fold desc="ability methods">
+    public void setAbilitySpriteToPlayerLocation() {
+        ability.setAbilitySpriteToPlayerLocation(this);
+    }
+
+    public Ability getAbility() {
+        return ability;
+    }
+
     public boolean useAbility() {
         if (charges > 0 && abilityCooldown <= 0) {
             abilityCooldown = ABILITY_COOLDOWN_RATE;
@@ -64,6 +73,7 @@ public abstract class Toy implements Moveable {
             ability.useAbility(this);
             return true;
         }
+        SoundPlayer.playSound(SoundFile.NO_CHARGES);
         return false;
     }
 
@@ -111,7 +121,7 @@ public abstract class Toy implements Moveable {
     public int getChargesUsed() {
         return chargesUsed;
     }
-    
+
     public SoundFile getJumpSoundFile() {
         return jumpSoundFile;
     }

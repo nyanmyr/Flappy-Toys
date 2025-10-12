@@ -54,5 +54,4 @@ public class StaticSprite extends JComponent {
     public int getCenterX() {
         return getX() + (getWidth() / 2);
     }
-    
 }

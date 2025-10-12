@@ -198,6 +198,13 @@ public class Game extends javax.swing.JFrame {
         toy.setSize(CHARACTER_SIZE, CHARACTER_SIZE);
         // place toy into center`
         toy.setLocation((RESIZED_WIDTH / 2) - (toy.getSprite().getWidth() / 2), 0);
+
+        // adds the character ability sprite
+        panel_Background.add(toy.getAbility().getSprite());
+        panel_Background.setComponentZOrder(toy.getAbility().getSprite(), OrderLayer.FOREGROUND.layer + 1);
+
+        // hidden away at start (only shows when ability is used)
+        toy.getAbility().setSpriteVisiblity(false);
     }
 
     private void addChargeIcon() {
@@ -244,6 +251,21 @@ public class Game extends javax.swing.JFrame {
 
         // game loop is here
         ActionListener update = (ActionEvent evt) -> {
+
+            // !!! find way to show that time ability is nearly over !!!
+            if (!toy.getAbility().isTimerDone()) {
+                toy.getAbility().decrementTimer();
+                toy.setAbilitySpriteToPlayerLocation();
+
+                boolean visibility = true;
+                if (toy.getAbility().isNearlyDone()) {
+                    visibility = toy.getAbility().isTimerDivisibleByFour();
+                }
+
+                toy.getAbility().setSpriteVisiblity(visibility);
+            } else {
+                toy.getAbility().setSpriteVisiblity(false);
+            }
 
             updateDynamicSprites();
 
@@ -438,10 +460,7 @@ public class Game extends javax.swing.JFrame {
 
         if (playerKeyInput.abilityUsed) {
             if (toy.useAbility()) {
-                SoundPlayer.playSound(SoundFile.ABILITY);
                 label_Charges.setText(String.valueOf(toy.getCharges()));
-            } else {
-                SoundPlayer.playSound(SoundFile.NO_CHARGES);
             }
             playerKeyInput.abilityUsed = false;
         }
@@ -686,7 +705,7 @@ public class Game extends javax.swing.JFrame {
 
     private void endGame(ActionEvent evt) {
         MusicPlayer.crossfadeTo(MusicFile.MENU, 3000);
-        
+
         PlayManager.gameOver(toy);
 
         SoundPlayer.playSound(SoundFile.HURT);
