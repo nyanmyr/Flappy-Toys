@@ -2,18 +2,18 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="2">
         <file>
-            <url>src/game/Game.java</url>
-            <bookmark id="1">
-                <name/>
-                <line>758</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/game/CharacterSelection.java</url>
             <bookmark id="2">
                 <name/>
                 <line>97</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/game/Game.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>753</line>
                 <key/>
             </bookmark>
         </file>
@@ -22,11 +22,7 @@
         <group>
             <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/abilities/Ability.java</file>
             <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/game/Game.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/abilities/Dash.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/abilities/JumpBoost.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/abilities/Shield.java</file>
             <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/toys/Toy.java</file>
-            <file>file:/D:/Progamming/Java/GitHub/Flappy-Bird/src/sfx/sounds/SoundFile.java</file>
         </group>
     </open-files>
 </project-private>

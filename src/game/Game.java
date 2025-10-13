@@ -31,7 +31,6 @@ import sfx.music.MusicFile;
 import sfx.music.MusicPlayer;
 // utilities
 import utility.enums.OrderLayer;
-import utility.inputhandling.KeyInputHandler;
 import utility.inputhandling.MouseInputHandler;
 
 public class Game extends javax.swing.JFrame {
@@ -44,7 +43,6 @@ public class Game extends javax.swing.JFrame {
     // if 0, then 1 is 1 second
     public static final int MILISECOND_DELAY = 15;
 
-    KeyInputHandler playerKeyInput = new KeyInputHandler();
     MouseInputHandler playerMouseInput = new MouseInputHandler();
 
     final int MIMIMUM_GAP = 100;
@@ -132,10 +130,8 @@ public class Game extends javax.swing.JFrame {
 
     private void giveControls() {
         // give controls to player
-        playerKeyInput.reset();
         playerMouseInput.reset();
 
-        this.addKeyListener(playerKeyInput);
         this.addMouseListener(playerMouseInput);
         this.addMouseMotionListener(playerMouseInput);
     }
@@ -293,7 +289,6 @@ public class Game extends javax.swing.JFrame {
             if (!gameOver) {
                 handlePlayer();
             } else {
-                this.removeKeyListener(playerKeyInput);
                 this.removeMouseListener(playerMouseInput);
                 this.removeMouseMotionListener(playerMouseInput);
             }
@@ -458,11 +453,11 @@ public class Game extends javax.swing.JFrame {
             playerMouseInput.moveRight = false;
         }
 
-        if (playerKeyInput.abilityUsed) {
+        if (playerMouseInput.abilityUsed) {
             if (toy.useAbility()) {
                 label_Charges.setText(String.valueOf(toy.getCharges()));
             }
-            playerKeyInput.abilityUsed = false;
+            playerMouseInput.abilityUsed = false;
         }
     }
 
@@ -761,7 +756,6 @@ public class Game extends javax.swing.JFrame {
         tokenList.clear();
 
         // disable controls
-        this.removeKeyListener(playerKeyInput);
         this.removeMouseListener(playerMouseInput);
         toy.resetScore();
 

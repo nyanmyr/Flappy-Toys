@@ -64,7 +64,9 @@ public abstract class Toy implements Moveable {
     }
 
     public boolean useAbility() {
-        if (charges > 0 && abilityCooldown <= 0) {
+        if (charges > 0
+                && abilityCooldown <= 0
+                && !immune) {
             abilityCooldown = ABILITY_COOLDOWN_RATE;
 
             charges--;
