@@ -1,13 +1,14 @@
 package levels;
 
 import collectibles.PopsicleToken;
-import levels.backgrounds.IceCreamLandBackground;
+import levels.backgrounds.IceCreamBackground;
 import levels.parallaxes.IceCreamParallax;
 import levels.parallaxes.ParallaxLevel;
 import obstacles.columns.IceCreamColumn;
 import obstacles.grounds.IceCreamGround;
+import sfx.music.MusicFile;
 
-public class IceCreamLand extends Level {
+public class IceCream extends AbstractLevel {
 
     @Override
     final public void generateColumn(int gap, int columnOffset, int lifeTime) {
@@ -26,7 +27,7 @@ public class IceCreamLand extends Level {
 
     @Override
     final public void generateBackground() {
-        background = new IceCreamLandBackground();
+        background = new IceCreamBackground();
     }
 
     @Override
@@ -60,5 +61,10 @@ public class IceCreamLand extends Level {
     @Override
     public void generateToken(int lifeTime) {
         token = new PopsicleToken(lifeTime);
+    }
+    
+        @Override
+    public void generateMusic() {
+        MUSIC_FILE = MusicFile.ICECREAM;
     }
 }

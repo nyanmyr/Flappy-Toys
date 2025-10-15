@@ -14,14 +14,20 @@ import collectibles.BrickToken;
 import collectibles.Charge;
 import collectibles.Collectible;
 import collectibles.PopsicleToken;
+import java.util.LinkedList;
+import java.util.Queue;
 // toys
 import toys.Toy;
 // levels
 import obstacles.columns.Column;
 import obstacles.grounds.GroundSetting;
+import levels.AbstractLevel;
+import levels.Bricks;
+import levels.Desert;
+import levels.Forest;
+import levels.IceCream;
 import levels.Level;
-import levels.BrickLand;
-import levels.IceCreamLand;
+import levels.Steamworks;
 import levels.backgrounds.Background;
 import levels.parallaxes.ParallaxLevel;
 // sfx
@@ -65,7 +71,7 @@ public class Game extends javax.swing.JFrame {
     // values set after constructor call
     private final int RESIZED_WIDTH;
 
-    Level level;
+    AbstractLevel level;
 
     int transitionTimer;
 
@@ -106,6 +112,8 @@ public class Game extends javax.swing.JFrame {
 
     Collectible screenCharge;
     Collectible screenToken;
+
+    Queue<Level> levelsQueue = new LinkedList();
 
     // <editor-fold desc="initialization methods">
     private void initializeVariables() {
@@ -149,7 +157,37 @@ public class Game extends javax.swing.JFrame {
     }
 
     private void generateLevel() {
-        level = new BrickLand();
+
+        int selectedLevel = randomizer.nextInt(1, 6);
+
+        // adds a place holder level
+        levelsQueue.add(Level.NONE);
+
+        switch (selectedLevel) {
+            case 1 -> {
+                level = new Bricks();
+                levelsQueue.add(Level.BRICKS);
+            }
+            case 2 -> {
+                level = new IceCream();
+                levelsQueue.add(Level.ICECREAM);
+            }
+            case 3 -> {
+                level = new Desert();
+                levelsQueue.add(Level.DESERT);
+            }
+            case 4 -> {
+                level = new Forest();
+                levelsQueue.add(Level.FOREST);
+            }
+            case 5 -> {
+                level = new Steamworks();
+                levelsQueue.add(Level.STEAMWORKS);
+            }
+            default -> {
+                throw new RuntimeException("Error: Level selection");
+            }
+        }
 
         // initialize objects here
         level.generateLeftGround(GroundSetting.NORMAL.value);
@@ -184,6 +222,10 @@ public class Game extends javax.swing.JFrame {
         level.generateBackground();
         panel_Background.add(level.getBackgroundSprite());
         panel_Background.setComponentZOrder(level.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
+
+        // play the music of the levle
+        level.generateMusic();
+        MusicPlayer.crossfadeTo(level.getMusicFILE(), 3000);
     }
 
     private void addPlayer() {
@@ -235,15 +277,14 @@ public class Game extends javax.swing.JFrame {
 
         giveControls();
         resetCollectibles();
-        generateLevel();
         addPlayer();
+
+        generateLevel();
 
         addChargeIcon();
         addTokenIcon(new BrickToken(0));
 
         setUIFront();
-
-        MusicPlayer.crossfadeTo(MusicFile.BRICKLAND, 3000);
 
         // game loop is here
         ActionListener update = (ActionEvent evt) -> {
@@ -376,17 +417,70 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.remove(screenToken.getSprite());
 
-        Level oldLevel = level;
-        MusicFile newMusic;
-        if (level instanceof BrickLand) {
-            addTokenIcon(new PopsicleToken(0));
-            level = new IceCreamLand();
-            newMusic = MusicFile.ICECREAM;
-        } else {
-            addTokenIcon(new BrickToken(0));
-            level = new BrickLand();
-            newMusic = MusicFile.BRICKLAND;
+        // summary: checks the current level, and the level before that
+        // to determine the next level (without duplication)
+        Level poppedLevel = levelsQueue.poll();
+
+        Level selectedLevel = poppedLevel;
+
+        while (selectedLevel == poppedLevel && selectedLevel != levelsQueue.peek()) {
+            int levelNum = randomizer.nextInt(1, 6);
+            switch (levelNum) {
+                case 1 -> {
+                    selectedLevel = Level.BRICKS;
+                    System.out.println("Next Level: Bricks");
+                }
+                case 2 -> {
+                    selectedLevel = Level.ICECREAM;
+                    System.out.println("Next Level: Icecream");
+                }
+                case 3 -> {
+                    selectedLevel = Level.DESERT;
+                    System.out.println("Next Level: Desert");
+                }
+                case 4 -> {
+                    selectedLevel = Level.FOREST;
+                    System.out.println("Next Level: Forest");
+                }
+                case 5 -> {
+                    selectedLevel = Level.STEAMWORKS;
+                    System.out.println("Next Level: Steamworks");
+                }
+                default -> {
+                    throw new RuntimeException("Error: Level selection");
+                }
+            }
         }
+        levelsQueue.add(selectedLevel);
+
+        AbstractLevel oldLevel = level;
+        switch (selectedLevel) {
+            case BRICKS -> {
+                addTokenIcon(new PopsicleToken(0));
+                level = new IceCream();
+            }
+            case ICECREAM -> {
+                addTokenIcon(new PopsicleToken(0));
+                level = new IceCream();
+            }
+            case DESERT -> {
+                addTokenIcon(new PopsicleToken(0));
+                level = new Desert();
+            }
+            case FOREST -> {
+                addTokenIcon(new PopsicleToken(0));
+                level = new Forest();
+            }
+            case STEAMWORKS -> {
+                addTokenIcon(new PopsicleToken(0));
+                level = new Steamworks();
+            }
+            default ->
+                throw new AssertionError(selectedLevel.name());
+        }
+
+        level.generateMusic();
+        MusicPlayer.crossfadeTo(level.getMusicFILE(), 3000);
 
         temporaryBackground = oldLevel.getBackground();
 
@@ -411,9 +505,6 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.setComponentZOrder(level.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
         panel_Background.setComponentZOrder(temporaryBackground.getSprite(), getOrderLayer(OrderLayer.BACKGROUND) - 1);
-
-        // transition music to new music
-        MusicPlayer.crossfadeTo(newMusic, 6000);
     }
 
     private void backgroundFade() {
@@ -770,6 +861,7 @@ public class Game extends javax.swing.JFrame {
     }
     // </editor-fold>
 
+    // utility method
     private int getOrderLayer(OrderLayer layer) {
         switch (layer) {
             case UI -> {

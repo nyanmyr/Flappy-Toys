@@ -6,9 +6,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class BrickParallax extends Parallax {
+public class DesertParallax extends Parallax {
 
-    public BrickParallax(int offsetX, ParallaxLevel level){
+    public DesertParallax(int offsetX, ParallaxLevel level){
         super(offsetX, level);
         LoadSprite();
     }
@@ -22,10 +22,10 @@ public class BrickParallax extends Parallax {
             java.net.URL resource;
             switch (level) {
                 case LEVEL_1 -> {
-                    resource = getClass().getResource("/resources/parallaxes/brick_parallax1.png");
+                    resource = getClass().getResource("/resources/parallaxes/desert_parallax1.png");
                 }
                 case LEVEL_2 -> {
-                    resource = getClass().getResource("/resources/parallaxes/brick_parallax2.png");
+                    resource = getClass().getResource("/resources/parallaxes/desert_parallax2.png");
                     offsetY = 100;
                 }
                 default ->
@@ -48,7 +48,7 @@ public class BrickParallax extends Parallax {
                 
                 sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 200);
             } else {
-                throw new RuntimeException("Image resource not found: brick_parallax1.png");
+                throw new RuntimeException("Parallax resources not found.");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

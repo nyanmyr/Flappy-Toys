@@ -1,43 +1,73 @@
 
 package levels;
 
+import collectibles.BrickToken;
+import levels.backgrounds.SteamworksBackground;
 import levels.parallaxes.ParallaxLevel;
+import levels.parallaxes.SteamworksParallax;
+import obstacles.columns.SteamworksColumn;
+import obstacles.grounds.SteamworksGround;
+import sfx.music.MusicFile;
 
-public class Steamworks extends Level {
+
+public class Steamworks extends AbstractLevel {
 
     @Override
-    public void generateColumn(int gap, int columnOffset, int lifeTime) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    final public void generateColumn(int gap, int columnOffset, int lifeTime) {
+        column = new SteamworksColumn(gap, columnOffset, lifeTime);
     }
 
     @Override
-    public void generateLeftGround(int offsetX) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    final public void generateLeftGround(int offsetX) {
+        ground_left = new SteamworksGround(offsetX);
     }
 
     @Override
-    public void generateRightGround(int offsetX) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    final public void generateRightGround(int offsetX) {
+        ground_right = new SteamworksGround(offsetX);
     }
 
     @Override
-    public void generateBackground() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    final public void generateBackground() {
+        background = new SteamworksBackground();
     }
 
     @Override
-    public void generateLeftParallax(int offsetX, ParallaxLevel level) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    final public void generateLeftParallax(int offsetX, ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                parallax1_left = new SteamworksParallax(offsetX, level);
+            }
+            case LEVEL_2 -> {
+                parallax2_left = new SteamworksParallax(offsetX, level);
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
 
     @Override
-    public void generateRightParallax(int offsetX, ParallaxLevel level) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    final public void generateRightParallax(int offsetX, ParallaxLevel level) {
+        switch (level) {
+            case LEVEL_1 -> {
+                parallax1_right = new SteamworksParallax(offsetX, level);
+            }
+            case LEVEL_2 -> {
+                parallax2_right = new SteamworksParallax(offsetX, level);
+            }
+            default ->
+                throw new AssertionError(level.name());
+        }
     }
 
     @Override
     public void generateToken(int lifeTime) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        token = new BrickToken(lifeTime);
     }
 
+    @Override
+    public void generateMusic() {
+        MUSIC_FILE = MusicFile.STEAMWORKS;
+    }
 }
+

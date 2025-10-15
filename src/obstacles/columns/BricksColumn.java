@@ -6,9 +6,9 @@ import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class BrickColumn extends Column {
+public class BricksColumn extends Column {
     
-    public BrickColumn(int gap, int offset, int lifeTime) {
+    public BricksColumn(int gap, int offset, int lifeTime) {
         super(lifeTime);
         LoadSprite(gap, offset);
     }
@@ -16,7 +16,7 @@ public class BrickColumn extends Column {
     @Override
     public final void LoadSprite(int gap, int offset) {
         try {
-            java.net.URL resource = getClass().getResource("/resources/columns/brick_column.png");
+            java.net.URL resource = getClass().getResource("/resources/columns/bricks_column.png");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -39,7 +39,7 @@ public class BrickColumn extends Column {
                 top.setBounds(785, -(offset + gap), 90, 600);
                 bottom.setBounds(785, (top.getY() + top.getHeight()) + gap, 90, 600);
             } else {
-                throw new RuntimeException("Image resource not found: /brick_column.png");
+                throw new RuntimeException("Image resource not found: /bricks_column.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

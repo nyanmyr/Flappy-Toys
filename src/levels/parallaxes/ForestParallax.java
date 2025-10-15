@@ -6,9 +6,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class IceCreamParallax extends Parallax {
+public class ForestParallax extends Parallax {
 
-    public IceCreamParallax(int offsetX, ParallaxLevel level) {
+    public ForestParallax(int offsetX, ParallaxLevel level){
         super(offsetX, level);
         LoadSprite();
     }
@@ -16,22 +16,22 @@ public class IceCreamParallax extends Parallax {
     @Override
     public final void LoadSprite() {
         try {
-
+            
             int offsetY = 0;
             
             java.net.URL resource;
             switch (level) {
                 case LEVEL_1 -> {
-                    resource = getClass().getResource("/resources/parallaxes/icecream_parallax1.png");
+                    resource = getClass().getResource("/resources/parallaxes/forest_parallax1.png");
                 }
                 case LEVEL_2 -> {
-                    resource = getClass().getResource("/resources/parallaxes/icecream_parallax2.png");
+                    resource = getClass().getResource("/resources/parallaxes/forest_parallax2.png");
                     offsetY = 100;
                 }
                 default ->
                     throw new AssertionError(level.name());
             }
-
+            
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -45,9 +45,8 @@ public class IceCreamParallax extends Parallax {
                 g2d.dispose();
 
                 sprite = new StaticSprite(buffered);
-
-                // adjust
-                sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 150);
+                
+                sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 200);
             } else {
                 throw new RuntimeException("Parallax resources not found.");
             }
@@ -55,5 +54,5 @@ public class IceCreamParallax extends Parallax {
             throw new RuntimeException("Failed to load sprite image", e);
         }
     }
-
+    
 }

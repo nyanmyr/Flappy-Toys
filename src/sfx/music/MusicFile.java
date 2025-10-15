@@ -4,8 +4,11 @@ import java.net.URL;
 
 public enum MusicFile {
 
-    BRICKLAND("/resources/music/pou.wav"),
+    BRICKS("/resources/music/pou.wav"),
     ICECREAM("/resources/music/pou.wav"),
+    DESERT("/resources/music/pou.wav"),
+    FOREST("/resources/music/pou.wav"),
+    STEAMWORKS("/resources/music/pou.wav"),
     MENU("/resources/music/menu.wav");
     
     private final URL FILE_PATH;

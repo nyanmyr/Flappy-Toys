@@ -6,16 +6,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class BrickLandBackground extends Background {
+public class IceCreamBackground extends Background {
 
-    public BrickLandBackground() {
+    public IceCreamBackground() {
         LoadSprite();
     }
 
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/backgrounds/brickland_bg.jpg");
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/icecream_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -30,10 +30,9 @@ public class BrickLandBackground extends Background {
 
                 sprite = new StaticSprite(buffered);
                 sprite.setOpaque(false);
-
                 sprite.setBounds(0, 0, 800, 600);
             } else {
-                throw new RuntimeException("Image resource not found: /brickland_bg.jpg");
+                throw new RuntimeException("Image resource not found: /icecream_bg.jpg");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

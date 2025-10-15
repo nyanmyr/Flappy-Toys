@@ -1,37 +1,22 @@
-package levels.parallaxes;
+package obstacles.grounds;
 
+import utility.sprites.StaticSprite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import utility.sprites.StaticSprite;
 
-public class IceCreamParallax extends Parallax {
+public class ForestGround extends Ground {
 
-    public IceCreamParallax(int offsetX, ParallaxLevel level) {
-        super(offsetX, level);
+    public ForestGround(int offsetX){
+        super(offsetX);
         LoadSprite();
     }
 
     @Override
     public final void LoadSprite() {
         try {
-
-            int offsetY = 0;
-            
-            java.net.URL resource;
-            switch (level) {
-                case LEVEL_1 -> {
-                    resource = getClass().getResource("/resources/parallaxes/icecream_parallax1.png");
-                }
-                case LEVEL_2 -> {
-                    resource = getClass().getResource("/resources/parallaxes/icecream_parallax2.png");
-                    offsetY = 100;
-                }
-                default ->
-                    throw new AssertionError(level.name());
-            }
-
+            java.net.URL resource = getClass().getResource("/resources/grounds/forest_ground.png");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -46,14 +31,17 @@ public class IceCreamParallax extends Parallax {
 
                 sprite = new StaticSprite(buffered);
 
-                // adjust
-                sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 150);
+                sprite.setBounds(0 + offsetX, 450, 800, 200);
             } else {
-                throw new RuntimeException("Parallax resources not found.");
+                throw new RuntimeException("Image resource not found: /forest_ground.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
         }
     }
 
+    @Override
+    public String killEffect() {
+        return "Killed by ground";
+    }
 }

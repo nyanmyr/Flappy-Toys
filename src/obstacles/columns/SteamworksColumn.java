@@ -6,9 +6,9 @@ import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class IceCreamColumn extends Column {
+public class SteamworksColumn extends Column {
 
-    public IceCreamColumn(int gap, int offset, int lifeTime) {
+    public SteamworksColumn(int gap, int offset, int lifeTime) {
         super(lifeTime);
         LoadSprite(gap, offset);
     }
@@ -16,8 +16,8 @@ public class IceCreamColumn extends Column {
     @Override
     public final void LoadSprite(int gap, int offset) {
         try {
-            java.net.URL topSprite = getClass().getResource("/resources/columns/icecream_top_column.png");
-            java.net.URL bottomSprite = getClass().getResource("/resources/columns/icecream_bottom_column.png");
+            java.net.URL topSprite = getClass().getResource("/resources/columns/steamworks_column.png");
+            java.net.URL bottomSprite = getClass().getResource("/resources/columns/steamworks_column.png");
             if (topSprite != null && bottomSprite != null) {
                 Image topImage = ImageIO.read(topSprite);
                 Image bottomImage = ImageIO.read(bottomSprite);
@@ -52,7 +52,7 @@ public class IceCreamColumn extends Column {
                 top.setBounds(785, -(offset + gap), 90, 600);
                 bottom.setBounds(785, (top.getY() + top.getHeight()) + gap, 90, 600);
             } else {
-                throw new RuntimeException("Image resource not found: icecream_top_column.png or icecream_bottom_column.png");
+                throw new RuntimeException("Image resource not found: steamworks_column.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

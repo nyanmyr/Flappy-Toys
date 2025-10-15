@@ -1,4 +1,4 @@
-package levels.parallaxes;
+package levels.backgrounds;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -6,32 +6,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class IceCreamParallax extends Parallax {
+public class ForestBackground extends Background {
 
-    public IceCreamParallax(int offsetX, ParallaxLevel level) {
-        super(offsetX, level);
+    public ForestBackground() {
         LoadSprite();
     }
 
     @Override
     public final void LoadSprite() {
         try {
-
-            int offsetY = 0;
-            
-            java.net.URL resource;
-            switch (level) {
-                case LEVEL_1 -> {
-                    resource = getClass().getResource("/resources/parallaxes/icecream_parallax1.png");
-                }
-                case LEVEL_2 -> {
-                    resource = getClass().getResource("/resources/parallaxes/icecream_parallax2.png");
-                    offsetY = 100;
-                }
-                default ->
-                    throw new AssertionError(level.name());
-            }
-
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/forest_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -45,15 +29,15 @@ public class IceCreamParallax extends Parallax {
                 g2d.dispose();
 
                 sprite = new StaticSprite(buffered);
+                sprite.setOpaque(false);
 
-                // adjust
-                sprite.setBounds(0 + offsetX, 400 - offsetY, 800, 150);
+                sprite.setBounds(0, 0, 800, 600);
             } else {
-                throw new RuntimeException("Parallax resources not found.");
+                throw new RuntimeException("Image resource not found: /forest_bg.jpg");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
         }
     }
-
+    
 }

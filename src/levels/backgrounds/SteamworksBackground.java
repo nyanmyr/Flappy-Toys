@@ -6,16 +6,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import utility.sprites.StaticSprite;
 
-public class IceCreamLandBackground extends Background {
+public class SteamworksBackground extends Background {
 
-    public IceCreamLandBackground() {
+    public SteamworksBackground() {
         LoadSprite();
     }
 
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/backgrounds/icecream_bg.jpg");
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/steamworks_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -30,9 +30,10 @@ public class IceCreamLandBackground extends Background {
 
                 sprite = new StaticSprite(buffered);
                 sprite.setOpaque(false);
+
                 sprite.setBounds(0, 0, 800, 600);
             } else {
-                throw new RuntimeException("Image resource not found: /icecream_bg.jpg");
+                throw new RuntimeException("Image resource not found: /steamworks_bg.jpg");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

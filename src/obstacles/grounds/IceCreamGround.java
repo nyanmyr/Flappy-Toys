@@ -16,7 +16,7 @@ public class IceCreamGround extends Ground {
     @Override
     public final void LoadSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/grounds/icecreamland_ground.png");
+            java.net.URL resource = getClass().getResource("/resources/grounds/icecream_ground.png");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -33,7 +33,7 @@ public class IceCreamGround extends Ground {
 
                 sprite.setBounds(0 + offsetX, 450, 800, 150);
             } else {
-                throw new RuntimeException("Image resource not found: /icecreamland_ground.png");
+                throw new RuntimeException("Image resource not found: /icecream_ground.png");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);

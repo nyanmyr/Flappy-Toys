@@ -47,7 +47,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void loadBackgroundSprite() {
         try {
-            java.net.URL resource = getClass().getResource("/resources/backgrounds/brickland_bg.jpg");
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/bricks_bg.jpg");
             if (resource != null) {
                 Image img = ImageIO.read(resource);
                 java.awt.image.BufferedImage buffered
@@ -64,7 +64,7 @@ public class Menu extends javax.swing.JFrame {
 
                 background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             } else {
-                throw new RuntimeException("Image resource not found: brickland_bg.jpg");
+                throw new RuntimeException("Image resource not found: bricks_bg.jpg");
             }
 
             java.net.URL accountResource = getClass().getResource("/resources/animations/icons/account_anim.png");
