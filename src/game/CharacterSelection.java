@@ -40,6 +40,9 @@ public class CharacterSelection extends javax.swing.JFrame {
     public CharacterSelection() {
         initComponents();
 
+        label_Tutorial.setVisible(Options.tutorial);
+        label_Objectives.setVisible(Options.tutorial);
+        
         Dimension screenSize = panel_Background.getSize();
         RESIZED_WIDTH = screenSize.width;
 

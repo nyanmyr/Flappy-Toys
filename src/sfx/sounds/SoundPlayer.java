@@ -1,5 +1,6 @@
 package sfx.sounds;
 
+import game.Options;
 import java.io.IOException;
 import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
@@ -12,6 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class SoundPlayer {
 
     public static void playSound(SoundFile soundFile) {
+        if (!Options.soundEffects) return;
         
         URL filePath = soundFile.getFilePath();
         

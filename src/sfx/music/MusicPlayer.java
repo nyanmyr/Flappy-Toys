@@ -1,5 +1,6 @@
 package sfx.music;
 
+import game.Options;
 import java.io.IOException;
 import java.net.URL;
 import javax.sound.sampled.AudioInputStream;
@@ -16,6 +17,8 @@ public class MusicPlayer {
     private static boolean isTransitioning = false;
     
     public static void playSound(MusicFile musicFile) {
+        if (!Options.music) return;
+        
         stopCurrentClip();
 
         URL filePath = musicFile.getFilePath();
@@ -46,6 +49,8 @@ public class MusicPlayer {
     }
 
     public static void crossfadeTo(MusicFile nextMusicFile, int durationMs) {
+        if (!Options.music) return;
+        
         if (isTransitioning) return; // Prevent overlapping transitions
         isTransitioning = true;
 

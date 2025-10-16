@@ -428,23 +428,18 @@ public class Game extends javax.swing.JFrame {
             switch (levelNum) {
                 case 1 -> {
                     selectedLevel = Level.BRICKS;
-                    System.out.println("Next Level: Bricks");
                 }
                 case 2 -> {
                     selectedLevel = Level.ICECREAM;
-                    System.out.println("Next Level: Icecream");
                 }
                 case 3 -> {
                     selectedLevel = Level.DESERT;
-                    System.out.println("Next Level: Desert");
                 }
                 case 4 -> {
                     selectedLevel = Level.FOREST;
-                    System.out.println("Next Level: Forest");
                 }
                 case 5 -> {
                     selectedLevel = Level.STEAMWORKS;
-                    System.out.println("Next Level: Steamworks");
                 }
                 default -> {
                     throw new RuntimeException("Error: Level selection");
