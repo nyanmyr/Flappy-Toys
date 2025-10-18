@@ -937,27 +937,35 @@ public class Game extends javax.swing.JFrame {
         panel_Background.setMinimumSize(new java.awt.Dimension(800, 600));
         panel_Background.setLayout(null);
 
+        label_Collectibles.setBackground(new java.awt.Color(255, 255, 255, 32));
         label_Collectibles.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
         label_Collectibles.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_Collectibles.setText("Tokens");
+        label_Collectibles.setOpaque(true);
         panel_Background.add(label_Collectibles);
         label_Collectibles.setBounds(70, 90, 170, 50);
 
+        label_Charges.setBackground(new java.awt.Color(255, 255, 255, 32));
         label_Charges.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
         label_Charges.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_Charges.setText("Charges ");
+        label_Charges.setOpaque(true);
         panel_Background.add(label_Charges);
         label_Charges.setBounds(70, 10, 170, 50);
 
+        label_Score.setBackground(new java.awt.Color(255, 255, 255, 32));
         label_Score.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
         label_Score.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label_Score.setText("Score");
+        label_Score.setOpaque(true);
         panel_Background.add(label_Score);
         label_Score.setBounds(10, 470, 780, 70);
 
+        label_GameOver.setBackground(new java.awt.Color(255, 255, 255, 32));
         label_GameOver.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
         label_GameOver.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label_GameOver.setText("GAME OVER");
+        label_GameOver.setOpaque(true);
         panel_Background.add(label_GameOver);
         label_GameOver.setBounds(260, 200, 290, 100);
 
