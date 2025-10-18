@@ -71,11 +71,11 @@ public class Game extends javax.swing.JFrame {
     // values set after constructor call
     private final int RESIZED_WIDTH;
 
-    AbstractLevel level;
+    AbstractLevel gameLevel;
 
     int transitionTimer;
 
-    final int LEVEL_CHANGE_TIME = 1500;
+    final int LEVEL_CHANGE_TIME = 750;
     final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 125;
     final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 125;
 
@@ -158,74 +158,50 @@ public class Game extends javax.swing.JFrame {
 
     private void generateLevel() {
 
-        int selectedLevel = randomizer.nextInt(1, 6);
+        levelsQueue.clear();
 
         // adds a place holder level
         levelsQueue.add(Level.NONE);
 
-        switch (selectedLevel) {
-            case 1 -> {
-                level = new Bricks();
-                levelsQueue.add(Level.BRICKS);
-            }
-            case 2 -> {
-                level = new IceCream();
-                levelsQueue.add(Level.ICECREAM);
-            }
-            case 3 -> {
-                level = new Desert();
-                levelsQueue.add(Level.DESERT);
-            }
-            case 4 -> {
-                level = new Forest();
-                levelsQueue.add(Level.FOREST);
-            }
-            case 5 -> {
-                level = new Steamworks();
-                levelsQueue.add(Level.STEAMWORKS);
-            }
-            default -> {
-                throw new RuntimeException("Error: Level selection");
-            }
-        }
+        gameLevel = generateRandomLevel(true);
 
         // initialize objects here
-        level.generateLeftGround(GroundSetting.NORMAL.value);
-        level.generateRightGround(GroundSetting.OFFSET.value);
+        gameLevel.generateLeftGround(GroundSetting.NORMAL.value);
+        gameLevel.generateRightGround(GroundSetting.OFFSET.value);
 
-        panel_Background.add(level.getLeftGroundSprite());
-        panel_Background.setComponentZOrder(level.getLeftGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
-        panel_Background.add(level.getRightGroundSprite());
-        panel_Background.setComponentZOrder(level.getRightGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
+        panel_Background.add(gameLevel.getLeftGroundSprite());
+        panel_Background.setComponentZOrder(gameLevel.getLeftGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
+        panel_Background.add(gameLevel.getRightGroundSprite());
+        panel_Background.setComponentZOrder(gameLevel.getRightGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
 
         // generate first layer of parallax
-        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_1);
-        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_1);
+        gameLevel.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_1);
+        gameLevel.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_1);
 
-        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
-        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
+        panel_Background.add(gameLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_1));
+        panel_Background.setComponentZOrder(gameLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
 
-        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
-        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
+        panel_Background.add(gameLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_1));
+        panel_Background.setComponentZOrder(gameLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
 
         // generate second layer of parallax
-        level.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_2);
-        level.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_2);
+        gameLevel.generateLeftParallax(GroundSetting.NORMAL.value, ParallaxLevel.LEVEL_2);
+        gameLevel.generateRightParallax(GroundSetting.OFFSET.value, ParallaxLevel.LEVEL_2);
 
-        panel_Background.add(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
-        panel_Background.setComponentZOrder(level.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
+        panel_Background.add(gameLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_2));
+        panel_Background.setComponentZOrder(gameLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
 
-        panel_Background.add(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
-        panel_Background.setComponentZOrder(level.getRightParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
+        panel_Background.add(gameLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_2));
+        panel_Background.setComponentZOrder(gameLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
 
         // initialize the background
-        level.generateBackground();
-        panel_Background.add(level.getBackgroundSprite());
-        panel_Background.setComponentZOrder(level.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
+        gameLevel.generateBackground();
+        panel_Background.add(gameLevel.getBackgroundSprite());
+        panel_Background.setComponentZOrder(gameLevel.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
 
         // play the music of the levle
-        level.generateMusic();
-        MusicPlayer.crossfadeTo(level.getMusicFILE(), 3000);
+        gameLevel.generateMusic();
+        MusicPlayer.crossfadeTo(gameLevel.getMusicFILE(), 3000);
     }
 
     private void addPlayer() {
@@ -254,7 +230,9 @@ public class Game extends javax.swing.JFrame {
     }
 
     public void addTokenIcon(Collectible token) {
-        // should probably make this change
+        if (screenToken != null) {
+            panel_Background.remove(screenToken.getSprite());
+        }
         screenToken = token;
         panel_Background.add(screenToken.getSprite());
         screenToken.setLocation(10, 90);
@@ -341,7 +319,7 @@ public class Game extends javax.swing.JFrame {
             }
             if (toy.getSprite().getY() > GROUND_HEIGHT) {
                 gameOver = true;
-                System.out.println(level.groundKillEffect());
+                System.out.println(gameLevel.groundKillEffect());
             }
 
             moveGround();
@@ -417,80 +395,60 @@ public class Game extends javax.swing.JFrame {
 
         panel_Background.remove(screenToken.getSprite());
 
-        // summary: checks the current level, and the level before that
+        // checks the current level, and the level before that
         // to determine the next level (without duplication)
-        Level poppedLevel = levelsQueue.poll();
+        Level polledLevel = levelsQueue.poll();
 
-        Level selectedLevel = poppedLevel;
+        Level selectedLevel = polledLevel;
 
-        while (selectedLevel == poppedLevel && selectedLevel != levelsQueue.peek()) {
-            int levelNum = randomizer.nextInt(1, 6);
-            switch (levelNum) {
-                case 1 -> {
-                    selectedLevel = Level.BRICKS;
-                }
-                case 2 -> {
-                    selectedLevel = Level.ICECREAM;
-                }
-                case 3 -> {
-                    selectedLevel = Level.DESERT;
-                }
-                case 4 -> {
-                    selectedLevel = Level.FOREST;
-                }
-                case 5 -> {
-                    selectedLevel = Level.STEAMWORKS;
-                }
-                default -> {
-                    throw new RuntimeException("Error: Level selection");
-                }
-            }
+        while (selectedLevel == polledLevel && selectedLevel != levelsQueue.peek()) {
+            selectedLevel = getRandomLevel();
         }
         levelsQueue.add(selectedLevel);
 
-        AbstractLevel oldLevel = level;
+        AbstractLevel oldLevel = gameLevel;
         switch (selectedLevel) {
             case BRICKS -> {
-                addTokenIcon(new PopsicleToken(0));
-                level = new IceCream();
+                addTokenIcon(new BrickToken(0));
+                gameLevel = new IceCream();
             }
             case ICECREAM -> {
                 addTokenIcon(new PopsicleToken(0));
-                level = new IceCream();
+                gameLevel = new IceCream();
             }
             case DESERT -> {
                 addTokenIcon(new PopsicleToken(0));
-                level = new Desert();
+                gameLevel = new Desert();
             }
             case FOREST -> {
                 addTokenIcon(new PopsicleToken(0));
-                level = new Forest();
+                gameLevel = new Forest();
             }
             case STEAMWORKS -> {
                 addTokenIcon(new PopsicleToken(0));
-                level = new Steamworks();
+                gameLevel = new Steamworks();
             }
             default ->
                 throw new AssertionError(selectedLevel.name());
         }
 
-        level.generateMusic();
-        MusicPlayer.crossfadeTo(level.getMusicFILE(), 3000);
+        gameLevel.generateMusic();
+        MusicPlayer.crossfadeTo(gameLevel.getMusicFILE(), 3000);
 
         temporaryBackground = oldLevel.getBackground();
 
-        level.setLeftGround(oldLevel.getLeftGround());
-        level.setRightGround(oldLevel.getRightGround());
+        gameLevel.setLeftGround(oldLevel.getLeftGround());
+        gameLevel.setRightGround(oldLevel.getRightGround());
 
-        level.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
-        level.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
+        gameLevel.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
+        gameLevel.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_1), ParallaxLevel.LEVEL_1);
 
-        level.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
-        level.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
+        gameLevel.setLeftParallax(oldLevel.getLeftParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
+        gameLevel.setRightParallax(oldLevel.getRightParallax(ParallaxLevel.LEVEL_2), ParallaxLevel.LEVEL_2);
 
         // initialize the background
-        level.generateBackground();
-        panel_Background.add(level.getBackgroundSprite());
+        gameLevel.generateBackground();
+        panel_Background.add(gameLevel.getBackgroundSprite());
 
         panel_Background.setComponentZOrder(oldLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
         panel_Background.setComponentZOrder(oldLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_1), getOrderLayer(OrderLayer.PARALLAX_1));
@@ -498,7 +456,7 @@ public class Game extends javax.swing.JFrame {
         panel_Background.setComponentZOrder(oldLevel.getLeftParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
         panel_Background.setComponentZOrder(oldLevel.getRightParallaxSprite(ParallaxLevel.LEVEL_2), getOrderLayer(OrderLayer.PARALLAX_2));
 
-        panel_Background.setComponentZOrder(level.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
+        panel_Background.setComponentZOrder(gameLevel.getBackgroundSprite(), getOrderLayer(OrderLayer.BACKGROUND));
         panel_Background.setComponentZOrder(temporaryBackground.getSprite(), getOrderLayer(OrderLayer.BACKGROUND) - 1);
     }
 
@@ -549,15 +507,16 @@ public class Game extends javax.swing.JFrame {
 
     private void moveParallax() {
         for (ParallaxLevel parallaxLevel : ParallaxLevel.values()) {
-            level.moveLeftParallax((int) -(Math.max(1, speed - 1)), 0, parallaxLevel);
-            level.moveRightParallax((int) -(Math.max(1, speed - 1)), 0, parallaxLevel);
+            int parallaxSpeed = parallaxLevel == ParallaxLevel.LEVEL_1 ? speed - 1 : speed - 2;
+            gameLevel.moveLeftParallax((int) -(Math.max(1, parallaxSpeed)), 0, parallaxLevel);
+            gameLevel.moveRightParallax((int) -(Math.max(1, parallaxSpeed)), 0, parallaxLevel);
         }
     }
 
     private void moveGround() {
         // move ground to the left
-        level.moveLeftGround((int) -speed, 0);
-        level.moveRightGround((int) -speed, 0);
+        gameLevel.moveLeftGround((int) -speed, 0);
+        gameLevel.moveRightGround((int) -speed, 0);
     }
 
     private void handleColumns() {
@@ -645,14 +604,14 @@ public class Game extends javax.swing.JFrame {
     private void addColumn() {
         columnRespawnTimer = getColumnRespawnTime();
 
-        level.generateColumn(columnGap, columnRandomY, aliveTime);
+        gameLevel.generateColumn(columnGap, columnRandomY, aliveTime);
 
-        panel_Background.add(level.getBottomColumn());
-        panel_Background.setComponentZOrder(level.getBottomColumn(), getOrderLayer(OrderLayer.COLUMNS));
-        panel_Background.add(level.getTopColumn());
-        panel_Background.setComponentZOrder(level.getTopColumn(), getOrderLayer(OrderLayer.COLUMNS));
+        panel_Background.add(gameLevel.getBottomColumn());
+        panel_Background.setComponentZOrder(gameLevel.getBottomColumn(), getOrderLayer(OrderLayer.COLUMNS));
+        panel_Background.add(gameLevel.getTopColumn());
+        panel_Background.setComponentZOrder(gameLevel.getTopColumn(), getOrderLayer(OrderLayer.COLUMNS));
 
-        columnsList.add(level.getColumn());
+        columnsList.add(gameLevel.getColumn());
 
         // only spawns the charge every 6th column
         if (chargeCooldown > 0) {
@@ -665,7 +624,7 @@ public class Game extends javax.swing.JFrame {
             panel_Background.setComponentZOrder(charge.getSprite(), OrderLayer.UI.layer);
             // spawns the charge in between the gap
             charge.getSprite().setLocation(815,
-                    level.getTopColumn().getY() + level.getTopColumn().getHeight() + (columnGap / 2) - 20);
+                    gameLevel.getTopColumn().getY() + gameLevel.getTopColumn().getHeight() + (columnGap / 2) - 20);
 
             chargeList.add(charge);
         }
@@ -715,28 +674,28 @@ public class Game extends javax.swing.JFrame {
     private void addToken() {
         tokenRespawnTimer = getColumnRespawnTime();
 
-        level.generateToken(aliveTime);
+        gameLevel.generateToken(aliveTime);
 
-        panel_Background.add(level.getTokenSprite());
+        panel_Background.add(gameLevel.getTokenSprite());
         // place the token to the offscreen right
-        level.getTokenSprite().setLocation(815, tokenRandomY);
-        panel_Background.setComponentZOrder(level.getTokenSprite(), getOrderLayer(OrderLayer.COLUMNS));
+        gameLevel.getTokenSprite().setLocation(815, tokenRandomY);
+        panel_Background.setComponentZOrder(gameLevel.getTokenSprite(), getOrderLayer(OrderLayer.COLUMNS));
 
-        tokenList.add(level.getToken());
+        tokenList.add(gameLevel.getToken());
     }
 
     private void checkGroundOutOfBounds() {
         int offsetX = GroundSetting.OFFSET.value;
 
-        if (level.isLeftGroundOutOfBounds()) {
-            level.generateLeftGround(offsetX);
-            panel_Background.add(level.getLeftGroundSprite());
-            panel_Background.setComponentZOrder(level.getLeftGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
+        if (gameLevel.isLeftGroundOutOfBounds()) {
+            gameLevel.generateLeftGround(offsetX);
+            panel_Background.add(gameLevel.getLeftGroundSprite());
+            panel_Background.setComponentZOrder(gameLevel.getLeftGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
         }
-        if (level.isRightGroundOutOfBounds()) {
-            level.generateRightGround(offsetX);
-            panel_Background.add(level.getRightGroundSprite());
-            panel_Background.setComponentZOrder(level.getRightGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
+        if (gameLevel.isRightGroundOutOfBounds()) {
+            gameLevel.generateRightGround(offsetX);
+            panel_Background.add(gameLevel.getRightGroundSprite());
+            panel_Background.setComponentZOrder(gameLevel.getRightGroundSprite(), getOrderLayer(OrderLayer.MIDDLEGROUND));
         }
     }
 
@@ -756,15 +715,15 @@ public class Game extends javax.swing.JFrame {
                     throw new AssertionError(parallaxLevel.name());
             }
 
-            if (level.isLeftParallaxOutOfBounds(parallaxLevel)) {
-                level.generateLeftParallax(offsetX, parallaxLevel);
-                panel_Background.add(level.getLeftParallaxSprite(parallaxLevel));
-                panel_Background.setComponentZOrder(level.getLeftParallaxSprite(parallaxLevel), orderLayer);
+            if (gameLevel.isLeftParallaxOutOfBounds(parallaxLevel)) {
+                gameLevel.generateLeftParallax(offsetX, parallaxLevel);
+                panel_Background.add(gameLevel.getLeftParallaxSprite(parallaxLevel));
+                panel_Background.setComponentZOrder(gameLevel.getLeftParallaxSprite(parallaxLevel), orderLayer);
             }
-            if (level.isRightParallaxOutOfBounds(parallaxLevel)) {
-                level.generateRightParallax(offsetX, parallaxLevel);
-                panel_Background.add(level.getRightParallaxSprite(parallaxLevel));
-                panel_Background.setComponentZOrder(level.getRightParallaxSprite(parallaxLevel), orderLayer);
+            if (gameLevel.isRightParallaxOutOfBounds(parallaxLevel)) {
+                gameLevel.generateRightParallax(offsetX, parallaxLevel);
+                panel_Background.add(gameLevel.getRightParallaxSprite(parallaxLevel));
+                panel_Background.setComponentZOrder(gameLevel.getRightParallaxSprite(parallaxLevel), orderLayer);
             }
         }
     }
@@ -808,18 +767,18 @@ public class Game extends javax.swing.JFrame {
             panel_Background.remove(temporaryBackground.getSprite());
         }
 
-        panel_Background.remove(level.getBackgroundSprite());
+        panel_Background.remove(gameLevel.getBackgroundSprite());
 
         panel_Background.remove(toy.getSprite());
 
         // rework background removal handling
-        panel_Background.remove(level.getLeftGroundSprite());
-        panel_Background.remove(level.getRightGroundSprite());
+        panel_Background.remove(gameLevel.getLeftGroundSprite());
+        panel_Background.remove(gameLevel.getRightGroundSprite());
 
         // add removal for parallaxes here
         for (ParallaxLevel parallaxLevel : ParallaxLevel.values()) {
-            panel_Background.remove(level.getLeftParallaxSprite(parallaxLevel));
-            panel_Background.remove(level.getRightParallaxSprite(parallaxLevel));
+            panel_Background.remove(gameLevel.getLeftParallaxSprite(parallaxLevel));
+            panel_Background.remove(gameLevel.getRightParallaxSprite(parallaxLevel));
         }
 
         // remove every spawned column from the screen
@@ -869,7 +828,7 @@ public class Game extends javax.swing.JFrame {
                 return panel_Background.getComponentZOrder(toy.getSprite()) + 2;
             }
             case COLUMNS -> {
-                return panel_Background.getComponentZOrder(level.getRightGroundSprite()) + 2;
+                return panel_Background.getComponentZOrder(gameLevel.getRightGroundSprite()) + 2;
             }
             case PARALLAX_1 -> {
                 return panel_Background.getComponentCount() - 3;
@@ -883,6 +842,77 @@ public class Game extends javax.swing.JFrame {
             default ->
                 throw new AssertionError(layer.name());
         }
+    }
+
+    private Level getRandomLevel() {
+        int selectedLevel = randomizer.nextInt(1, 6);
+        switch (selectedLevel) {
+            case 1 -> {
+                return Level.BRICKS;
+            }
+            case 2 -> {
+                return Level.ICECREAM;
+            }
+            case 3 -> {
+                return Level.DESERT;
+            }
+            case 4 -> {
+                return Level.FOREST;
+            }
+            case 5 -> {
+                return Level.STEAMWORKS;
+            }
+            default -> {
+                throw new RuntimeException("Error: Level selection");
+            }
+        }
+    }
+
+    private AbstractLevel generateRandomLevel(boolean addToQueue) {
+        int selectedLevel = randomizer.nextInt(1, 6);
+
+        AbstractLevel generatedLevel;
+        Level queueLevel;
+        Collectible generatedToken;
+
+        switch (selectedLevel) {
+            case 1 -> {
+                generatedLevel = new Bricks();
+                queueLevel = Level.BRICKS;
+                generatedToken = new BrickToken(0);
+            }
+            case 2 -> {
+                generatedLevel = new IceCream();
+                queueLevel = Level.ICECREAM;
+                generatedToken = new PopsicleToken(0);
+            }
+            case 3 -> {
+                generatedLevel = new Desert();
+                queueLevel = Level.DESERT;
+                generatedToken = new BrickToken(0);
+            }
+            case 4 -> {
+                generatedLevel = new Forest();
+                queueLevel = Level.FOREST;
+                generatedToken = new BrickToken(0);
+            }
+            case 5 -> {
+                generatedLevel = new Steamworks();
+                queueLevel = Level.BRICKS;
+                generatedToken = new BrickToken(0);
+            }
+            default -> {
+                throw new RuntimeException("Error: Level selection");
+            }
+        }
+
+        if (addToQueue) {
+            levelsQueue.add(queueLevel);
+        }
+
+        addTokenIcon(generatedToken);
+        
+        return generatedLevel;
     }
 
     @SuppressWarnings("unchecked")
