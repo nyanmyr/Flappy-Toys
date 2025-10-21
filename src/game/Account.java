@@ -82,7 +82,7 @@ public class Account extends javax.swing.JFrame {
         label_Username.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label_Username.setText("USERNAME");
         panel_Background.add(label_Username);
-        label_Username.setBounds(50, 50, 290, 80);
+        label_Username.setBounds(150, 50, 290, 80);
 
         label_TextHighestScore.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         label_TextHighestScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

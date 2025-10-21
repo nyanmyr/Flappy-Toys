@@ -75,9 +75,10 @@ public class Game extends javax.swing.JFrame {
 
     int transitionTimer;
 
-    final int LEVEL_CHANGE_TIME = 750;
-    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_TIME + 125;
-    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_TIME + 125;
+    // 750 for testing purposes
+    final int LEVEL_CHANGE_SCORE = 1500;
+    final int LEVEL_SPEEDUP_CHECKPOINT = LEVEL_CHANGE_SCORE + 125;
+    final int TRANSITION_TIME = LEVEL_SPEEDUP_CHECKPOINT - LEVEL_CHANGE_SCORE + 125;
 
     int columnRandomY;
     int columnGap;
