@@ -1,7 +1,7 @@
 
 package levels;
 
-import collectibles.BrickToken;
+import collectibles.GearToken;
 import levels.backgrounds.SteamworksBackground;
 import levels.parallaxes.ParallaxLevel;
 import levels.parallaxes.SteamworksParallax;
@@ -62,7 +62,7 @@ public class Steamworks extends AbstractLevel {
 
     @Override
     public void generateToken(int lifeTime) {
-        token = new BrickToken(lifeTime);
+        token = new GearToken(lifeTime);
     }
 
     @Override

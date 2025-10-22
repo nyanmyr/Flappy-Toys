@@ -13,7 +13,10 @@ import database.PlayManager;
 import collectibles.BrickToken;
 import collectibles.Charge;
 import collectibles.Collectible;
+import collectibles.GearToken;
+import collectibles.MushroomToken;
 import collectibles.PopsicleToken;
+import collectibles.ScarabToken;
 import java.util.LinkedList;
 import java.util.Queue;
 // toys
@@ -57,9 +60,6 @@ public class Game extends javax.swing.JFrame {
 
     final int GROUND_HEIGHT = 420;
 
-//    final int MOVEMENT_SPEED = 3;
-//    final int JUMP_HEIGHT = 50;
-//    final int GRAVITY = 2;
     final int STARTING_SPEED = 3;
     int speed;
 
@@ -161,9 +161,6 @@ public class Game extends javax.swing.JFrame {
 
         levelsQueue.clear();
 
-        // adds a place holder level
-        levelsQueue.add(Level.NONE);
-
         gameLevel = generateRandomLevel(true);
 
         // initialize objects here
@@ -230,17 +227,6 @@ public class Game extends javax.swing.JFrame {
         panel_Background.setComponentZOrder(screenCharge.getSprite(), getOrderLayer(OrderLayer.UI));
     }
 
-    public void addTokenIcon(Collectible token) {
-        if (screenToken != null) {
-            panel_Background.remove(screenToken.getSprite());
-        }
-        screenToken = token;
-        panel_Background.add(screenToken.getSprite());
-        screenToken.setLocation(10, 90);
-        screenToken.setSize(50, 50);
-        panel_Background.setComponentZOrder(screenToken.getSprite(), getOrderLayer(OrderLayer.UI));
-    }
-
     private void setUIFront() {
         panel_Background.setComponentZOrder(label_Collectibles, getOrderLayer(OrderLayer.UI));
         panel_Background.setComponentZOrder(label_Charges, getOrderLayer(OrderLayer.UI));
@@ -261,7 +247,6 @@ public class Game extends javax.swing.JFrame {
         generateLevel();
 
         addChargeIcon();
-        addTokenIcon(new BrickToken(0));
 
         setUIFront();
 
@@ -418,15 +403,15 @@ public class Game extends javax.swing.JFrame {
                 gameLevel = new IceCream();
             }
             case DESERT -> {
-                addTokenIcon(new PopsicleToken(0));
+                addTokenIcon(new ScarabToken(0));
                 gameLevel = new Desert();
             }
             case FOREST -> {
-                addTokenIcon(new PopsicleToken(0));
+                addTokenIcon(new MushroomToken(0));
                 gameLevel = new Forest();
             }
             case STEAMWORKS -> {
-                addTokenIcon(new PopsicleToken(0));
+                addTokenIcon(new GearToken(0));
                 gameLevel = new Steamworks();
             }
             default ->
@@ -816,7 +801,7 @@ public class Game extends javax.swing.JFrame {
     }
     // </editor-fold>
 
-    // utility method
+    // <editor-fold desc="utility methods">
     private int getOrderLayer(OrderLayer layer) {
         switch (layer) {
             case UI -> {
@@ -890,17 +875,17 @@ public class Game extends javax.swing.JFrame {
             case 3 -> {
                 generatedLevel = new Desert();
                 queueLevel = Level.DESERT;
-                generatedToken = new BrickToken(0);
+                generatedToken = new ScarabToken(0);
             }
             case 4 -> {
                 generatedLevel = new Forest();
                 queueLevel = Level.FOREST;
-                generatedToken = new BrickToken(0);
+                generatedToken = new MushroomToken(0);
             }
             case 5 -> {
                 generatedLevel = new Steamworks();
-                queueLevel = Level.BRICKS;
-                generatedToken = new BrickToken(0);
+                queueLevel = Level.STEAMWORKS;
+                generatedToken = new GearToken(0);
             }
             default -> {
                 throw new RuntimeException("Error: Level selection");
@@ -912,10 +897,22 @@ public class Game extends javax.swing.JFrame {
         }
 
         addTokenIcon(generatedToken);
-        
+
         return generatedLevel;
     }
 
+    public void addTokenIcon(Collectible token) {
+        if (screenToken != null) {
+            panel_Background.remove(screenToken.getSprite());
+        }
+        screenToken = token;
+        panel_Background.add(screenToken.getSprite());
+        screenToken.setLocation(10, 90);
+        screenToken.setSize(50, 50);
+        panel_Background.setComponentZOrder(screenToken.getSprite(), getOrderLayer(OrderLayer.UI));
+    }
+    // </editor-fold>
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1009,6 +1006,7 @@ public class Game extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    // <editor-fold desc="button methods">
     private void button_ChooseCharacterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ChooseCharacterActionPerformed
         SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
@@ -1028,7 +1026,8 @@ public class Game extends javax.swing.JFrame {
     private void button_PlayAgainMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PlayAgainMouseEntered
         SoundPlayer.playSound(SoundFile.SELECT);
     }//GEN-LAST:event_button_PlayAgainMouseEntered
-
+    // </editor-fold>
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_ChooseCharacter;
     private javax.swing.JButton button_PlayAgain;

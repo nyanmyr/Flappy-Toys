@@ -1,7 +1,7 @@
 
 package levels;
 
-import collectibles.BrickToken;
+import collectibles.ScarabToken;
 import levels.backgrounds.DesertBackground;
 import levels.parallaxes.DesertParallax;
 import levels.parallaxes.ParallaxLevel;
@@ -62,7 +62,7 @@ public class Desert extends AbstractLevel {
 
     @Override
     public void generateToken(int lifeTime) {
-        token = new BrickToken(lifeTime);
+        token = new ScarabToken(lifeTime);
     }
 
     @Override

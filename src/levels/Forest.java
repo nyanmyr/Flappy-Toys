@@ -1,7 +1,7 @@
 
 package levels;
 
-import collectibles.BrickToken;
+import collectibles.MushroomToken;
 import levels.backgrounds.ForestBackground;
 import levels.parallaxes.ForestParallax;
 import levels.parallaxes.ParallaxLevel;
@@ -62,7 +62,7 @@ public class Forest extends AbstractLevel {
 
     @Override
     public void generateToken(int lifeTime) {
-        token = new BrickToken(lifeTime);
+        token = new MushroomToken(lifeTime);
     }
 
     @Override
