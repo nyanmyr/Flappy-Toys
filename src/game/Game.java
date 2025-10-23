@@ -65,8 +65,7 @@ public class Game extends javax.swing.JFrame {
 
     Toy toy;
     final int CHARACTER_SIZE = 40;
-//    int countdown;
-//    boolean immunity;
+    final int CHARACTER_COLLIDER = 10;
 
     // values set after constructor call
     private final int RESIZED_WIDTH;
@@ -525,16 +524,31 @@ public class Game extends javax.swing.JFrame {
             col.move((int) -speed, 0);
 
             // column collision detection
-            if ((((toy.getSprite().getX() < col.bottom.getX() + col.bottom.getWidth()
-                    && toy.getSprite().getX() + toy.getSprite().getWidth() > col.bottom.getX()
-                    && toy.getSprite().getY() < col.bottom.getY() + col.bottom.getHeight()
-                    && toy.getSprite().getY() + toy.getSprite().getHeight() > col.bottom.getY()))
-                    || ((toy.getSprite().getX() < col.top.getX() + col.top.getWidth()
-                    && toy.getSprite().getX() + toy.getSprite().getWidth() > col.top.getX()
-                    && toy.getSprite().getY() < col.top.getY() + col.top.getHeight()
-                    && toy.getSprite().getY() + toy.getSprite().getHeight() > col.top.getY())))
-                    && !toy.isImmune()
-                    && col.isAlive()) {
+            // top 
+            double top_dx = Math.max(col.top.getX() - toy.getSprite().getCenterX(),
+                    toy.getSprite().getCenterX() - (col.top.getX() + col.top.getWidth()));
+            double top_dy = Math.max(col.top.getY() - toy.getSprite().getCenterY(),
+                    toy.getSprite().getCenterY() - (col.top.getY() + col.top.getHeight()));
+            
+            top_dx = Math.max(top_dx, 0);
+            top_dy = Math.max(top_dy, 0);
+            
+            double top_distance = Math.max(0,
+                    Math.sqrt(Math.pow(top_dx, 2) + Math.pow(top_dy, 2)) - CHARACTER_COLLIDER);
+            
+            // bottom 
+            double bottom_dx = Math.max(col.bottom.getX() - toy.getSprite().getCenterX(),
+                    toy.getSprite().getCenterX() - (col.bottom.getX() + col.bottom.getWidth()));
+            double bottom_dy = Math.max(col.bottom.getY() - toy.getSprite().getCenterY(),
+                    toy.getSprite().getCenterY() - (col.bottom.getY() + col.bottom.getHeight()));
+            
+            bottom_dx = Math.max(bottom_dx, 0);
+            bottom_dy = Math.max(bottom_dy, 0);
+            
+            double bottom_distance = Math.max(0,
+                    Math.sqrt(Math.pow(bottom_dx, 2) + Math.pow(bottom_dy, 2)) - CHARACTER_COLLIDER);
+
+            if (bottom_distance <= 0 || top_distance <= 0) {
                 gameOver = true;
                 System.out.println(col.killEffect());
             }
@@ -912,7 +926,7 @@ public class Game extends javax.swing.JFrame {
         panel_Background.setComponentZOrder(screenToken.getSprite(), getOrderLayer(OrderLayer.UI));
     }
     // </editor-fold>
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1027,7 +1041,7 @@ public class Game extends javax.swing.JFrame {
         SoundPlayer.playSound(SoundFile.SELECT);
     }//GEN-LAST:event_button_PlayAgainMouseEntered
     // </editor-fold>
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_ChooseCharacter;
     private javax.swing.JButton button_PlayAgain;
