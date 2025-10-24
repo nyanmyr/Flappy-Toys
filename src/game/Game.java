@@ -395,7 +395,7 @@ public class Game extends javax.swing.JFrame {
         switch (selectedLevel) {
             case BRICKS -> {
                 addTokenIcon(new BrickToken(0));
-                gameLevel = new IceCream();
+                gameLevel = new Bricks();
             }
             case ICECREAM -> {
                 addTokenIcon(new PopsicleToken(0));
@@ -529,26 +529,28 @@ public class Game extends javax.swing.JFrame {
                     toy.getSprite().getCenterX() - (col.top.getX() + col.top.getWidth()));
             double top_dy = Math.max(col.top.getY() - toy.getSprite().getCenterY(),
                     toy.getSprite().getCenterY() - (col.top.getY() + col.top.getHeight()));
-            
+
             top_dx = Math.max(top_dx, 0);
             top_dy = Math.max(top_dy, 0);
-            
+
             double top_distance = Math.max(0,
                     Math.sqrt(Math.pow(top_dx, 2) + Math.pow(top_dy, 2)) - CHARACTER_COLLIDER);
-            
+
             // bottom 
             double bottom_dx = Math.max(col.bottom.getX() - toy.getSprite().getCenterX(),
                     toy.getSprite().getCenterX() - (col.bottom.getX() + col.bottom.getWidth()));
             double bottom_dy = Math.max(col.bottom.getY() - toy.getSprite().getCenterY(),
                     toy.getSprite().getCenterY() - (col.bottom.getY() + col.bottom.getHeight()));
-            
+
             bottom_dx = Math.max(bottom_dx, 0);
             bottom_dy = Math.max(bottom_dy, 0);
-            
+
             double bottom_distance = Math.max(0,
                     Math.sqrt(Math.pow(bottom_dx, 2) + Math.pow(bottom_dy, 2)) - CHARACTER_COLLIDER);
 
-            if (bottom_distance <= 0 || top_distance <= 0) {
+            if ((bottom_distance <= 0 || top_distance <= 0) 
+                    && !toy.isImmune()
+                    && col.isAlive()) {
                 gameOver = true;
                 System.out.println(col.killEffect());
             }

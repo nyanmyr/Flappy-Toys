@@ -1,0 +1,132 @@
+package game;
+
+import static game.Main.SCREEN_HEIGHT;
+import static game.Main.SCREEN_WIDTH;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import sfx.sounds.SoundFile;
+import sfx.sounds.SoundPlayer;
+import utility.sprites.StaticSprite;
+
+public class Leaderboards extends javax.swing.JFrame {
+
+    private StaticSprite background;
+
+    public Leaderboards() {
+        initComponents();
+
+        LoadSprite();
+        panel_Background.add(background);
+    }
+
+    private void LoadSprite() {
+        try {
+            java.net.URL resource = getClass().getResource("/resources/backgrounds/bricks_bg.jpg");
+            if (resource != null) {
+                Image img = ImageIO.read(resource);
+                java.awt.image.BufferedImage buffered
+                        = new java.awt.image.BufferedImage(
+                                img.getWidth(null),
+                                img.getHeight(null),
+                                java.awt.image.BufferedImage.TYPE_INT_ARGB
+                        );
+                Graphics2D g2d = buffered.createGraphics();
+                g2d.drawImage(img, 0, 0, null);
+                g2d.dispose();
+
+                background = new StaticSprite(buffered);
+
+                background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            } else {
+                throw new RuntimeException("Image resource not found: bricks_bg.jpg");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load sprite image", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        panel_Background = new javax.swing.JPanel();
+        label_Title = new javax.swing.JLabel();
+        button_Return = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        setSize(new java.awt.Dimension(800, 600));
+        getContentPane().setLayout(null);
+
+        panel_Background.setBackground(new java.awt.Color(51, 102, 255));
+        panel_Background.setMaximumSize(new java.awt.Dimension(800, 600));
+        panel_Background.setMinimumSize(new java.awt.Dimension(800, 600));
+        panel_Background.setLayout(null);
+
+        label_Title.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
+        label_Title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Title.setText("Leaderboards");
+        panel_Background.add(label_Title);
+        label_Title.setBounds(50, 50, 320, 80);
+
+        button_Return.setBackground(new java.awt.Color(0, 74, 173));
+        button_Return.setForeground(new java.awt.Color(255, 255, 255));
+        button_Return.setText("Return");
+        button_Return.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_ReturnMouseEntered(evt);
+            }
+        });
+        button_Return.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_ReturnActionPerformed(evt);
+            }
+        });
+        panel_Background.add(button_Return);
+        button_Return.setBounds(290, 460, 220, 50);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        panel_Background.add(jScrollPane1);
+        jScrollPane1.setBounds(60, 150, 660, 290);
+
+        getContentPane().add(panel_Background);
+        panel_Background.setBounds(0, 0, 800, 600);
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed
+        SoundPlayer.playSound(SoundFile.CLICK);
+        dispose();
+        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
+    }//GEN-LAST:event_button_ReturnActionPerformed
+
+    private void button_ReturnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_ReturnMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_ReturnMouseEntered
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton button_Return;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel label_Title;
+    private javax.swing.JPanel panel_Background;
+    // End of variables declaration//GEN-END:variables
+}

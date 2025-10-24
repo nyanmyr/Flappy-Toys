@@ -296,7 +296,12 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_button_ExitActionPerformed
 
     private void button_LeaderboardsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LeaderboardsActionPerformed
+        timer.stop();
+
         SoundPlayer.playSound(SoundFile.CLICK);
+
+        dispose();
+        new Leaderboards().setVisible(true);
     }//GEN-LAST:event_button_LeaderboardsActionPerformed
 
     private void button_CreditsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreditsActionPerformed
