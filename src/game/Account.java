@@ -13,15 +13,22 @@ import utility.sprites.StaticSprite;
 public class Account extends javax.swing.JFrame {
 
     private StaticSprite background;
+    private StaticSprite pfp;
 
-    public Account() {
+    public Account(String username, int pfpNum) {
         initComponents();
 
-        LoadSprite();
+        label_Username.setText(username);
+
+        loadBackground();
+        loadPfp(pfpNum);
         panel_Background.add(background);
+        panel_Background.add(pfp);
+
+        panel_Background.setComponentZOrder(pfp, 0);
     }
 
-    private void LoadSprite() {
+    private void loadBackground() {
         try {
             java.net.URL resource = getClass().getResource("/resources/backgrounds/icecream_bg.jpg");
             if (resource != null) {
@@ -41,6 +48,62 @@ public class Account extends javax.swing.JFrame {
                 background.setBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             } else {
                 throw new RuntimeException("Image resource not found: icecream_bg.jpg");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load sprite image", e);
+        }
+    }
+
+    private void loadPfp(int pfpNum) {
+        try {
+
+            java.net.URL resource;
+
+            // load pfp
+            switch (pfpNum) {
+                case 1 -> {
+                    resource = getClass().getResource("/resources/pfp/teddycopter_pfp.png");
+                }
+                case 2 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+                }
+                case 3 -> {
+                    resource = getClass().getResource("/resources/pfp/foldy_pfp.png");
+                }
+                case 4 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+//                    resource = getClass().getResource("/resources/pfp/dancerina_pfp.png");
+                }
+                case 5 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+//                    resource = getClass().getResource("/resources/pfp/sergeant_pfp.png");
+                }
+                case 6 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+//                    resource = getClass().getResource("/resources/pfp/allicorn_pfp.png");
+                }
+                default -> {
+                    throw new AssertionError(pfpNum);
+                }
+            }
+
+            if (resource != null) {
+                Image img = ImageIO.read(resource);
+                java.awt.image.BufferedImage buffered
+                        = new java.awt.image.BufferedImage(
+                                img.getWidth(null),
+                                img.getHeight(null),
+                                java.awt.image.BufferedImage.TYPE_INT_ARGB
+                        );
+                Graphics2D g2d = buffered.createGraphics();
+                g2d.drawImage(img, 0, 0, null);
+                g2d.dispose();
+
+                pfp = new StaticSprite(buffered);
+
+                pfp.setBounds(150, 50, 80, 80);
+            } else {
+                throw new RuntimeException("Pfp resource not found");
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load sprite image", e);
@@ -79,10 +142,10 @@ public class Account extends javax.swing.JFrame {
         panel_Background.setLayout(null);
 
         label_Username.setFont(new java.awt.Font("Comic Sans MS", 0, 48)); // NOI18N
-        label_Username.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Username.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_Username.setText("USERNAME");
         panel_Background.add(label_Username);
-        label_Username.setBounds(150, 50, 290, 80);
+        label_Username.setBounds(250, 50, 290, 80);
 
         label_TextHighestScore.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         label_TextHighestScore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);

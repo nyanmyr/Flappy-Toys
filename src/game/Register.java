@@ -13,15 +13,22 @@ import utility.sprites.StaticSprite;
 public class Register extends javax.swing.JFrame {
 
     private StaticSprite background;
+    private StaticSprite pfp;
+    static private int pfpSelected = 1;
 
     public Register() {
         initComponents();
 
-        LoadSprite();
+        loadBackground();
+        loadPfp(pfpSelected);
+
         panel_Background.add(background);
+//        panel_Background.add(pfp);
+
+//        panel_Background.setComponentZOrder(pfp, 0);
     }
 
-    private void LoadSprite() {
+    private void loadBackground() {
         try {
             java.net.URL resource = getClass().getResource("/resources/backgrounds/icecream_bg.jpg");
             if (resource != null) {
@@ -47,6 +54,72 @@ public class Register extends javax.swing.JFrame {
         }
     }
 
+    private void loadPfp(int pfpNum) {
+        if (pfp != null) {
+            panel_Background.remove(pfp);
+            panel_Background.setComponentZOrder(background, panel_Background.getComponentCount() - 1);
+        }
+
+        try {
+
+            java.net.URL resource;
+
+            // load pfp
+            switch (pfpNum) {
+                case 1 -> {
+                    resource = getClass().getResource("/resources/pfp/teddycopter_pfp.png");
+                }
+                case 2 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+                }
+                case 3 -> {
+                    resource = getClass().getResource("/resources/pfp/foldy_pfp.png");
+                }
+                case 4 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+//                    resource = getClass().getResource("/resources/pfp/dancerina_pfp.png");
+                }
+                case 5 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+//                    resource = getClass().getResource("/resources/pfp/sergeant_pfp.png");
+                }
+                case 6 -> {
+                    resource = getClass().getResource("/resources/pfp/rocketron_pfp.png");
+//                    resource = getClass().getResource("/resources/pfp/allicorn_pfp.png");
+                }
+                default -> {
+                    throw new AssertionError(pfpNum);
+                }
+            }
+
+            if (resource != null) {
+                Image img = ImageIO.read(resource);
+                java.awt.image.BufferedImage buffered
+                        = new java.awt.image.BufferedImage(
+                                img.getWidth(null),
+                                img.getHeight(null),
+                                java.awt.image.BufferedImage.TYPE_INT_ARGB
+                        );
+                Graphics2D g2d = buffered.createGraphics();
+                g2d.drawImage(img, 0, 0, null);
+                g2d.dispose();
+
+                pfp = new StaticSprite(buffered);
+
+                pfp.setBounds(360, 50, 80, 80);
+            } else {
+                throw new RuntimeException("Pfp resource not found");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load sprite image", e);
+        }
+
+        panel_Background.add(pfp);
+        panel_Background.setComponentZOrder(pfp, 0);
+        panel_Background.revalidate();
+        panel_Background.repaint();
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -62,6 +135,7 @@ public class Register extends javax.swing.JFrame {
         button_CreateAccount = new javax.swing.JButton();
         button_Login = new javax.swing.JButton();
         button_Return = new javax.swing.JButton();
+        button_Pfp = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -165,6 +239,23 @@ public class Register extends javax.swing.JFrame {
         panel_Background.add(button_Return);
         button_Return.setBounds(290, 480, 220, 30);
 
+        button_Pfp.setBackground(new java.awt.Color(255, 255, 255, 0));
+        button_Pfp.setForeground(new java.awt.Color(255, 255, 255));
+        button_Pfp.setBorderPainted(false);
+        button_Pfp.setContentAreaFilled(false);
+        button_Pfp.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_PfpMouseEntered(evt);
+            }
+        });
+        button_Pfp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_PfpActionPerformed(evt);
+            }
+        });
+        panel_Background.add(button_Pfp);
+        button_Pfp.setBounds(360, 60, 80, 80);
+
         getContentPane().add(panel_Background);
         panel_Background.setBounds(0, 0, 800, 600);
 
@@ -181,8 +272,8 @@ public class Register extends javax.swing.JFrame {
     private void button_CreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreateAccountActionPerformed
         // implement login system here
         SoundPlayer.playSound(SoundFile.CLICK);
-        dispose();
-        java.awt.EventQueue.invokeLater(() -> new Account().setVisible(true));
+//        dispose();
+//        java.awt.EventQueue.invokeLater(() -> new Account().setVisible(true));
     }//GEN-LAST:event_button_CreateAccountActionPerformed
 
     private void button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LoginActionPerformed
@@ -211,9 +302,23 @@ public class Register extends javax.swing.JFrame {
         SoundPlayer.playSound(SoundFile.SELECT);
     }//GEN-LAST:event_button_ReturnMouseEntered
 
+    private void button_PfpMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PfpMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_PfpMouseEntered
+
+    private void button_PfpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_PfpActionPerformed
+        pfpSelected++;
+        if (pfpSelected > 6) {
+            pfpSelected = 1;
+        }
+        System.out.println("pfpSelected: " + pfpSelected);
+        loadPfp(pfpSelected);
+    }//GEN-LAST:event_button_PfpActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_CreateAccount;
     private javax.swing.JButton button_Login;
+    private javax.swing.JButton button_Pfp;
     private javax.swing.JButton button_Return;
     private javax.swing.JLabel label_Password;
     private javax.swing.JLabel label_Password1;

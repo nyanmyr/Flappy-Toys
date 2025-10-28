@@ -14,9 +14,10 @@ public class Main {
     public static void main(String args[]) {
 
         MusicPlayer.playSound(MusicFile.MENU);
-        
+
         try {
-            Connection connection = DatabaseConnection.getConnection();
+//            Connection connection = DatabaseConnection.getConnection();
+            DatabaseConnection.update();
         } catch (SQLException e) {
             System.out.println("Database Error");
         }

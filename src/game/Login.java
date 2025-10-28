@@ -1,5 +1,6 @@
 package game;
 
+import database.DatabaseConnection;
 import static game.Main.SCREEN_HEIGHT;
 import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
@@ -157,7 +158,7 @@ public class Login extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed
-        SoundPlayer.playSound(SoundFile.CLICK); 
+        SoundPlayer.playSound(SoundFile.CLICK);
         dispose();
         java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
     }//GEN-LAST:event_button_ReturnActionPerformed
@@ -165,8 +166,28 @@ public class Login extends javax.swing.JFrame {
     private void button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LoginActionPerformed
         // implement login system here
         SoundPlayer.playSound(SoundFile.CLICK);
-        dispose();
-        java.awt.EventQueue.invokeLater(() -> new Account().setVisible(true));
+
+        String typedUsername = textField_Username.getText();
+        String typedPassword = new String(passwordField_Password.getPassword());
+
+        // add message
+        if (typedUsername.isEmpty()) {
+            return;
+        } else if (typedPassword.isEmpty()) {
+            return;
+        } else if (typedUsername.isEmpty() && typedPassword.isEmpty()) {
+            return;
+        }
+
+        if (DatabaseConnection.authenticate(typedUsername, typedPassword)) {
+            System.out.println("Username: " + typedUsername);
+            System.out.println("Password: " + typedPassword);
+            
+            dispose();
+            java.awt.EventQueue.invokeLater(() -> new Account(typedUsername, DatabaseConnection.getPfp(typedUsername)).setVisible(true));
+        } else {
+            // add incorrect credentials error
+        }
     }//GEN-LAST:event_button_LoginActionPerformed
 
     private void button_CreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreateAccountActionPerformed
