@@ -20,7 +20,8 @@ public class Teddycopter extends Toy {
                 FallSpeed.SLOW.speed,
                 MovementSpeed.NORMAL.speed,
                 JumpHeight.HIGH.height,
-                SoundFile.TEDDYCOPTER_JUMP);
+                SoundFile.TEDDYCOPTER_JUMP,
+                ToyCharacter.TEDDYCOPTER);
         LoadSprite();
     }
 

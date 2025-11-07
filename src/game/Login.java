@@ -20,6 +20,7 @@ public class Login extends javax.swing.JFrame {
 
         LoadSprite();
         panel_Background.add(background);
+        label_Warning.setVisible(false);
     }
 
     private void LoadSprite() {
@@ -61,6 +62,7 @@ public class Login extends javax.swing.JFrame {
         button_Login = new javax.swing.JButton();
         button_CreateAccount = new javax.swing.JButton();
         button_Return = new javax.swing.JButton();
+        label_Warning = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -150,6 +152,13 @@ public class Login extends javax.swing.JFrame {
         panel_Background.add(button_Return);
         button_Return.setBounds(290, 480, 220, 30);
 
+        label_Warning.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        label_Warning.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Warning.setText("Warning");
+        label_Warning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        panel_Background.add(label_Warning);
+        label_Warning.setBounds(90, 140, 160, 110);
+
         getContentPane().add(panel_Background);
         panel_Background.setBounds(0, 0, 800, 600);
 
@@ -170,23 +179,28 @@ public class Login extends javax.swing.JFrame {
         String typedUsername = textField_Username.getText();
         String typedPassword = new String(passwordField_Password.getPassword());
 
+        label_Warning.setVisible(true);
+
         // add message
         if (typedUsername.isEmpty()) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Enter a username.");
             return;
         } else if (typedPassword.isEmpty()) {
-            return;
-        } else if (typedUsername.isEmpty() && typedPassword.isEmpty()) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Enter a password.");
             return;
         }
 
         if (DatabaseConnection.authenticate(typedUsername, typedPassword)) {
             System.out.println("Username: " + typedUsername);
             System.out.println("Password: " + typedPassword);
-            
+
             dispose();
             java.awt.EventQueue.invokeLater(() -> new Account(typedUsername, DatabaseConnection.getPfp(typedUsername)).setVisible(true));
         } else {
-            // add incorrect credentials error
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Incorrect username or password.");
         }
     }//GEN-LAST:event_button_LoginActionPerformed
 
@@ -220,6 +234,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel label_Password;
     private javax.swing.JLabel label_Title;
     private javax.swing.JLabel label_Username;
+    private javax.swing.JLabel label_Warning;
     private javax.swing.JPanel panel_Background;
     private javax.swing.JPasswordField passwordField_Password;
     private javax.swing.JTextField textField_Username;

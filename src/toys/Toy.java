@@ -30,13 +30,16 @@ public abstract class Toy implements Moveable {
 
     private final SoundFile jumpSoundFile;
 
-    public Toy(Ability ability, int FALL_SPEED, int MOVEMENT_SPEED, int JUMP_HEIGHT, SoundFile jumpSoundFile) {
+    public Toy(Ability ability, int FALL_SPEED, int MOVEMENT_SPEED, int JUMP_HEIGHT, SoundFile jumpSoundFile, ToyCharacter toyCharacter) {
         this.ability = ability;
         this.FALL_SPEED = FALL_SPEED;
         this.MOVEMENT_SPEED = MOVEMENT_SPEED;
         this.JUMP_HEIGHT = JUMP_HEIGHT;
         this.jumpSoundFile = jumpSoundFile;
+        this.toyCharacter = toyCharacter;
     }
+
+    private final ToyCharacter toyCharacter;
 
     abstract public void LoadSprite();
 
@@ -126,6 +129,10 @@ public abstract class Toy implements Moveable {
 
     public SoundFile getJumpSoundFile() {
         return jumpSoundFile;
+    }
+
+    public ToyCharacter getToyCharacter() {
+        return toyCharacter;
     }
     // </editor-fold>
 

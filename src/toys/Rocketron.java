@@ -20,7 +20,8 @@ public class Rocketron extends Toy {
                 FallSpeed.FAST.speed,
                 MovementSpeed.SLOW.speed,
                 JumpHeight.NORMAL.height,
-                SoundFile.ROCKETRON_JUMP);
+                SoundFile.ROCKETRON_JUMP,
+                ToyCharacter.ROCKETRON);
         LoadSprite();
     }
 

@@ -41,6 +41,9 @@ public class Menu extends javax.swing.JFrame {
             optionsIcon.update();
         };
 
+        label_Warning.setVisible(!Main.databaseConnected);
+        if (!Main.databaseConnected) label_Warning.setText("<html>Database error: Communications link failure");
+        
         timer = new Timer(MILISECOND_DELAY, update);
         timer.start();
     }
@@ -164,6 +167,7 @@ public class Menu extends javax.swing.JFrame {
         button_Exit = new javax.swing.JButton();
         button_Account = new javax.swing.JButton();
         button_Settings = new javax.swing.JButton();
+        label_Warning = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -284,6 +288,13 @@ public class Menu extends javax.swing.JFrame {
         panel_Background.add(button_Settings);
         button_Settings.setBounds(590, 80, 60, 60);
 
+        label_Warning.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        label_Warning.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Warning.setText("Warning");
+        label_Warning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        panel_Background.add(label_Warning);
+        label_Warning.setBounds(270, 200, 160, 110);
+
         getContentPane().add(panel_Background);
         panel_Background.setBounds(0, 0, 800, 600);
 
@@ -298,6 +309,11 @@ public class Menu extends javax.swing.JFrame {
     private void button_LeaderboardsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LeaderboardsActionPerformed
         timer.stop();
 
+        if (!Main.databaseConnected) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            return;
+        }
+        
         SoundPlayer.playSound(SoundFile.CLICK);
 
         dispose();
@@ -334,10 +350,19 @@ public class Menu extends javax.swing.JFrame {
     private void button_AccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AccountActionPerformed
         timer.stop();
 
+        if (!Main.databaseConnected) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            return;
+        }
+        
         SoundPlayer.playSound(SoundFile.CLICK);
 
         dispose();
-        new Login().setVisible(true);
+        if (Account.logedIn) {
+            new Account(Account.getSavedUsername(), Account.getSavedPfp()).setVisible(true);
+        } else {
+            new Login().setVisible(true);
+        }
     }//GEN-LAST:event_button_AccountActionPerformed
 
     private void button_PlayMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PlayMouseEntered
@@ -375,6 +400,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JButton button_Play;
     private javax.swing.JButton button_Settings;
     private javax.swing.JLabel label_Title;
+    private javax.swing.JLabel label_Warning;
     private javax.swing.JPanel panel_Background;
     // End of variables declaration//GEN-END:variables
 }

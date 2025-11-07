@@ -1,5 +1,6 @@
 package game;
 
+import database.DatabaseConnection;
 import static game.Main.SCREEN_HEIGHT;
 import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
@@ -14,6 +15,10 @@ public class Account extends javax.swing.JFrame {
 
     private StaticSprite background;
     private StaticSprite pfp;
+    public static boolean logedIn = false;
+
+    private static String savedUsername;
+    private static int savedPfp;
 
     public Account(String username, int pfpNum) {
         initComponents();
@@ -26,6 +31,40 @@ public class Account extends javax.swing.JFrame {
         panel_Background.add(pfp);
 
         panel_Background.setComponentZOrder(pfp, 0);
+
+        logedIn = true;
+        savedUsername = username;
+        savedPfp = pfpNum;
+
+        label_HighestScore.setText(String.valueOf(DatabaseConnection.getHighestScore()));
+        label_TotalScore.setText(String.valueOf(DatabaseConnection.getTotalScore()));
+        label_HighestTokensCollected.setText(String.valueOf(DatabaseConnection.getHighestTokensCollected()));
+        label_TotalTokens.setText(String.valueOf(DatabaseConnection.getTotalTokens()));
+        label_ChargesUsed.setText(String.valueOf(DatabaseConnection.getTotalChargesUsed()));
+        
+        label_MostUsedCharacter.setText(DatabaseConnection.getMostUsedCharacter());
+    }
+
+    public static void setSavedUsername(String savedUsername) {
+        Account.savedUsername = savedUsername;
+    }
+
+    public static void setSavedPfp(int savedPfp) {
+        Account.savedPfp = savedPfp;
+    }
+
+    public static String getSavedUsername() {
+        return savedUsername;
+    }
+
+    public static int getSavedPfp() {
+        return savedPfp;
+    }
+
+    public static void logOut() {
+        logedIn = false;
+        savedUsername = null;
+        savedPfp = 0;
     }
 
     private void loadBackground() {
@@ -260,6 +299,9 @@ public class Account extends javax.swing.JFrame {
 
     private void button_LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LogoutActionPerformed
         SoundPlayer.playSound(SoundFile.CLICK);
+        logOut();
+        dispose();
+        java.awt.EventQueue.invokeLater(() -> new Menu().setVisible(true));
     }//GEN-LAST:event_button_LogoutActionPerformed
 
     private void button_ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_ReturnActionPerformed

@@ -19,6 +19,7 @@ import collectibles.PopsicleToken;
 import collectibles.ScarabToken;
 import java.util.LinkedList;
 import java.util.Queue;
+import javax.swing.JOptionPane;
 // toys
 import toys.Toy;
 // levels
@@ -33,10 +34,10 @@ import levels.Level;
 import levels.Steamworks;
 import levels.backgrounds.Background;
 import levels.parallaxes.ParallaxLevel;
+import sfx.music.MusicFile;
 // sfx
 import sfx.sounds.SoundPlayer;
 import sfx.sounds.SoundFile;
-import sfx.music.MusicFile;
 import sfx.music.MusicPlayer;
 // utilities
 import utility.enums.OrderLayer;
@@ -134,6 +135,7 @@ public class Game extends javax.swing.JFrame {
         button_PlayAgain.setVisible(false);
         button_ChooseCharacter.setVisible(false);
         label_GameOver.setVisible(false);
+        button_SaveRecord.setVisible(false);
     }
 
     private void giveControls() {
@@ -548,7 +550,7 @@ public class Game extends javax.swing.JFrame {
             double bottom_distance = Math.max(0,
                     Math.sqrt(Math.pow(bottom_dx, 2) + Math.pow(bottom_dy, 2)) - CHARACTER_COLLIDER);
 
-            if ((bottom_distance <= 0 || top_distance <= 0) 
+            if ((bottom_distance <= 0 || top_distance <= 0)
                     && !toy.isImmune()
                     && col.isAlive()) {
                 gameOver = true;
@@ -761,6 +763,8 @@ public class Game extends javax.swing.JFrame {
         panel_Background.setComponentZOrder(button_ChooseCharacter, OrderLayer.UI.layer);
         button_PlayAgain.setVisible(true);
         panel_Background.setComponentZOrder(button_PlayAgain, OrderLayer.UI.layer);
+        button_SaveRecord.setVisible(true);
+        panel_Background.setComponentZOrder(button_SaveRecord, OrderLayer.UI.layer);
     }
 
     private void resetGame() {
@@ -938,6 +942,7 @@ public class Game extends javax.swing.JFrame {
         label_Charges = new javax.swing.JLabel();
         label_Score = new javax.swing.JLabel();
         label_GameOver = new javax.swing.JLabel();
+        button_SaveRecord = new javax.swing.JButton();
         button_PlayAgain = new javax.swing.JButton();
         button_ChooseCharacter = new javax.swing.JButton();
 
@@ -983,6 +988,22 @@ public class Game extends javax.swing.JFrame {
         panel_Background.add(label_GameOver);
         label_GameOver.setBounds(260, 200, 290, 100);
 
+        button_SaveRecord.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
+        button_SaveRecord.setText("SAVE SCORE");
+        button_SaveRecord.setFocusable(false);
+        button_SaveRecord.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button_SaveRecordMouseEntered(evt);
+            }
+        });
+        button_SaveRecord.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_SaveRecordActionPerformed(evt);
+            }
+        });
+        panel_Background.add(button_SaveRecord);
+        button_SaveRecord.setBounds(290, 420, 210, 40);
+
         button_PlayAgain.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         button_PlayAgain.setText("PLAY AGAIN");
         button_PlayAgain.setFocusable(false);
@@ -997,7 +1018,7 @@ public class Game extends javax.swing.JFrame {
             }
         });
         panel_Background.add(button_PlayAgain);
-        button_PlayAgain.setBounds(315, 370, 170, 50);
+        button_PlayAgain.setBounds(290, 360, 210, 50);
 
         button_ChooseCharacter.setFont(new java.awt.Font("Comic Sans MS", 0, 12)); // NOI18N
         button_ChooseCharacter.setText("CHOOSE A NEW CHARACTER");
@@ -1013,7 +1034,7 @@ public class Game extends javax.swing.JFrame {
             }
         });
         panel_Background.add(button_ChooseCharacter);
-        button_ChooseCharacter.setBounds(290, 310, 210, 50);
+        button_ChooseCharacter.setBounds(290, 310, 210, 40);
 
         getContentPane().add(panel_Background);
         panel_Background.setBounds(0, 0, 800, 600);
@@ -1042,11 +1063,34 @@ public class Game extends javax.swing.JFrame {
     private void button_PlayAgainMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_PlayAgainMouseEntered
         SoundPlayer.playSound(SoundFile.SELECT);
     }//GEN-LAST:event_button_PlayAgainMouseEntered
+
+    private void button_SaveRecordMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_SaveRecordMouseEntered
+        SoundPlayer.playSound(SoundFile.SELECT);
+    }//GEN-LAST:event_button_SaveRecordMouseEntered
+
+    private void button_SaveRecordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SaveRecordActionPerformed
+        if (!Main.databaseConnected) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Communications link failure.",
+                    "Database error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        if (!SaveRecord.enabled) {
+            button_SaveRecord.setVisible(false);
+            new SaveRecord(toy.getScore(), toy.getTokensCollected(), toy.getChargesUsed(), toy.getToyCharacter()).setVisible(true);
+        }
+    }//GEN-LAST:event_button_SaveRecordActionPerformed
     // </editor-fold>
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_ChooseCharacter;
     private javax.swing.JButton button_PlayAgain;
+    private javax.swing.JButton button_SaveRecord;
     private javax.swing.JLabel label_Charges;
     private javax.swing.JLabel label_Collectibles;
     private javax.swing.JLabel label_GameOver;

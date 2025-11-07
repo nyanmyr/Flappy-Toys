@@ -1,11 +1,23 @@
 package game;
 
+import database.DatabaseConnection;
 import static game.Main.SCREEN_HEIGHT;
 import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.imageio.ImageIO;
+import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import sfx.sounds.SoundFile;
 import sfx.sounds.SoundPlayer;
 import utility.sprites.StaticSprite;
@@ -14,8 +26,54 @@ public class Leaderboards extends javax.swing.JFrame {
 
     private StaticSprite background;
 
+    private String[] columnNames = {"Ranking", "Username", "Highest Score", "Highest Tokens Collected"};
+    private List<Object[]> retrievedData = DatabaseConnection.getStatsData();
+    private Object[][] data = new Object[retrievedData.size()][4];
+
     public Leaderboards() {
         initComponents();
+
+        for (int i = 0; i < retrievedData.size(); i++) {
+            data[i][1] = retrievedData.get(i)[0]; // display username
+            data[i][2] = retrievedData.get(i)[1]; // display highest score
+            data[i][3] = retrievedData.get(i)[3]; // display highest tokens collected
+        }
+
+        DefaultTableModel model = new DefaultTableModel(data, columnNames);
+        table_Leaderboards.setModel(model);
+
+        // Enable sorting
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
+        table_Leaderboards.setRowSorter(sorter);
+
+        sorter.setSortKeys(java.util.List.of(
+                new RowSorter.SortKey(2, SortOrder.DESCENDING)
+        ));
+        // disable ranking and username sorting
+        sorter.setSortable(0, false);
+        sorter.setSortable(1, false);
+
+        // Guard against reentrancy while updating rankings
+        AtomicBoolean updating = new AtomicBoolean(false);
+
+        // detect if the table is being sorted
+        RowSorterListener listener = e -> {
+            if (e.getType() == RowSorterEvent.Type.SORT_ORDER_CHANGED) {
+                // Run later so the sorter finishes internal state changes first
+                SwingUtilities.invokeLater(() -> {
+                    // Prevent re-entry if we're the ones changing the model
+                    if (updating.compareAndSet(false, true)) {
+                        try {
+                            updateRanking(table_Leaderboards);
+                        } finally {
+                            updating.set(false);
+                        }
+                    }
+                });
+            }
+        };
+
+        updateRanking(table_Leaderboards);
 
         LoadSprite();
         panel_Background.add(background);
@@ -47,6 +105,19 @@ public class Leaderboards extends javax.swing.JFrame {
         }
     }
 
+    private static void updateRanking(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        for (int viewRow = 0; viewRow < table.getRowCount(); viewRow++) {
+            int modelRow = table.convertRowIndexToModel(viewRow);
+            // Only set if different (reduces needless events)
+            Object current = model.getValueAt(modelRow, 0);
+            int newRank = viewRow + 1;
+            if (!(current instanceof Number) || ((Number) current).intValue() != newRank) {
+                model.setValueAt(newRank, modelRow, 0);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -55,7 +126,7 @@ public class Leaderboards extends javax.swing.JFrame {
         label_Title = new javax.swing.JLabel();
         button_Return = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table_Leaderboards = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -89,18 +160,10 @@ public class Leaderboards extends javax.swing.JFrame {
         panel_Background.add(button_Return);
         button_Return.setBounds(290, 460, 220, 50);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        table_Leaderboards.setShowGrid(true);
+        table_Leaderboards.getTableHeader().setResizingAllowed(false);
+        table_Leaderboards.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(table_Leaderboards);
 
         panel_Background.add(jScrollPane1);
         jScrollPane1.setBounds(60, 150, 660, 290);
@@ -125,8 +188,8 @@ public class Leaderboards extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_Return;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel label_Title;
     private javax.swing.JPanel panel_Background;
+    private javax.swing.JTable table_Leaderboards;
     // End of variables declaration//GEN-END:variables
 }

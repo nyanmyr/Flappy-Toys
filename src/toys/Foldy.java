@@ -20,7 +20,8 @@ public class Foldy extends Toy {
                 FallSpeed.NORMAL.speed,
                 MovementSpeed.FAST.speed,
                 JumpHeight.LOW.height,
-                SoundFile.FOLDY_JUMP);
+                SoundFile.FOLDY_JUMP,
+                ToyCharacter.FOLDY);
         LoadSprite();
     }
 

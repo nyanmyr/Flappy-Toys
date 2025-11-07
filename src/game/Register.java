@@ -1,10 +1,12 @@
 package game;
 
+import database.DatabaseConnection;
 import static game.Main.SCREEN_HEIGHT;
 import static game.Main.SCREEN_WIDTH;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.imageio.ImageIO;
 import sfx.sounds.SoundFile;
 import sfx.sounds.SoundPlayer;
@@ -23,9 +25,7 @@ public class Register extends javax.swing.JFrame {
         loadPfp(pfpSelected);
 
         panel_Background.add(background);
-//        panel_Background.add(pfp);
-
-//        panel_Background.setComponentZOrder(pfp, 0);
+        label_Warning.setVisible(false);
     }
 
     private void loadBackground() {
@@ -126,8 +126,10 @@ public class Register extends javax.swing.JFrame {
 
         panel_Background = new javax.swing.JPanel();
         label_Title = new javax.swing.JLabel();
+        label_Pfp = new javax.swing.JLabel();
+        label_Warning = new javax.swing.JLabel();
         label_Username = new javax.swing.JLabel();
-        passwordField_Password1 = new javax.swing.JPasswordField();
+        passwordField_ConfirmedPassword = new javax.swing.JPasswordField();
         label_Password1 = new javax.swing.JLabel();
         textField_Username = new javax.swing.JTextField();
         label_Password = new javax.swing.JLabel();
@@ -153,19 +155,32 @@ public class Register extends javax.swing.JFrame {
         panel_Background.add(label_Title);
         label_Title.setBounds(50, 50, 290, 80);
 
+        label_Pfp.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        label_Pfp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_Pfp.setText("CHANGE PROFILE PICTURE");
+        panel_Background.add(label_Pfp);
+        label_Pfp.setBounds(270, 20, 260, 30);
+
+        label_Warning.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        label_Warning.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        label_Warning.setText("Warning");
+        label_Warning.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        panel_Background.add(label_Warning);
+        label_Warning.setBounds(90, 140, 160, 110);
+
         label_Username.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         label_Username.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         label_Username.setText("USERNAME");
         panel_Background.add(label_Username);
         label_Username.setBounds(270, 140, 260, 30);
 
-        passwordField_Password1.addActionListener(new java.awt.event.ActionListener() {
+        passwordField_ConfirmedPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passwordField_Password1ActionPerformed(evt);
+                passwordField_ConfirmedPasswordActionPerformed(evt);
             }
         });
-        panel_Background.add(passwordField_Password1);
-        passwordField_Password1.setBounds(270, 340, 260, 30);
+        panel_Background.add(passwordField_ConfirmedPassword);
+        passwordField_ConfirmedPassword.setBounds(270, 340, 260, 30);
 
         label_Password1.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         label_Password1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -270,10 +285,58 @@ public class Register extends javax.swing.JFrame {
     }//GEN-LAST:event_button_ReturnActionPerformed
 
     private void button_CreateAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_CreateAccountActionPerformed
-        // implement login system here
+
+        String typedUsername = textField_Username.getText();
+        String typedPassword = new String(passwordField_Password.getPassword());
+        String typedConfirmedPassword = new String(passwordField_ConfirmedPassword.getPassword());
+
+        label_Warning.setVisible(true);
+
+        // add message
+        if (typedUsername.isEmpty()) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Enter a username.");
+            return;
+        } else if (typedUsername.length() < 5) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Choose a longer username (5 characters long or more).");
+            return;
+        } else if (typedPassword.isEmpty()) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Enter a password.");
+            return;
+        } else if (typedPassword.length() < 8) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Choose a stronger password (8 characters long or more).");
+            return;
+        } else if (typedConfirmedPassword.isEmpty()) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Enter confirm password.");
+            return;
+        } else if (!typedPassword.equals(typedConfirmedPassword)) {
+            SoundPlayer.playSound(SoundFile.INCORRECT);
+            label_Warning.setText("<html>Passwords does not match.");
+            return;
+        }
+
+        try {
+            label_Warning.setVisible(false);
+            SoundPlayer.playSound(SoundFile.CLICK);
+
+            textField_Username.setText("");
+            passwordField_Password.setText("");
+            passwordField_ConfirmedPassword.setText("");
+
+            if (DatabaseConnection.addAccount(typedUsername, typedPassword, pfpSelected)) {
+                dispose();
+                java.awt.EventQueue.invokeLater(() -> new Account(typedUsername, pfpSelected).setVisible(true));
+            }
+        } catch (SQLException e) {
+            System.out.println("Database Error");
+        }
+
         SoundPlayer.playSound(SoundFile.CLICK);
-//        dispose();
-//        java.awt.EventQueue.invokeLater(() -> new Account().setVisible(true));
+
     }//GEN-LAST:event_button_CreateAccountActionPerformed
 
     private void button_LoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_LoginActionPerformed
@@ -286,9 +349,9 @@ public class Register extends javax.swing.JFrame {
         SoundPlayer.playSound(SoundFile.CLICK);
     }//GEN-LAST:event_passwordField_PasswordActionPerformed
 
-    private void passwordField_Password1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordField_Password1ActionPerformed
+    private void passwordField_ConfirmedPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordField_ConfirmedPasswordActionPerformed
         SoundPlayer.playSound(SoundFile.CLICK);
-    }//GEN-LAST:event_passwordField_Password1ActionPerformed
+    }//GEN-LAST:event_passwordField_ConfirmedPasswordActionPerformed
 
     private void button_CreateAccountMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_button_CreateAccountMouseEntered
         SoundPlayer.playSound(SoundFile.SELECT);
@@ -311,7 +374,7 @@ public class Register extends javax.swing.JFrame {
         if (pfpSelected > 6) {
             pfpSelected = 1;
         }
-        System.out.println("pfpSelected: " + pfpSelected);
+//        System.out.println("pfpSelected: " + pfpSelected);
         loadPfp(pfpSelected);
     }//GEN-LAST:event_button_PfpActionPerformed
 
@@ -322,11 +385,13 @@ public class Register extends javax.swing.JFrame {
     private javax.swing.JButton button_Return;
     private javax.swing.JLabel label_Password;
     private javax.swing.JLabel label_Password1;
+    private javax.swing.JLabel label_Pfp;
     private javax.swing.JLabel label_Title;
     private javax.swing.JLabel label_Username;
+    private javax.swing.JLabel label_Warning;
     private javax.swing.JPanel panel_Background;
+    private javax.swing.JPasswordField passwordField_ConfirmedPassword;
     private javax.swing.JPasswordField passwordField_Password;
-    private javax.swing.JPasswordField passwordField_Password1;
     private javax.swing.JTextField textField_Username;
     // End of variables declaration//GEN-END:variables
 }
