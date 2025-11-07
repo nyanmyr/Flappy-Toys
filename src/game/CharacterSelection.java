@@ -202,7 +202,7 @@ public class CharacterSelection extends javax.swing.JFrame {
 
         label_Tutorial.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
         label_Tutorial.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        label_Tutorial.setText("<html><body style=\"text-align: center\">Click <b>LEFT MOUSE CLICK</b> to jump <br /><b>MOVE</b> your mouse left and right to move left and right <br />Press <b>SPACE</b> to use your ability (if you have charges)</body></html>");
+        label_Tutorial.setText("<html><body style=\"text-align: center\">Click <b>LEFT MOUSE CLICK</b> to jump <br /><b>MOVE</b> your mouse left and right to move left and right <br />Press <b>RIGHT CLICK</b> to use your ability (if you have charges)</body></html>");
         panel_Background.add(label_Tutorial);
         label_Tutorial.setBounds(20, 270, 260, 240);
 

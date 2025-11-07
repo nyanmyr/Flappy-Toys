@@ -168,7 +168,7 @@
               <Font name="Comic Sans MS" size="18" style="0"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body style=&quot;text-align: center&quot;&gt;Click &lt;b&gt;LEFT MOUSE CLICK&lt;/b&gt; to jump &lt;br /&gt;&lt;b&gt;MOVE&lt;/b&gt; your mouse left and right to move left and right &lt;br /&gt;Press &lt;b&gt;SPACE&lt;/b&gt; to use your ability (if you have charges)&lt;/body&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body style=&quot;text-align: center&quot;&gt;Click &lt;b&gt;LEFT MOUSE CLICK&lt;/b&gt; to jump &lt;br /&gt;&lt;b&gt;MOVE&lt;/b&gt; your mouse left and right to move left and right &lt;br /&gt;Press &lt;b&gt;RIGHT CLICK&lt;/b&gt; to use your ability (if you have charges)&lt;/body&gt;&lt;/html&gt;"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
